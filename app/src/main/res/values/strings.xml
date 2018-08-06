@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">MapOrganizer</string>
     <string name="title_activity_maps">Map</string>
-</resources>
+
+
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+  <string name="title_hint">Title</string>
+  <string name="description_hint">Description</string>
+  <string name="reminder_text">Reminder</string>
+  <string name="never_remind">Never</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="search_here">Search here</string>
+  <string name="title_activity_maps2">Map</string>
+  <string name="search">Search</string>
+    </resources>
+
+
