@@ -1,4 +1,4 @@
-package com.example.marik.maporganizer;
+package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -22,7 +22,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marik.maporganizer.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -42,20 +44,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private final static int PERMISSION_CODE = 26;
+    private final static int PERMISSION_REQUEST_CODE = 26;
+    private static final float DEFAULT_ZOOM = 15f;
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mCurrentLocation;
     private Marker mCurrentLocationMarker;
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
-    private static final float DEFAULT_ZOOM = 15f;
+    private GeofencingClient mGeofencingClient;
+
     private EditText mSearchText;
-    private Boolean mLocationPermissionsGranted = false;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private ImageView mGps;
 
     @Override
@@ -68,6 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         mSearchText = (EditText) findViewById(R.id.input_search);
 
@@ -199,7 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MapsActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        PERMISSION_CODE);
+                                        PERMISSION_REQUEST_CODE);
                             }
                         })
                         .create()
@@ -210,7 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSION_CODE);
+                        PERMISSION_REQUEST_CODE);
             }
         }
     }
@@ -219,7 +219,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_CODE: {
+            case PERMISSION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
