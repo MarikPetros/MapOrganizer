@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.utils;
 
 import android.provider.SyncStateContract;
 
+import com.example.marik.maporganizer.item.TaskItem;
 import com.google.android.gms.location.Geofence;
 
 import java.util.ArrayList;
@@ -19,12 +20,12 @@ public class GeofenceMaker {
         mGeofenceList.add(new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
-                .setRequestId(taskItem.getAddress.toString())
+                .setRequestId(taskItem.getAddress().toString())
 
                 .setCircularRegion(
-                        taskItem.getAddress.getLatitude(),
-                        taskItem.getAddress.getLongitude(),
-                        taskItem.getAlertRadius()
+                        taskItem.getAddress().getLatitude(),
+                        taskItem.getAddress().getLongitude(),
+                        taskItem.getRadius()
                 )
                 .setExpirationDuration(NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )
