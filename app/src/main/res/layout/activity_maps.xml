@@ -37,7 +37,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:src="@drawable/ic_search_black_24dp"/>
-        <EditText
+
+        <AutoCompleteTextView
             android:id="@+id/input_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
