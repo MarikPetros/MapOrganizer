@@ -1,3 +1,4 @@
+/*
 package com.example.marik.maporganizer.utils;
 
 import android.provider.SyncStateContract;
@@ -32,3 +33,4 @@ public class GeofenceMaker {
                 .build());
     }
 }
+*/
