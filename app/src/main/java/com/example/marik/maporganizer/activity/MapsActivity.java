@@ -55,6 +55,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
     private final static int PERMISSION_CODE = 26;
@@ -67,8 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mCurrentLocation;
     private Marker mCurrentLocationMarker;
     private AutoCompleteTextView mSearchText;
-    private Boolean mLocationPermissionsGranted = false;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private ImageView mGps;
     private PlaceAutocompleteAdapter mplaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
@@ -119,6 +118,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
+
+            onMapClick();
+            initSearch();
+        }
+
+    private void onMapClick(){
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -137,10 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
-        initSearch();
-        }
-
-
+    }
 
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -233,7 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -323,6 +325,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
         }
     }
+
+
     // we actually dont need this button as we should implement google places Api and get the suggestions list instead
     // it's just for checking
 
@@ -330,7 +334,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(view.getId() == R.id.ugly_button){
             EditText et_location = (EditText) findViewById(R.id.input_search);
             String location = et_location.getText().toString();
-            List<Address> addressList = null;
+            List<Address> addressList;
             if(!location.equals(""))
             {
                 Geocoder geocoder = new Geocoder(this);
@@ -377,13 +381,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(MapsActivity.this);
     }
+
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -426,7 +430,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mplace.setWebsiteUri(place.getWebsiteUri());
             } catch (NullPointerException e){}
 
-            moveCamera(new LatLng(place.getViewport().getCenter().latitude, place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mplace.getName());
+            moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude, place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mplace.getName());
             places.release();
 
 
