@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,8 +17,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -69,9 +70,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker mCurrentLocationMarker;
     private AutoCompleteTextView mSearchText;
     private ImageView mGps;
-    private PlaceAutocompleteAdapter mplaceAutocompleteAdapter;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
-    private PlaceInfo mplace;
+    private PlaceInfo mPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,8 +280,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
 
-        mplaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient,LAT_LNG_BOUNDS, null);
-        mSearchText.setAdapter(mplaceAutocompleteAdapter);
+        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient,LAT_LNG_BOUNDS, null);
+        mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -377,15 +378,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void hideKeyboard(){
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            Objects.requireNonNull(imm).hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }}
 
-
-    private void initMap(){
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
-        mapFragment.getMapAsync(MapsActivity.this);
-    }
 
 
     @Override
@@ -401,7 +399,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onItemClick(AdapterView<?> parent,View view,int position,long id) {
             hideKeyboard();
 
-            final AutocompletePrediction mAutocompletePrediction = mplaceAutocompleteAdapter.getItem(position);
+            final AutocompletePrediction mAutocompletePrediction = mPlaceAutocompleteAdapter.getItem(position);
             final String placeId = mAutocompletePrediction.getPlaceId();
 
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
@@ -421,16 +419,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             //later we will create a popup window on the marcker click
             try {
-                mplace = new PlaceInfo();
-                mplace.setName(place.getName().toString());
-                mplace.setAddress(place.getAddress().toString());
-                mplace.setPhoneNumber(place.getPhoneNumber().toString());
-                mplace.setId(place.getId());
-                mplace.setLatLng(place.getLatLng());
-                mplace.setWebsiteUri(place.getWebsiteUri());
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                mPlace.setAddress(place.getAddress().toString());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setId(place.getId());
+                mPlace.setLatLng(place.getLatLng());
+                mPlace.setWebsiteUri(place.getWebsiteUri());
             } catch (NullPointerException e){}
 
-            moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude, place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mplace.getName());
+            moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude, place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace.getName());
             places.release();
 
 
