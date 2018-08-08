@@ -9,9 +9,13 @@ import com.example.marik.maporganizer.R;
 
 public class TaskHolder extends RecyclerView.ViewHolder {
 
+
     private TextView mDescription;
     private TextView mDate;
     private TextView mTitle;
+    private TextView mChoosedAddress;
+
+
 
     public TaskHolder(View itemView) {
 
@@ -19,6 +23,7 @@ public class TaskHolder extends RecyclerView.ViewHolder {
         mTitle = itemView.findViewById(R.id.title_view);
         mDescription = itemView.findViewById(R.id.description_view);
         mDate = itemView.findViewById(R.id.date_view);
+        mChoosedAddress=itemView.findViewById(R.id.location_view);
 
     }
 
@@ -40,6 +45,15 @@ public class TaskHolder extends RecyclerView.ViewHolder {
 
     public TextView getTitle() {
         return mTitle;
+    }
+
+
+    public TextView getChoosedAddress() {
+        return mChoosedAddress;
+    }
+
+    public void setChoosedAddress(TextView choosedAddress) {
+        mChoosedAddress = choosedAddress;
     }
 
     public void setTitle(TextView title) {
