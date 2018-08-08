@@ -23,6 +23,7 @@
     <string name="geofence_transition_invalid_type">d% is invalid GeofenceTransition type!</string>
   <string name="search">Search</string>
     <string name="title_hint">title</string>
+    <string name="location">location</string>
 </resources>
 
 

@@ -6,6 +6,8 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
+    android:elevation="30dp"
     tools:context=".fragments.FragmentTaskCreation"
     >
 
@@ -125,6 +127,7 @@
             android:layout_marginTop="@dimen/margin_top"
             android:padding="@dimen/view_padding"
             android:textSize="@dimen/text_size"
+            android:text="@string/location"
             android:visibility="gone"/>
 
             <ImageView
