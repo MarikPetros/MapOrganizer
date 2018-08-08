@@ -1,7 +1,6 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.app.DatePickerDialog;
-import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class FragmentTaskCreation extends Fragment {
+public class FragmentTaskCreation extends android.support.v4.app.Fragment {
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final int PICK_IMAGE_ID = 1;
     private static final String MODE_CREATION = "CREATE";
