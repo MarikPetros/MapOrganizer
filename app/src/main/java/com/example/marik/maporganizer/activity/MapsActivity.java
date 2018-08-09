@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,10 +13,14 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,19 +30,25 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
+import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
+import com.example.marik.maporganizer.fragments.FragmentTasksList;
+import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
 import com.example.marik.maporganizer.models.PlaceInfo;
 import com.example.marik.maporganizer.service.GeofencerService;
+import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -64,10 +75,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(70, 137));
+    private static final String TAG= "MapsActivity";
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -79,9 +91,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
     private PlaceInfo mPlace;
+
+
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = new GeofenceMaker();
+    private SectionPagerAdapter mSectionPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +114,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
 
-        mGps = (ImageView) findViewById(R.id.ic_gps);
+        mGps =  (ImageView) findViewById(R.id.ic_gps);
         checkLocationPermission();
+
+        mSectionPagerAdapter= new SectionPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+
+        setupViewPager(mViewPager);
+
+        //smth is wrong here
+
+        TabLayout tabLayout= findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+         //TODO when fragments will be completely  done
+//        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.ic_map);
+//        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.ic_format_list);
+
     }
+
 
 
     @Override
@@ -131,11 +162,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
 
-        onMapClick();
-        initSearch();
-    }
+            onMapClick();
+            initSearch();
+        }
 
-    private void onMapClick() {
+    private void onMapClick(){
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -211,6 +242,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
 
+
+
+
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -241,7 +275,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -275,7 +309,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //-------------------------------------------------------------------------------------
 
-    private void initSearch() {
+    private void initSearch(){
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -285,16 +319,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
 
-        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient, LAT_LNG_BOUNDS, null);
+        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient,LAT_LNG_BOUNDS, null);
         mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
 
                     // dont forget to executee method for searching
                     geoLocate();
@@ -314,17 +348,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hideKeyboard();
     }
 
-    private void geoLocate() {
+    private void geoLocate(){
         String searchString = mSearchText.getText().toString();
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
-        try {
+        try{
             list = geocoder.getFromLocationName(searchString, 1);
-        } catch (IOException e) {
+        }catch (IOException e){
         }
 
-        if (list.size() > 0) {
+        if(list.size() > 0){
             Address address = list.get(0);
 
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
@@ -336,20 +370,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // we actually dont need this button as we should implement google places Api and get the suggestions list instead
     // it's just for checking
 
-    public void onClick(View view) {
-        if (view.getId() == R.id.ugly_button) {
+    public void onClick(View view){
+        if(view.getId() == R.id.ugly_button){
             EditText et_location = (EditText) findViewById(R.id.input_search);
             String location = et_location.getText().toString();
             List<Address> addressList;
-            if (!location.equals("")) {
+            if(!location.equals(""))
+            {
                 Geocoder geocoder = new Geocoder(this);
 
                 try {
                     addressList = geocoder.getFromLocationName(location, 5);
 
-                    if (addressList != null) {
-                        for (int i = 0; i < addressList.size(); i++) {
-                            LatLng latLng = new LatLng(addressList.get(i).getLatitude(), addressList.get(i).getLongitude());
+                    if(addressList != null)
+                    {
+                        for(int i = 0;i<addressList.size();i++)
+                        {
+                            LatLng latLng = new LatLng(addressList.get(i).getLatitude() , addressList.get(i).getLongitude());
                             MarkerOptions markerOptions = new MarkerOptions();
                             markerOptions.position(latLng);
                             markerOptions.title(location);
@@ -367,10 +404,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void moveCamera(LatLng latLng, float zoom, String title) {
+    private void moveCamera(LatLng latLng, float zoom, String title){
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        if (title.equals("my location")) {
+        if(!title.equals("my location")){
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
@@ -379,13 +416,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hideKeyboard();
     }
 
-    private void hideKeyboard() {
+    private void hideKeyboard(){
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             Objects.requireNonNull(imm).hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
+    }}
+
 
 
     @Override
@@ -393,12 +430,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+    //----------------Sections aka tabs -------------------------------------------
+
+    private void setupViewPager(ViewPager mViewPager) {
+        //SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
+       // adapter.addFragment(new FragmentTasksList());
+      //ToDO check what i should do in this case to add the maps activity
+      //  mViewPager.setAdapter(adapter);
+    }
+
+
+
     /*
    -----------------------------google places API autocomplete suggestions------------
    */
     private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent,View view,int position,long id) {
             hideKeyboard();
 
             final AutocompletePrediction mAutocompletePrediction = mPlaceAutocompleteAdapter.getItem(position);
@@ -412,14 +461,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ResultCallback<PlaceBuffer> mPLacesUbdDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(@NonNull PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
+            if(!places.getStatus().isSuccess()){
                 places.release();//to prevent the memory leak
                 return;
             }
 
             final Place place = places.get(0);
 
-            //later we will create a popup window on the marcker click
+            //later we will create a popup window on the marker click
             try {
                 mPlace = new PlaceInfo();
                 mPlace.setName(place.getName().toString());
@@ -428,8 +477,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mPlace.setId(place.getId());
                 mPlace.setLatLng(place.getLatLng());
                 mPlace.setWebsiteUri(place.getWebsiteUri());
-            } catch (NullPointerException e) {
-            }
+            } catch (NullPointerException e){}
 
             moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude, place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace.getName());
             places.release();
