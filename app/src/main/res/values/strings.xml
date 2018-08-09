@@ -30,6 +30,9 @@
     <string name="channel_description">Notifying about nearby location</string>
     <string name="explanation">You have something to do at</string>
     <string name="alert_text">You are near-by</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
 

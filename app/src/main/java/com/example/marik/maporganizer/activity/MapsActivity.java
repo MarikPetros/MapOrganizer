@@ -94,6 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGeofencingClient = LocationServices.getGeofencingClient(this);
+       // addGeofences();
 
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
 
