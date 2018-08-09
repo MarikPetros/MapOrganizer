@@ -1,16 +1,18 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.app.DatePickerDialog;
-import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -21,6 +23,7 @@ import android.widget.TimePicker;
 import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.item.TaskItem;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,10 +36,12 @@ public class FragmentTaskCreation extends Fragment {
     private static final String MODE_CREATION = "CREATE";
     private static final String MODE_EDIT = "EDIT";
     private static final String[] spinner = {"15 minutes", "30 minutes", "45 minutes", "1 hour",
-            "2 ours", "3 ours", "10 hours", "1 day"};
+            "2 hours", "3 hours", "10 hours", "1 day"};
+
+    TaskViewModel mViewModel;
 
     private TaskItem mTaskItem;
-    private TextView mLatLng;
+    private TextView mChoosedAddress;
     private TextView mTitle;
     private TextView mDescription;
     private TextView mDate;
@@ -98,13 +103,13 @@ public class FragmentTaskCreation extends Fragment {
                 }
             }
         }
-        mPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
-                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
-            }
-        });
+//        mPhoto.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
+//                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+//            }
+//        });
 
 
     }
@@ -134,14 +139,55 @@ public class FragmentTaskCreation extends Fragment {
 
     private void init(View root) {
 
-        mLatLng = root.findViewById(R.id.location_text);
+        mChoosedAddress = root.findViewById(R.id.location_text);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
         mPhoto = root.findViewById(R.id.photo);
         mDate = root.findViewById(R.id.date);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
-        mRemindTime = root.findViewById(R.id.reminder_spinner);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
+
+        mRemindTime = root.findViewById(R.id.reminder_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRemindTime.setAdapter(adapter);
+
+
+        mReminderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mRemindTime.setVisibility(View.VISIBLE);
+                } else {
+                    mRemindTime.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mChoosedAddress.setVisibility(View.VISIBLE);
+                } else {
+                    mChoosedAddress.setVisibility(View.GONE);
+                }
+
+            }
+        });
+        mDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDatePicker();
+            }
+        });
+
+        mPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
@@ -163,12 +209,11 @@ public class FragmentTaskCreation extends Fragment {
         mDate.setText(dateFormat.format(mSelectedDate.getTime()));
     }
 
-
-
-
-    public void onPickImage(View view) {
-        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
-        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+    public TaskItem getTaskItem() {
+        String title = mTitle.getText().toString();
+        String description = mDescription.getText().toString();
+        String date = mDate.toString();
+        return mTaskItem;
     }
 
     @Override
