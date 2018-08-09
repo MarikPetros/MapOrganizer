@@ -467,7 +467,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Failed to add geofences
-                        // ...
+                        e.printStackTrace();
                     }
                 });
     }
