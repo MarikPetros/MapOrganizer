@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -118,17 +119,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkLocationPermission();
 
         mSectionPagerAdapter= new SectionPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        /*mViewPager = (ViewPager) findViewById(R.id.view_pager);
 
         setupViewPager(mViewPager);
 
-        //smth is wrong here
+        //smth is wrong here, must be fixed
 
         TabLayout tabLayout= findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-         //TODO when fragments will be completely  done
+        tabLayout.setupWithViewPager(mViewPager);*/
+         //TODO when fragments and the new activity will be completely  done
 //        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.ic_map);
 //        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.ic_format_list);
+
+
+
 
     }
 
@@ -366,42 +370,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-    // we actually dont need this button as we should implement google places Api and get the suggestions list instead
-    // it's just for checking
-
-    public void onClick(View view){
-        if(view.getId() == R.id.ugly_button){
-            EditText et_location = (EditText) findViewById(R.id.input_search);
-            String location = et_location.getText().toString();
-            List<Address> addressList;
-            if(!location.equals(""))
-            {
-                Geocoder geocoder = new Geocoder(this);
-
-                try {
-                    addressList = geocoder.getFromLocationName(location, 5);
-
-                    if(addressList != null)
-                    {
-                        for(int i = 0;i<addressList.size();i++)
-                        {
-                            LatLng latLng = new LatLng(addressList.get(i).getLatitude() , addressList.get(i).getLongitude());
-                            MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(latLng);
-                            markerOptions.title(location);
-                            mMap.addMarker(markerOptions);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
 
 
     private void moveCamera(LatLng latLng, float zoom, String title){
