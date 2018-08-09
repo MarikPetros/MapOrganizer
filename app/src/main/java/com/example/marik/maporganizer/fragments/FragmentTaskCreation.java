@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class FragmentTaskCreation extends Fragment {
@@ -132,6 +134,13 @@ public class FragmentTaskCreation extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+        mViewModel.setItem(getTaskItem());
+
+    }
 
     private void fillData(TaskItem taskItem) {
     }
@@ -212,8 +221,9 @@ public class FragmentTaskCreation extends Fragment {
     public TaskItem getTaskItem() {
         String title = mTitle.getText().toString();
         String description = mDescription.getText().toString();
-        String date = mDate.toString();
-        return mTaskItem;
+       // Date date=new Date(mDate.toString());
+        String mAddressLine=mChoosedAddress.getText().toString();
+        return new TaskItem(title, description,mAddressLine);
     }
 
     @Override

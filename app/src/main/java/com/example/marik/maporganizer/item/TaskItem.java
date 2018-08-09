@@ -24,6 +24,13 @@ public class TaskItem implements Parcelable{
     public TaskItem() {
     }
 
+    public TaskItem(String title, String description,  String addressLine) {
+        mTitle=title;
+        mDescription=description;
+       // mDate=date;
+        mChoosedAddress=addressLine;
+    }
+
     public Address getAddress() {
         return mAddress;
     }

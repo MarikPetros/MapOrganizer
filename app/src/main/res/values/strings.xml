@@ -16,16 +16,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="search_here">Search here</string>
     <string name="title_activity_maps2">Map</string>
-    <string name="search">Search</string>
-    <string name="title_hint">title</string>
-    <string name="location">location</string>
-
-
     <string name="error_code_NotAvailable">Geofence is not available!</string>
     <string name="error_code_TooManyGeafences">Too many geafences!</string>
     <string name="error_code_TooManyPendingintents">Too many pending intents!</string>
     <string name="error_NotSpecified">Not specified error!</string>
     <string name="geofence_transition_invalid_type">d% is invalid GeofenceTransition type!</string>
+    <string name="search">Search</string>
+    <string name="title_hint">title</string>
+    <string name="location">location</string>
     <string name="channel_name">Nearby locations</string>
     <string name="channel_description">Notifying about nearby location</string>
     <string name="explanation">You have something to do at</string>
