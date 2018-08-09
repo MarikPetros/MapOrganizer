@@ -9,8 +9,6 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLngBounds;
-
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -24,7 +22,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -175,6 +172,5 @@ public class PlaceAutocompleteAdapter
         Log.e(TAG, "Google API client is not connected ");
         return null;
     }
-
 
 }
