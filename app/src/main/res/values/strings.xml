@@ -18,6 +18,7 @@
     <string name="title_activity_maps2">Map</string>
     <string name="search">Search</string>
     <string name="title_hint">title</string>
+    <string name="location">location</string>
 
 
     <string name="error_code_NotAvailable">Geofence is not available!</string>
