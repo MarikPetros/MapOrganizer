@@ -9,9 +9,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -20,16 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.MapsActivity" />
+
 </FrameLayout>
 
-    <!--<RelativeLayout
-        android:id="@+id/main_layout"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activity.MapsActivity">-->
 
     <RelativeLayout
         android:id="@+id/search_relative"
@@ -39,25 +29,25 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:background="@drawable/white_border">
+
         <ImageView
             android:id="@+id/search_icon"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_search_black_24dp"/>
 
         <AutoCompleteTextView
             android:id="@+id/input_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/search_icon"
+            android:layout_toEndOf="@+id/search_icon"
             android:layout_centerVertical="true"
             android:textSize="15sp"
             android:textColor="#000"
             android:hint="@string/search_here"
-            android:imeOptions="actionSearch"
-            />
+            android:imeOptions="actionSearch" />
 
         <Button
             android:id="@+id/ugly_button"
@@ -71,6 +61,8 @@
             android:text="@string/search"
             android:visibility="visible" />
 
+
+
         <Button
             android:id="@+id/add"
             android:layout_width="wrap_content"
@@ -78,44 +70,82 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:text="Add" />
-        <!--
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:background="?attr/colorPrimary"
-                android:elevation="6dp"
-              android:minHeight="@dimen/cardview_default_elevation"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
-
-        <!--   <android.support.design.widget.TabLayout
-               android:id="@+id/tab_layout"
-               app:tabMode="fixed"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:background="@color/common_google_signin_btn_text_light_focused"
-               android:elevation="6dp"
-               app:tabTextColor="#d3d3d3"
-               app:tabSelectedTextColor="#ffffff"
-               app:tabIndicatorColor="#ba9bba"
-               android:minHeight="?attr/actionBarSize"
-               android:layout_alignParentBottom="true"
-               />
-
-           <android.support.v4.view.ViewPager
-               android:id="@+id/viewpager"
-               android:layout_width="match_parent"
-               android:layout_height="0dp"
-               android:layout_weight="1"
-               android:background="@mipmap/ic_launcher"/>-->
 
     </RelativeLayout>
+
+
+
+   <!--     <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/relLayout">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/relLayoutMiddle"
+                android:layout_above="@+id/relLayoutBotBar">
+            </RelativeLayout>-->
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintBottom_toTopOf="@+id/tabs"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+
+
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    app:tabGravity="fill"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/white_grey_border_bottom"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:weightSum="100"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:id="@+id/map_bottom"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="50"
+                                android:src="@drawable/ic_map"/>
+                            <ImageView
+                                android:id="@+id/list_bottom"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="50"
+                                android:src="@drawable/ic_format_list"/>
+                        </LinearLayout>
+
+
+</android.support.v7.widget.Toolbar>
+
+            </android.support.constraint.ConstraintLayout>
+
     <ImageView
         android:id="@+id/ic_gps"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_below="@id/search_relative"
         android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
@@ -123,5 +153,11 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_gps_fixed_black_24dp"
         />
+        </RelativeLayout>
 
-</RelativeLayout>
+
+
+
+
+
+

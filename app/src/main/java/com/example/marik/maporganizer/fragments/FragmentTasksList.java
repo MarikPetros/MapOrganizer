@@ -11,14 +11,6 @@ import android.view.ViewGroup;
 import com.example.marik.maporganizer.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FragmentTasksList.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FragmentTasksList#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentTasksList extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
