@@ -2,7 +2,6 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,14 +12,10 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
@@ -29,27 +24,21 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
-import com.example.marik.maporganizer.fragments.FragmentTasksList;
-import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
+import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.models.PlaceInfo;
 import com.example.marik.maporganizer.service.GeofencerService;
-import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -70,6 +59,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
     private PlaceInfo mPlace;
+    private ClusterManager<Clusters> mClusterManager;
 
 
     private GeofencingClient mGeofencingClient;
@@ -130,10 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          //TODO when fragments and the new activity will be completely  done
 //        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.ic_map);
 //        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.ic_format_list);
-
-
-
-
     }
 
 
@@ -170,6 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             initSearch();
         }
 
+
     private void onMapClick(){
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -189,7 +177,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
+                  setUpClusterer();
     }
+
 
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -237,6 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return mCurrentLocation;
     }
 
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -244,10 +235,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-
-
-
 
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
@@ -384,6 +371,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hideKeyboard();
     }
 
+
+
     private void hideKeyboard(){
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -399,7 +388,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    //----------------Sections aka tabs -------------------------------------------
+    //-----------------------------Sections aka tabs -------------------------------------------
 
     private void setupViewPager(ViewPager mViewPager) {
         //SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
@@ -425,6 +414,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             placeResult.setResultCallback(mPLacesUbdDetailsCallback);
         }
     };
+
 
     private ResultCallback<PlaceBuffer> mPLacesUbdDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -453,7 +443,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     };
-/**
+
+
+//-----------------------
+    //Marker clustering
+    private void setUpClusterer() {
+        // Position the map.
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200, -44.503490), 14));
+
+        mClusterManager = new ClusterManager<Clusters>(this, mMap);
+
+        // point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        addItems();
+    }
+
+
+    //just to be sure that it works! (will delete it later)
+    private void addItems() {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = 40.177200;
+        double lng = 44.503490;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            Clusters offsetItem = new Clusters(lat, lng);
+            mClusterManager.addItem(offsetItem);
+        }
+    }
+
+
+    /**
   -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
 */
     private PendingIntent getGeofencePendingIntent() {
