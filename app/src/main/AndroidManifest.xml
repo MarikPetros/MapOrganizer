@@ -54,12 +54,12 @@
         <service
             android:name=".service.GeofencerService"
             android:exported="false" />
-        <!--<receiver android:name=".ServiceStarter" >
+        <receiver android:name=".activity.MapsActivity$BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
     </application>
 
 </manifest>

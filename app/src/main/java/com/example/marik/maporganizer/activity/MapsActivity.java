@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -83,6 +84,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = new GeofenceMaker();
 
+
+    public class BootReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            addGeofences();
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +104,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGeofencingClient = LocationServices.getGeofencingClient(this);
-       // addGeofences();
 
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
 
@@ -437,9 +446,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     };
-/**
-  -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
-*/
+
+    /**
+     * -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
+     */
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {

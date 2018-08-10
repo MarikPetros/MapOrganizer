@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.marik.maporganizer.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,9 +24,10 @@ import com.google.android.gms.maps.MapFragment;
  * {@link TempMapFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class TempMapFragment extends MapFragment {
+public class TempMapFragment extends MapFragment implements OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
+    private GoogleMap mMap;
 
     public TempMapFragment() {
         // Required empty public constructor
@@ -31,6 +39,53 @@ public class TempMapFragment extends MapFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_temp_map, container, false);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+
+    private void onMapClick() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                // Creating a marker
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+                // Clears the previously touched position
+                mMap.clear();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.addMarker(markerOptions);
+                drawCircle(latLng);
+            }
+        });
+    }
+
+    private void drawCircle(LatLng point) {
+
+        // Instantiating CircleOptions to draw a circle around the marker
+        CircleOptions circleOptions = new CircleOptions();
+
+        // Specifying the center of the circle
+        circleOptions.center(point);
+
+        // Radius of the circle
+        circleOptions.radius(100);
+
+        // Border color of the circle
+        circleOptions.strokeColor(Color.RED);
+
+        // Fill color of the circle
+        circleOptions.fillColor(0x30ff0000);
+
+        // Border width of the circle
+        circleOptions.strokeWidth(2);
+
+        // Adding the circle to the GoogleMap
+        mMap.addCircle(circleOptions);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -56,6 +111,7 @@ public class TempMapFragment extends MapFragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
