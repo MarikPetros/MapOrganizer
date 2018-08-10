@@ -11,16 +11,29 @@ import java.util.List;
 public class TaskViewModel extends ViewModel{
 
     private MutableLiveData<List<TaskItem>> items;
-    public LiveData<List<TaskItem>> getUsers() {
+    private MutableLiveData<TaskItem> mItem;
+
+    public LiveData<List<TaskItem>> getItems() {
         if (items == null) {
             items = new MutableLiveData<List<TaskItem>>();
-            loadUsers();
+            loadItems();
         }
         return items;
     }
 
-    private void loadUsers() {
+    public LiveData<TaskItem> getItem() {
+        if (mItem == null) {
+            mItem = new MutableLiveData<TaskItem>();
+            loadItems();
+        }
+        return mItem;
+    }
+    private void loadItems() {
         // Do an asynchronous operation to fetch users.
+    }
+
+    private void loadItem(){
+
     }
 }
 

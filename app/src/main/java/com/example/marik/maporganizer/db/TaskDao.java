@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.db;
 
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -15,7 +16,7 @@ import java.util.UUID;
 public interface TaskDao {
 
     @Query("SELECT * FROM task_item")
-    List<TaskItem> getAll();
+   LiveData< List<TaskItem>> getAll();
 
     @Query("SELECT * FROM task_item WHERE mId = :id")
     TaskItem getById(UUID id);
