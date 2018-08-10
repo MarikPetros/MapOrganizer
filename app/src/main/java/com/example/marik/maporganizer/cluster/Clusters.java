@@ -1,7 +1,7 @@
 package com.example.marik.maporganizer.cluster;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
+
 
 public class Clusters implements com.google.maps.android.clustering.ClusterItem {
     private final LatLng mPosition;
