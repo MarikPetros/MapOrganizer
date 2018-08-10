@@ -83,7 +83,6 @@ public class GeofencerService extends IntentService {
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
             stringBuilder.append(getString(R.string.alert_text));
         }
-        // TODO get location and append to stringBuilder
         for (Geofence g : triggeringGeofences){
            stringBuilder.append(g.getRequestId());
            explanation = getString(R.string.explanation) + g.getRequestId();
