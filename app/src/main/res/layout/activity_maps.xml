@@ -2,10 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/relative_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <FrameLayout
     android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+/>
+
+<RelativeLayout
+    android:id="@+id/frame_for_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,7 +25,6 @@
         android:layout_height="match_parent"
         tools:context=".activity.MapsActivity" />
 
-</FrameLayout>
 
 
     <RelativeLayout
@@ -85,9 +91,9 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_gps_fixed_black_24dp"
         />
-        </RelativeLayout>
+</RelativeLayout>
 
-
+</RelativeLayout>
 
 
 

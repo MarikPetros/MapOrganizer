@@ -1,34 +1,96 @@
-package com.example.marik.maporganizer.item;
 
+
+package com.example.marik.maporganizer.db;
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.android.gms.maps.model.LatLng;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
+import java.util.UUID;
 
-public class TaskItem implements Parcelable{
+@Entity(tableName = "task_item")
+public class TaskItem implements Parcelable {
 
+    @PrimaryKey
+    @NonNull
+    private UUID mId;
+
+    @ColumnInfo(name="address")
     private Address mAddress;
+
+    @ColumnInfo(name="choosed_address")
     private String mChoosedAddress;
+
+    @ColumnInfo(name="title")
     private String mTitle;
+
+    @ColumnInfo(name="description")
     private String mDescription;
+
+    @ColumnInfo(name="image_uri")
+    private String mImageUri;
+
+    @ColumnInfo(name="date")
     private Date mDate;
+
+    @ColumnInfo(name="remind")
     private boolean mReminder;
-    private String mRemindtime;
+
+    @ColumnInfo(name="remind_time")
+    private long mRemindtime;
+
+    @ColumnInfo(name="notify_by_place")
     private boolean mNotifyByPlace;
+
+    @ColumnInfo(name="alert_radius")
     private int mAlertRadius;
 
 
-    public TaskItem() {
+
+    public String getImageUri() {
+        return mImageUri;
     }
 
-    public TaskItem(String title, String description,  String addressLine) {
-        mTitle=title;
-        mDescription=description;
-       // mDate=date;
-        mChoosedAddress=addressLine;
+
+    public void setImageUri(String imageUri) {
+        mImageUri = imageUri;
+    }
+
+    public int getAlertRadius() {
+        return mAlertRadius;
+    }
+
+    public void setAlertRadius(int alertRadius) {
+        mAlertRadius = alertRadius;
+    }
+
+
+    public TaskItem() {
+
+        setId(UUID.randomUUID());
+    }
+
+    @NonNull
+    public UUID getId() {
+        return mId;
+    }
+
+    public void setId(@NonNull UUID id) {
+        mId = id;
+    }
+
+
+
+    public TaskItem(String title, String description, Date date, String addressLine) {
+        mTitle = title;
+        mDescription = description;
+        mDate = date;
+        mChoosedAddress = addressLine;
     }
 
     public Address getAddress() {
@@ -79,11 +141,11 @@ public class TaskItem implements Parcelable{
         mReminder = reminder;
     }
 
-    public String getRemindtime() {
+    public long getRemindtime() {
         return mRemindtime;
     }
 
-    public void setRemindtime(String remindtime) {
+    public void setRemindtime(long remindtime) {
         mRemindtime = remindtime;
     }
 
@@ -112,10 +174,11 @@ public class TaskItem implements Parcelable{
         mChoosedAddress = in.readString();
         mTitle = in.readString();
         mDescription = in.readString();
+        mImageUri = in.readString();
         mDate = new Date(in.readLong());
-        mReminder = in.readByte() ==1;
-        mRemindtime = in.readString();
-        mNotifyByPlace = in.readByte() ==1;
+        mReminder = in.readByte() == 1;
+        mRemindtime = in.readLong();
+        mNotifyByPlace = in.readByte() == 1;
         mAlertRadius = in.readInt();
     }
 
@@ -142,9 +205,10 @@ public class TaskItem implements Parcelable{
         dest.writeString(mChoosedAddress);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
+        dest.writeString(mImageUri);
         dest.writeLong(mDate.getTime());
         dest.writeByte((byte) (mReminder ? 1 : 0));
-        dest.writeString(mRemindtime);
+        dest.writeLong(mRemindtime);
         dest.writeByte((byte) (mNotifyByPlace ? 1 : 0));
         dest.writeInt(mAlertRadius);
     }
