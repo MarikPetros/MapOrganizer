@@ -344,36 +344,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // we actually dont need this button as we should implement google places Api and get the suggestions list instead
     // it's just for checking
 
-    public void onClick(View view) {
-        if (view.getId() == R.id.ugly_button) {
-            EditText et_location = (EditText) findViewById(R.id.input_search);
-            String location = et_location.getText().toString();
-            List<Address> addressList;
-            if (!location.equals("")) {
-                Geocoder geocoder = new Geocoder(this);
-
-                try {
-                    addressList = geocoder.getFromLocationName(location, 5);
-
-                    if (addressList != null) {
-                        for (int i = 0; i < addressList.size(); i++) {
-                            LatLng latLng = new LatLng(addressList.get(i).getLatitude(), addressList.get(i).getLongitude());
-                            MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(latLng);
-                            markerOptions.title(location);
-                            mMap.addMarker(markerOptions);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-
 
     private void moveCamera(LatLng latLng, float zoom, String title) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
