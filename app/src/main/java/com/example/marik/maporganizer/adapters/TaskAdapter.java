@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.item.TaskItem;
+import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.viewHolder.TaskHolder;
 
 import java.util.ArrayList;

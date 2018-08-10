@@ -1,6 +1,6 @@
 package com.example.marik.maporganizer.utils;
 
-import com.example.marik.maporganizer.item.TaskItem;
+import com.example.marik.maporganizer.db.TaskItem;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 
