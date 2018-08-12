@@ -1,25 +1,21 @@
 package com.example.marik.maporganizer.activity;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 
-public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
+public class MapsActivity extends AppCompatActivity {
 
-    private ViewPager viewPager;
-    private SectionPagerAdapter viewPagerAdapter;
-     private MapsFragment mapsFragment;
-    @Override
+     ViewPager viewPager;
+
+
+     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -32,8 +28,4 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

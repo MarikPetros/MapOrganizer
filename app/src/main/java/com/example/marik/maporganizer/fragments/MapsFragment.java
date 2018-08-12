@@ -28,9 +28,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -43,7 +43,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
-import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.models.PlaceInfo;
 import com.example.marik.maporganizer.service.GeofencerService;
@@ -67,17 +66,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +83,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
-    private static final String TAG = "MapsActivity";
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -106,18 +100,13 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     private FragmentTasksList mFragmentTasksList;
     private FragmentActivity mFragmentActivity;
     private FragmentTaskCreation fragmentTaskCreation;
-    private Boolean mLocationPermissionsGranted = false;
-
     private Marker mMarker;
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = new GeofenceMaker();
-    private SectionPagerAdapter mSectionPagerAdapter;
     private ViewPager mViewPager;
     private RelativeLayout mLayout;
-     SupportMapFragment supportMapFragment;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private SupportMapFragment supportMapFragment;
 
 
 
@@ -127,6 +116,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             addGeofences();
         }
     }
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -150,7 +140,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     }
 
     @Override
-    public View onCreateView(LayoutInflater  inflater,ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater  inflater,ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map,container,false);
@@ -175,7 +165,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     }
 
     public void initOnViewCreated(View root) {
-       mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+       mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
         /*mGeofencingClient = LocationServices.getGeofencingClient(this);
          addGeofences();*/
         mSearchText = (AutoCompleteTextView) root.findViewById(R.id.input_search);
@@ -185,9 +175,15 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
 
         // Tabs navigation
-        mBottomNavigationView = (BottomNavigationView) root.findViewById(R.id.nav_view_bar);
+
 
         mFrameLayout = (FrameLayout) root.findViewById(R.id.fragment_container);
+
+        mFragmentTasksList = new FragmentTasksList();
+        fragmentTaskCreation = new FragmentTaskCreation();
+
+        mBottomNavigationView = (BottomNavigationView) root.findViewById(R.id.nav_view_bar);
+
 
         Button mButton = root.findViewById(R.id.add);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -207,6 +203,15 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         });
     }
 
+
+    public void setFragment(Fragment fragment){
+        assert getFragmentManager() != null;
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.map, fragment);
+        fragmentTransaction.commit();
+
+
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -385,7 +390,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(getContext(),
+                    if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
@@ -413,10 +418,10 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     private void initSearch() {
         mGoogleApiClient = new GoogleApiClient
-                .Builder(getContext())
+                .Builder(Objects.requireNonNull(getContext()))
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-               .enableAutoManage(getActivity(),this)
+               .enableAutoManage(Objects.requireNonNull(getActivity()),this)
                 .build();
 
         mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
@@ -488,6 +493,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             View currentFocusedView = activity.getCurrentFocus();
             if (currentFocusedView != null) {
+                assert inputManager != null;
                 inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }catch (Exception e){
@@ -497,6 +503,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             View currentFocusedView = activity.getCurrentFocus();
             if (currentFocusedView != null) {
+                assert inputManager != null;
                 inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }catch (Exception e){
@@ -530,7 +537,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             hideKeyboard(((Activity) getActivity()));
 
             final AutocompletePrediction mAutocompletePrediction = mPlaceAutocompleteAdapter.getItem(position);
-            final String placeId = mAutocompletePrediction.getPlaceId();
+            final String placeId = Objects.requireNonNull(mAutocompletePrediction).getPlaceId();
 
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
             placeResult.setResultCallback(mPLacesUbdDetailsCallback);
@@ -552,8 +559,8 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             try {
                 mPlace = new PlaceInfo();
                 mPlace.setName(place.getName().toString());
-                mPlace.setAddress(place.getAddress().toString());
-                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setAddress(Objects.requireNonNull(place.getAddress()).toString());
+                mPlace.setPhoneNumber(Objects.requireNonNull(place.getPhoneNumber()).toString());
                 mPlace.setId(place.getId());
                 mPlace.setLatLng(place.getLatLng());
                 mPlace.setWebsiteUri(place.getWebsiteUri());
@@ -576,7 +583,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200,-44.503490),14));
 
-        mClusterManager = new ClusterManager<Clusters>(getContext(),mMap);
+        mClusterManager = new ClusterManager<Clusters>(Objects.requireNonNull(getContext()),mMap);
 
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -626,7 +633,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     private void addGeofences() {
         checkLocationPermission();
         mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(),getGeofencePendingIntent())
-                .addOnSuccessListener(getActivity(),new OnSuccessListener<Void>() {
+                .addOnSuccessListener(Objects.requireNonNull(getActivity()),new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Geofences added
