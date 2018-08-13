@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -25,9 +26,13 @@ import static android.content.ContentValues.TAG;
 import static java.lang.Math.random;
 
 public class GeofencerService extends IntentService {
+    private static final int NOTIFICATION_RESPONCIVENESS_VALUE = (1000 * 60 * 60 * 2);
+
     private String CHANNEL_ID = "Geofence";
     private NotificationCompat.Builder mBuilder;
     private String explanation;
+    int notificationId;  /// must be initialized'
+    Location location;
 
     public GeofencerService() {
         super(GeofencerService.class.getSimpleName());
@@ -41,6 +46,9 @@ public class GeofencerService extends IntentService {
             Log.e(TAG, errorMessage);
             return;
         }
+
+        // Get event location
+        location = geofencingEvent.getTriggeringLocation();
 
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
@@ -70,10 +78,8 @@ public class GeofencerService extends IntentService {
     }
 
     private void sendNotification(String geofenceTransitionDetails) {
-        Random random = new Random();
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        int notificationId = random.nextInt(100);
         notificationManager.notify(notificationId, mBuilder.build());
     }
 
@@ -83,9 +89,9 @@ public class GeofencerService extends IntentService {
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
             stringBuilder.append(getString(R.string.alert_text));
         }
-        for (Geofence g : triggeringGeofences){
-           stringBuilder.append(g.getRequestId());
-           explanation = getString(R.string.explanation) + g.getRequestId();
+        for (Geofence g : triggeringGeofences) {//TODO notify for each place, do this for each notification.
+            notificationId = Integer.parseInt(g.getRequestId());
+            explanation = getString(R.string.explanation) + g.getRequestId();//TODO get address instead of this id
         }
         return stringBuilder.toString();
     }
@@ -125,13 +131,14 @@ public class GeofencerService extends IntentService {
                 .setContentTitle("NearBy")
                 .setContentText(geofenceTransitionDetails)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))// what must todo
+                        .bigText(explanation))
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setTimeoutAfter(1000 * 60 * 60)
                 .setAutoCancel(true);
-
     }
 
+    public Location getLocation() {
+        return location;
+    }
 }

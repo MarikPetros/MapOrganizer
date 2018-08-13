@@ -19,7 +19,6 @@ public class TaskItem implements Parcelable {
 
     @PrimaryKey
     @NonNull
-
     private UUID mId;
 
     @ColumnInfo(name="address")

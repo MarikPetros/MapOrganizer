@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".fragments.TempMapFragment">
 
+    <SeekBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:accessibilityLiveRegion="@integer/google_play_services_version"
+        android:background="@android:color/holo_blue_bright"
+        android:scrollbarStyle="outsideOverlay" />
+
     <fragment
         android:id="@+id/tMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"

@@ -101,21 +101,13 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     private FragmentActivity mFragmentActivity;
     private FragmentTaskCreation fragmentTaskCreation;
     private Marker mMarker;
-    private GeofencingClient mGeofencingClient;
-    private PendingIntent mGeofencePendingIntent;
-    private GeofenceMaker mGeofenceMaker = new GeofenceMaker();
     private ViewPager mViewPager;
     private RelativeLayout mLayout;
     private SupportMapFragment supportMapFragment;
 
 
 
-    public class Bootreceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context,Intent intent) {
-            addGeofences();
-        }
-    }
+
 
 
     private OnFragmentInteractionListener mListener;
@@ -613,41 +605,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     }
 
 
-    /**
-     * -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
-     */
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(getContext(),GeofencerService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(getContext(),0,intent,PendingIntent.
-                FLAG_UPDATE_CURRENT);
-        return mGeofencePendingIntent;
-    }
-
-
-    private void addGeofences() {
-        checkLocationPermission();
-        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(),getGeofencePendingIntent())
-                .addOnSuccessListener(Objects.requireNonNull(getActivity()),new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Geofences added
-                        // ...
-                    }
-                })
-                .addOnFailureListener(getActivity(),new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to add geofences
-                        e.printStackTrace();
-                    }
-                });
-    }
 
 
 

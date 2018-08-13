@@ -11,16 +11,26 @@ import static com.google.android.gms.location.Geofence.NEVER_EXPIRE;
 import static com.google.android.gms.location.GeofencingRequest.INITIAL_TRIGGER_DWELL;
 
 public class GeofenceMaker {
-    private static final int NOTIFICATION_RESPONCIVENESS_VALUE = (1000 * 60 * 60 * 2);
+    private static GeofenceMaker SINSTANCE;
+
+    private GeofenceMaker() {}
+
+    public static GeofenceMaker getGeofenceMakerInstance(){
+        if(SINSTANCE == null){
+            SINSTANCE = new GeofenceMaker();
+        }
+        return SINSTANCE;
+    }
+
     private List<Geofence> mGeofenceList = new ArrayList<>();
 
-    public Geofence crateGeofence(TaskItem taskItem) // needed location and radius
+    private Geofence crateGeofence(TaskItem taskItem) // needed location and radius
     {
         Geofence geofence;
         geofence = new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
-                .setRequestId(taskItem.getAddress().toString())
+                .setRequestId(taskItem.getId().toString())
                // .setNotificationResponsiveness(NOTIFICATION_RESPONCIVENESS_VALUE)
                 .setCircularRegion(
                         taskItem.getAddress().getLatitude(),
@@ -29,18 +39,22 @@ public class GeofenceMaker {
                 )
                 .setExpirationDuration(NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL )
-                .setLoiteringDelay(1000 * 60 * 60 * 3)
+                .setLoiteringDelay(1000 * 60 * 60 * 2)
                 .build();
         return geofence;
     }
 
 
-    public List<Geofence> crateGeofenceList(List<TaskItem> taskItems)
+    public List<Geofence> crateGeofenceList(List<TaskItem> taskItems)  //TODO Call this method from FragmentTaskList
     {
         for (TaskItem task : taskItems) {
             mGeofenceList.add(crateGeofence(task));
         }
 
+        return mGeofenceList;
+    }
+
+    public List<Geofence> getmGeofenceList() {
         return mGeofenceList;
     }
 
