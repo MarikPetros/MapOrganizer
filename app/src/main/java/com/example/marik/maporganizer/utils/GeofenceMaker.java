@@ -45,14 +45,14 @@ public class GeofenceMaker {
     }
 
 
-    public List<Geofence> crateGeofenceList(List<TaskItem> taskItems)  //TODO Call this method from FragmentTaskList
+    public List<Geofence> crateGeofenceList(List<TaskItem> taskItems)
     {
         for (TaskItem task : taskItems) {
             mGeofenceList.add(crateGeofence(task));
         }
-
         return mGeofenceList;
     }
+
 
     public List<Geofence> getmGeofenceList() {
         return mGeofenceList;

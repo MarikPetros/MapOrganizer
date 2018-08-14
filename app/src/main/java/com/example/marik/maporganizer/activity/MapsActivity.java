@@ -2,6 +2,8 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -17,14 +20,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
+import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -46,6 +53,14 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         setupViewPager(viewPager);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
+
+        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
+        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+            }
+        });
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -142,5 +157,16 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
                     addGeofences();
             }
         }
+    }
+
+
+    private List<TaskItem> selectGeofencingTasks(List<TaskItem> taskItems){
+        List<TaskItem> items = new ArrayList<>();
+        for (TaskItem item : taskItems){
+            if (item.isNotifyByPlace()){
+                items.add(item);
+            }
+        }
+        return items;
     }
 }

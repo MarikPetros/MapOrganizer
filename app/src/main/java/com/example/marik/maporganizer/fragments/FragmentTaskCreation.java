@@ -128,15 +128,13 @@ public class FragmentTaskCreation extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.fragment_task_creation, container, false);
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
         init(view);
-
         updateDateLabel();
 
         if (mTaskItem != null) {
@@ -145,13 +143,13 @@ public class FragmentTaskCreation extends Fragment {
     }
 
 
-    @Override
+   /* @Override
     public void onStop() {
         super.onStop();
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-       // mViewModel.setItem(getTaskItem());
+        mViewModel.insertItem(getTaskItem());
 
-    }
+    }*/
 
     private void fillData(TaskItem taskItem) {
     }
