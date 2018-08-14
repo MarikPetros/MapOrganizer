@@ -1,17 +1,28 @@
 package com.example.marik.maporganizer.viewModel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
 
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.db.TaskRepository;
 
 import java.util.List;
+import java.util.UUID;
 
-public class TaskViewModel extends ViewModel{
+public class TaskViewModel extends AndroidViewModel{
 
+    private TaskRepository taskRepository ;
     private MutableLiveData<List<TaskItem>> items;
-    private MutableLiveData<TaskItem> mItem;
+    private TaskItem mItem;
+
+    public TaskViewModel(@NonNull Application application) {
+        super(application);
+        taskRepository = TaskRepository.getRepository(application);
+    }
 
     public LiveData<List<TaskItem>> getItems() {
         if (items == null) {
@@ -21,20 +32,31 @@ public class TaskViewModel extends ViewModel{
         return items;
     }
 
-    public LiveData<TaskItem> getItem() {
+    public TaskItem getItem(UUID  id) {
         if (mItem == null) {
-            mItem = new MutableLiveData<TaskItem>();
-            loadItems();
+            mItem = new TaskItem();
+            loadItem(id);
         }
         return mItem;
     }
+
+    public void insertItem(TaskItem taskItem){
+        taskRepository.insert(taskItem);
+    }
+
+    public void deleteItem(TaskItem taskItem){
+        taskRepository.delete(taskItem);
+    }
+
     private void loadItems() {
-        // Do an asynchronous operation to fetch users.
+        items = (MutableLiveData<List<TaskItem>>) taskRepository.getAllItems();
     }
 
-    private void loadItem(){
-
+    private void loadItem(UUID id){
+        mItem = taskRepository.getById(id);
     }
+
+
 }
 
 

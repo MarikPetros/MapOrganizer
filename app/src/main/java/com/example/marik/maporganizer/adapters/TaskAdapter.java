@@ -17,8 +17,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     List<TaskItem> mItems;
 
-    public TaskAdapter(){
-        mItems=new ArrayList<>();
+    public TaskAdapter() {
+        mItems = new ArrayList<>();
+    }
+
+    public void setList(List<TaskItem> list){
+        mItems = list;
     }
 
 
@@ -34,12 +38,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
 
-        TaskItem taskItem=mItems.get(position);
+        TaskItem taskItem = mItems.get(position);
 
-holder.getTitle().setText(taskItem.getTitle());
-holder.getDescription().setText(taskItem.getDescription());
-holder.getDate().setText(taskItem.getDate().toString());
-holder.getChoosedAddress().setText(taskItem.getAddress().toString());
+        holder.getTitle().setText(taskItem.getTitle());
+        holder.getDescription().setText(taskItem.getDescription());
+        holder.getDate().setText(taskItem.getDate().toString());
+        holder.getChoosedAddress().setText(taskItem.getAddress().toString());
 
     }
 
@@ -48,9 +52,9 @@ holder.getChoosedAddress().setText(taskItem.getAddress().toString());
         return mItems.size();
     }
 
-    public void addItem(TaskItem item){
+    public void addItem(TaskItem item) {
         mItems.add(item);
-        notifyItemInserted(mItems.size()-1);
+        notifyItemInserted(mItems.size() - 1);
 
     }
 }

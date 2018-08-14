@@ -5,8 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -15,27 +15,27 @@ import android.util.Log;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MapsActivity;
+import com.example.marik.maporganizer.db.TaskRepository;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
 import static android.content.ContentValues.TAG;
-import static java.lang.Math.random;
 
 public class GeofencerService extends IntentService {
-    private static final int NOTIFICATION_RESPONCIVENESS_VALUE = (1000 * 60 * 60 * 2);
 
-    private String CHANNEL_ID = "Geofence";
     private NotificationCompat.Builder mBuilder;
     private String explanation;
-    int notificationId;  /// must be initialized'
-    Location location;
+    int notificationId;
+    private Location location;
+    private TaskRepository taskRepository;
 
     public GeofencerService() {
         super(GeofencerService.class.getSimpleName());
+        taskRepository = TaskRepository.getRepository(getApplication());
     }
 
     protected void onHandleIntent(Intent intent) {
@@ -91,7 +91,8 @@ public class GeofencerService extends IntentService {
         }
         for (Geofence g : triggeringGeofences) {//TODO notify for each place, do this for each notification.
             notificationId = Integer.parseInt(g.getRequestId());
-            explanation = getString(R.string.explanation) + g.getRequestId();//TODO get address instead of this id
+            Address itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getAddress();
+            explanation = getString(R.string.explanation) + itemAddress.toString();
         }
         return stringBuilder.toString();
     }
@@ -105,6 +106,7 @@ public class GeofencerService extends IntentService {
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
+        String CHANNEL_ID = "Geofence";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);

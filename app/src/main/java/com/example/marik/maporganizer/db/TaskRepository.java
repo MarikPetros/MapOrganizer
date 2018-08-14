@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class TaskRepository {
-   private static TaskRepository REPO_INSTANCE;
+    private static TaskRepository REPO_INSTANCE;
 
     private TaskDao mDao;
     private LiveData<List<TaskItem>> mItemList;
@@ -20,40 +20,40 @@ public class TaskRepository {
         mItemList = mDao.getAll();
     }
 
-    public static TaskRepository getRepository(Application application){
-        if (REPO_INSTANCE == null){
+    public static TaskRepository getRepository(Application application) {
+        if (REPO_INSTANCE == null) {
             REPO_INSTANCE = new TaskRepository(application);
         }
         return REPO_INSTANCE;
     }
 
-    LiveData<List<TaskItem>> getAllItems(){
+    public LiveData<List<TaskItem>> getAllItems() {
         return mItemList;
     }
 
-    TaskItem getById(UUID id){
+    public TaskItem getById(UUID id) {
         return mDao.getById(id);
     }
 
-    public void insert(TaskItem taskItem){
+    public void insert(TaskItem taskItem) {
         new InsertAsyncTask(mDao).execute(taskItem);
     }
 
-    public void update(TaskItem taskItem){
+    public void update(TaskItem taskItem) {
         new UpdateAsyncTask(mDao).execute(taskItem);
     }
-    public void delete(TaskItem taskItem){
+
+    public void delete(TaskItem taskItem) {
         new DeleteAsyncTask(mDao).execute(taskItem);
     }
 
 
-
-    public static class InsertAsyncTask extends AsyncTask<TaskItem, Void, Void>{
+    public static class InsertAsyncTask extends AsyncTask<TaskItem, Void, Void> {
 
         private TaskDao mAsyncTaskDao;
 
-        InsertAsyncTask(TaskDao dao){
-            mAsyncTaskDao=dao;
+        InsertAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
         }
 
         @Override
@@ -63,12 +63,12 @@ public class TaskRepository {
         }
     }
 
-    public static class UpdateAsyncTask extends AsyncTask<TaskItem, Void, Void>{
+    public static class UpdateAsyncTask extends AsyncTask<TaskItem, Void, Void> {
 
         private TaskDao mAsyncTaskDao;
 
-        UpdateAsyncTask(TaskDao dao){
-            mAsyncTaskDao=dao;
+        UpdateAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
         }
 
         @Override
@@ -79,12 +79,12 @@ public class TaskRepository {
     }
 
 
-    public static class DeleteAsyncTask extends AsyncTask<TaskItem, Void, Void>{
+    public static class DeleteAsyncTask extends AsyncTask<TaskItem, Void, Void> {
 
         private TaskDao mAsyncTaskDao;
 
-        DeleteAsyncTask(TaskDao dao){
-            mAsyncTaskDao=dao;
+        DeleteAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
         }
 
         @Override

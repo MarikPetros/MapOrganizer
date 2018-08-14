@@ -22,6 +22,7 @@ import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -83,13 +84,13 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     }
 
     public void getTodoItemFromViewModel() {
-//        mViewModel = ViewModelProviders.of((getActivity())).get(TaskViewModel.class);
-//        mViewModel.getItem().observe(this, new Observer<TaskItem>() {
-//            @Override
-//            public void onChanged(@Nullable TaskItem taskItem) {
-//                mAdapter.addItem(taskItem);
-//            }
-//        });
+        mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
+        mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                mAdapter.setList(taskItems);
+            }
+        });
     }
 
 
