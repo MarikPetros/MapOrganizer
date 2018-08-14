@@ -142,8 +142,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     public void initOnViewCreated(View root) {
        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
-        /*mGeofencingClient = LocationServices.getGeofencingClient(this);
-         addGeofences();*/
         mSearchText = (AutoCompleteTextView) root.findViewById(R.id.input_search);
 
         mGps = (ImageView) root.findViewById(R.id.ic_gps);

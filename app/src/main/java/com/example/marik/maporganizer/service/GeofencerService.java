@@ -19,6 +19,7 @@ import com.example.marik.maporganizer.db.TaskRepository;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,8 +27,11 @@ import static android.app.Notification.VISIBILITY_PUBLIC;
 import static android.content.ContentValues.TAG;
 
 public class GeofencerService extends IntentService {
+    int SUMMARY_ID = 0;
+    String GROUP_KEY_GEOFENCE_ALERT = "com.example.marik.maporganizer.GEOFENCE_ALERT";
 
     private NotificationCompat.Builder mBuilder;
+    private NotificationCompat.Builder mSummaryBuilder;
     private String explanation;
     int notificationId;
     private Location location;
@@ -81,6 +85,7 @@ public class GeofencerService extends IntentService {
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(notificationId, mBuilder.build());
+        notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
     }
 
     private String getGeofenceTransitionDetails(GeofencerService geofencerService, int geofenceTransition, List<Geofence> triggeringGeofences) {
@@ -88,11 +93,22 @@ public class GeofencerService extends IntentService {
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
             stringBuilder.append(getString(R.string.alert_text));
-        }
-        for (Geofence g : triggeringGeofences) {//TODO notify for each place, do this for each notification.
-            notificationId = Integer.parseInt(g.getRequestId());
-            Address itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getAddress();
-            explanation = getString(R.string.explanation) + itemAddress.toString();
+            List<Integer> ids = new ArrayList<>();
+            List<String> addresses = new ArrayList<>();
+            for (Geofence g : triggeringGeofences) {
+                notificationId = Integer.parseInt(g.getRequestId());
+                Address itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getAddress();
+                ids.add(notificationId);
+                addresses.add(itemAddress.toString() + "/n");
+            }
+            // making content for bigText
+            explanation = getString(R.string.explanation) + addresses.toString();
+
+            // setting notification's id with first tasks UUID
+            notificationId = ids.get(0);
+
+            //complete geofenceTransitionDetails text
+            stringBuilder.append(addresses.get(0));
         }
         return stringBuilder.toString();
     }
@@ -130,14 +146,30 @@ public class GeofencerService extends IntentService {
         // using NotificationCompat
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_nearby)
-                .setContentTitle("NearBy")
+                .setContentTitle(getString(R.string.nearby))
                 .setContentText(geofenceTransitionDetails)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(explanation))
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setGroup(GROUP_KEY_GEOFENCE_ALERT)
                 .setAutoCancel(true);
+
+
+
+        mSummaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(getString(R.string.nearTasks))
+                //set content text to support devices running API level < 24
+                .setContentText("New geofence messages")
+                .setSmallIcon(R.drawable.ic_notif_nearby)
+                //build summary info into InboxStyle template
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .setBigContentTitle(getString(R.string.some_messages)))
+                //specify which group this notification belongs to
+                .setGroup(GROUP_KEY_GEOFENCE_ALERT)
+                //set this notification as the summary for the group
+                .setGroupSummary(true);
     }
 
     public Location getLocation() {
