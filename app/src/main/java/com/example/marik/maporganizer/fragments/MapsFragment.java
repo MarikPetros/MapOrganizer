@@ -2,11 +2,8 @@ package com.example.marik.maporganizer.fragments;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,10 +14,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -28,7 +23,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -45,14 +39,11 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.models.PlaceInfo;
-import com.example.marik.maporganizer.service.GeofencerService;
-import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -70,7 +61,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterManager;
 import java.io.IOException;
@@ -96,18 +86,12 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     private PlaceInfo mPlace;
     private ClusterManager<Clusters> mClusterManager;
     private FrameLayout mFrameLayout;
-    private BottomNavigationView mBottomNavigationView;
-    private FragmentTasksList mFragmentTasksList;
-    private FragmentActivity mFragmentActivity;
-    private FragmentTaskCreation fragmentTaskCreation;
+
+
     private Marker mMarker;
     private ViewPager mViewPager;
     private RelativeLayout mLayout;
     private SupportMapFragment supportMapFragment;
-
-
-
-
 
 
     private OnFragmentInteractionListener mListener;
@@ -166,15 +150,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         checkLocationPermission();
 
 
-        // Tabs navigation
-
-
         mFrameLayout = (FrameLayout) root.findViewById(R.id.fragment_container);
-
-        mFragmentTasksList = new FragmentTasksList();
-        fragmentTaskCreation = new FragmentTaskCreation();
-
-        mBottomNavigationView = (BottomNavigationView) root.findViewById(R.id.nav_view_bar);
 
 
         Button mButton = root.findViewById(R.id.add);
@@ -196,14 +172,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     }
 
 
-    public void setFragment(Fragment fragment){
-        assert getFragmentManager() != null;
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.map, fragment);
-        fragmentTransaction.commit();
-
-
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -406,7 +374,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
     }
 
 
-    //-------------------------------------------------------------------------------------
+    //--------------------------------Searching stuff-----------------------------------------------------
 
     private void initSearch() {
         mGoogleApiClient = new GoogleApiClient
@@ -490,16 +458,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             }
         }catch (Exception e){
             e.printStackTrace();
-        }   try{
-            InputMethodManager inputManager = (InputMethodManager) activity
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            View currentFocusedView = activity.getCurrentFocus();
-            if (currentFocusedView != null) {
-                assert inputManager != null;
-                inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
 
@@ -509,15 +467,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     }
 
-
-    //-----------------------------Sections aka tabs -------------------------------------------
-
-    private void setupViewPager(ViewPager mViewPager) {
-        //SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
-        // adapter.addFragment(new FragmentTasksList());
-        //ToDO check what i should do in this case to add the maps activity
-        //  mViewPager.setAdapter(adapter);
-    }
 
 
     /*

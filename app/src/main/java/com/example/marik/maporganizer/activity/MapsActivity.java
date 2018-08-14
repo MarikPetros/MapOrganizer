@@ -13,13 +13,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
+import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
+import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
@@ -43,6 +50,11 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance() ;
 
+    private FragmentActivity mFragmentActivity;
+    private FragmentTaskCreation fragmentTaskCreation;
+    private BottomNavigationView mBottomNavigationView;
+    private FragmentTasksList mFragmentTasksList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +73,51 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
                 mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
             }
         });
+
+
+        mFragmentTasksList = new FragmentTasksList();
+        fragmentTaskCreation = new FragmentTaskCreation();
+        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.nav_view_bar);
+
+        setTabs();
+
     }
+
+
+    //-----------------------------Sections aka tabs -------------------------------------------
+
+
+    public void setFragment(Fragment fragment){
+        assert getFragmentManager() != null;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.map, fragment);
+        fragmentTransaction.commit();
+
+        }
+
+
+        public void setTabs(){
+                 mBottomNavigationView.setOnNavigationItemSelectedListener(
+                    new BottomNavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.mapNav:
+                                    //TODO stay on Map activity
+                                    setFragment(fragmentTaskCreation);
+
+                                    return true;
+
+                                case R.id.listNav:
+                                    setFragment(fragmentTaskCreation);
+                                    return  true;
+                            }
+
+                            return true;
+                        }
+                    });
+
+        }
 
     private void setupViewPager(ViewPager viewPager) {
         SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
@@ -70,6 +126,8 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         viewPager.setAdapter(adapter);
     }
 
+
+   // ---------------------------------------------------------------------------------------------
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
