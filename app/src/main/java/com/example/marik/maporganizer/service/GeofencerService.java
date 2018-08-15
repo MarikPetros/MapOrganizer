@@ -114,11 +114,13 @@ public class GeofencerService extends IntentService {
     }
 
     private void createNotification(String geofenceTransitionDetails) {
-
         // Create an explicit intent for  MaosActivity
         Intent intent = new Intent(this, MapsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        // Greate wearableExtender
+        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -154,6 +156,7 @@ public class GeofencerService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setGroup(GROUP_KEY_GEOFENCE_ALERT)
+                .extend(wearableExtender)
                 .setAutoCancel(true);
 
 
@@ -168,6 +171,7 @@ public class GeofencerService extends IntentService {
                         .setBigContentTitle(getString(R.string.some_messages)))
                 //specify which group this notification belongs to
                 .setGroup(GROUP_KEY_GEOFENCE_ALERT)
+                .extend(wearableExtender)
                 //set this notification as the summary for the group
                 .setGroupSummary(true);
     }
