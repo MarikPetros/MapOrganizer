@@ -17,21 +17,26 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
 import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
-import com.example.marik.maporganizer.fragments.FragmentTasksList;
+//import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.fragments.InfoFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
-import com.example.marik.maporganizer.viewModel.TaskViewModel;
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,7 +47,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
+public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener, InfoFragment.OnFragmentInteractionListener{
     public final static int PERMISSION_CODE = 26;
 
      ViewPager viewPager;
@@ -52,10 +57,13 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     private FragmentActivity mFragmentActivity;
     private FragmentTaskCreation fragmentTaskCreation;
+    private MapsFragment mMapsFragment;
     private BottomNavigationView mBottomNavigationView;
-    private FragmentTasksList mFragmentTasksList;
+ ///   private FragmentTasksList mFragmentTasksList;
 
+    private RelativeLayout mLayout;
 
+    private  InfoFragment infoFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,32 +74,48 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
-        model.getItems().observe(this, new Observer<List<TaskItem>>() {
-            @Override
-            public void onChanged(@Nullable List<TaskItem> taskItems) {
-                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
-            }
-        });
+//        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
+//        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+//            @Override
+//            public void onChanged(@Nullable List<TaskItem> taskItems) {
+//                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+//            }
+//        });
 
 
-        mFragmentTasksList = new FragmentTasksList();
+        //mFragmentTasksList = new FragmentTasksList();
         fragmentTaskCreation = new FragmentTaskCreation();
-        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.nav_view_bar);
+        mMapsFragment = new MapsFragment();
+        mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         setTabs();
+      // setupViewPager();
+
 
     }
+
+
 
 
     //-----------------------------Sections aka tabs -------------------------------------------
 
 
-    public void setFragment(Fragment fragment){
+    private void setFragment(Fragment fragment){
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.map, fragment);
+        fragmentTransaction.replace(R.id.fragment_container, fragment);//fragment container
         fragmentTransaction.commit();
+
+    /*    mLayout = findViewById(R.id.frame_for_map);
+        mLayout.setVisibility(View.INVISIBLE);
+        fragment = FragmentTaskCreation.newInstance(null);
+        android.support.v4.app.FragmentManager mFragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
+        mTransaction.replace(R.id.fragment_container, fragment, "Creation");
+        mTransaction.replace(R.id.map, fragment, "map");
+        mTransaction.addToBackStack("creation");
+        mTransaction.addToBackStack("map");
+        mTransaction.commit();*/
 
         }
 
@@ -103,17 +127,17 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
                         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.mapNav:
-                                    //TODO stay on Map activity
-                                    setFragment(fragmentTaskCreation);
-
+                                    setFragment(mMapsFragment);
                                     return true;
 
                                 case R.id.listNav:
                                     setFragment(fragmentTaskCreation);
                                     return  true;
+
+                                    default: return false;
                             }
 
-                            return true;
+
                         }
                     });
 
@@ -124,6 +148,30 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         adapter.addFragment(new MapsFragment());
 
         viewPager.setAdapter(adapter);
+
+     /*   mBottomNavigationView = (BottomNavigationView) findViewById(R.id.nav_view_bar);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.mapNav:
+                                setFragment(mMapsFragment);
+                                 break;
+
+
+                            case R.id.listNav:
+                                setFragment(fragmentTaskCreation);
+                                 break;
+
+
+
+                        }
+
+                        return false;
+                    }
+                });*/
+
     }
 
 
@@ -206,6 +254,8 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 
 
     public class BootReceiver extends BroadcastReceiver {

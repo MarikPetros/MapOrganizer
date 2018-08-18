@@ -69,7 +69,8 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MapsFragment extends Fragment  implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MapsFragment extends Fragment  implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMapLongClickListener {
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
@@ -113,6 +114,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         super.onCreate(savedInstanceState);
 
 
+
     }
 
     @Override
@@ -120,7 +122,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map,container,false);
-        supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        supportMapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);//child manager?
         if(supportMapFragment==null){
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
@@ -128,6 +130,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             transaction.replace(R.id.map, supportMapFragment).commit();
         }
         supportMapFragment.getMapAsync(this);
+
 
         return rootView;
     }
@@ -142,33 +145,9 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     public void initOnViewCreated(View root) {
        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
-        /*mGeofencingClient = LocationServices.getGeofencingClient(this);
-         addGeofences();*/
-        mSearchText = (AutoCompleteTextView) root.findViewById(R.id.input_search);
-
-        mGps = (ImageView) root.findViewById(R.id.ic_gps);
+        mGps =  root.findViewById(R.id.ic_gps);
         checkLocationPermission();
 
-
-        mFrameLayout = (FrameLayout) root.findViewById(R.id.fragment_container);
-
-
-        Button mButton = root.findViewById(R.id.add);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-         //    mapFragment.getView().setVisibility(View.INVISIBLE);
-                /*mLayout = v.findViewById(R.id.frame_for_map);
-                mLayout.setVisibility(View.INVISIBLE);
-                FragmentTaskCreation mTaskCreation = FragmentTaskCreation.newInstance(null);*/
-               // android.support.v4.app.FragmentManager mFragmentManager = getSupportFragmentManager();
-               // android.support.v4.app.FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
-//                mTransaction.add(R.id.fragment_container,mTaskCreation,"Creation");
-//                mTransaction.addToBackStack("creation");
-//                mTransaction.commit();
-            }
-
-        });
     }
 
 
@@ -228,9 +207,12 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         }
 
         onMapClick();
-        initSearch();
+        //  initSearch();
+
     }
 
+
+  InfoFragment infoFragment = new InfoFragment();
 
     private void onMapClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -244,15 +226,30 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
                 mMap.clear();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.addMarker(markerOptions);
-
-                //TODO open a new fragment which adds new event
-                //TODO change marker positition on long click
             }
+
 
         });
 
-        setUpClusterer();
+        mMap.setOnMapLongClickListener(this);
+
+
+            setUpClusterer();
     }
+
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+       setThisFragment(infoFragment);
+
+    }
+
+
+    public void setThisFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.mini_frame, fragment).
+                addToBackStack(null).commit();
+        }
 
 
     LocationCallback mLocationCallback = new LocationCallback() {
@@ -376,7 +373,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     //--------------------------------Searching stuff-----------------------------------------------------
 
-    private void initSearch() {
+    /*private void initSearch() {
         mGoogleApiClient = new GoogleApiClient
                 .Builder(Objects.requireNonNull(getContext()))
                 .addApi(Places.GEO_DATA_API)
@@ -414,8 +411,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         });
 
         hideKeyboard(((Activity) getActivity()));
-    }
-
+    }*/
     private void geoLocate() {
         String searchString = mSearchText.getText().toString();
 
@@ -552,7 +548,6 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
             mClusterManager.addItem(offsetItem);
         }
     }
-
 
 
 
