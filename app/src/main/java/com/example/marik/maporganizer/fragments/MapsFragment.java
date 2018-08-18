@@ -140,32 +140,12 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
 
     public void initOnViewCreated(View root) {
        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
-        /*mGeofencingClient = LocationServices.getGeofencingClient(this);
-         addGeofences();*/
-        mSearchText = (AutoCompleteTextView) root.findViewById(R.id.input_search);
+
+        mSearchText =  root.findViewById(R.id.input_search);
         mGps =  root.findViewById(R.id.ic_gps);
         checkLocationPermission();
 
 
-        mFrameLayout = (FrameLayout) root.findViewById(R.id.fragment_container);
-
-
-        Button mButton = root.findViewById(R.id.add);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-         //    mapFragment.getView().setVisibility(View.INVISIBLE);
-                /*mLayout = v.findViewById(R.id.frame_for_map);
-                mLayout.setVisibility(View.INVISIBLE);
-                FragmentTaskCreation mTaskCreation = FragmentTaskCreation.newInstance(null);*/
-               // android.support.v4.app.FragmentManager mFragmentManager = getSupportFragmentManager();
-               // android.support.v4.app.FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
-//                mTransaction.add(R.id.fragment_container,mTaskCreation,"Creation");
-//                mTransaction.addToBackStack("creation");
-//                mTransaction.commit();
-            }
-
-        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -267,7 +247,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(latLng.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
     }
 
@@ -555,7 +535,7 @@ public class MapsFragment extends Fragment  implements OnMapReadyCallback, Googl
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
         mMap.setOnCameraIdleListener(mClusterManager);
-       // mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
 
         addItems();
     }

@@ -106,17 +106,6 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         fragmentTransaction.replace(R.id.fragment_container, fragment);//fragment container
         fragmentTransaction.commit();
 
-    /*    mLayout = findViewById(R.id.frame_for_map);
-        mLayout.setVisibility(View.INVISIBLE);
-        fragment = FragmentTaskCreation.newInstance(null);
-        android.support.v4.app.FragmentManager mFragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction mTransaction = mFragmentManager.beginTransaction();
-        mTransaction.replace(R.id.fragment_container, fragment, "Creation");
-        mTransaction.replace(R.id.map, fragment, "map");
-        mTransaction.addToBackStack("creation");
-        mTransaction.addToBackStack("map");
-        mTransaction.commit();*/
-
         }
 
 
@@ -148,29 +137,6 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         adapter.addFragment(new MapsFragment());
 
         viewPager.setAdapter(adapter);
-
-     /*   mBottomNavigationView = (BottomNavigationView) findViewById(R.id.nav_view_bar);
-        mBottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.mapNav:
-                                setFragment(mMapsFragment);
-                                 break;
-
-
-                            case R.id.listNav:
-                                setFragment(fragmentTaskCreation);
-                                 break;
-
-
-
-                        }
-
-                        return false;
-                    }
-                });*/
 
     }
 
@@ -254,8 +220,6 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     public void onFragmentInteraction(Uri uri) {
 
     }
-
-
 
 
     public class BootReceiver extends BroadcastReceiver {
