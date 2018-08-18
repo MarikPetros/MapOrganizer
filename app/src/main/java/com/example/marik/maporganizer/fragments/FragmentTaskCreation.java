@@ -27,7 +27,7 @@ import android.widget.TimePicker;
 import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.viewModel.TaskViewModel;
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,7 +52,7 @@ public class FragmentTaskCreation extends Fragment {
     private static final String[] spinner = {remind15, remind30, remind45, remind1,
             remind2, remind3, remind10, remindDay};
 
-    TaskViewModel mViewModel;
+   // TaskViewModel mViewModel;
     //   Address mAddress;
 
     private TextView mChoosedAddress;

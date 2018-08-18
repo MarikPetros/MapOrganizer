@@ -7,13 +7,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:layout_height="100dp"
-        android:layout_width="match_parent"
-        android:id="@+id/mini_frame"
-        android:layout_alignParentBottom="true"
-        xmlns:android="http://schemas.android.com/apk/res/android"/>
-
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -23,7 +16,16 @@
         android:layout_height="match_parent"
         tools:context=".activity.MapsActivity" />
 
-        <RelativeLayout
+    <FrameLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/mini_frame"
+        android:layout_alignParentBottom="true"
+        xmlns:android="http://schemas.android.com/apk/res/android"/>
+
+
+
+    <RelativeLayout
             android:id="@+id/search_relative"
             android:layout_width="match_parent"
             android:layout_height="50dp"

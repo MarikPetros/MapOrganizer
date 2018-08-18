@@ -1,3 +1,4 @@
+/*
 package com.example.marik.maporganizer.viewModel;
 
 import android.app.Application;
@@ -63,3 +64,4 @@ public class TaskViewModel extends AndroidViewModel{
 
 
 
+*/
