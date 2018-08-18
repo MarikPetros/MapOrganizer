@@ -17,7 +17,7 @@ import java.util.UUID;
 public class TaskViewModel extends AndroidViewModel{
 
     private TaskRepository taskRepository ;
-    private MutableLiveData<List<TaskItem>> items;
+    private LiveData<List<TaskItem>> items;
     private TaskItem mItem;
 
     public TaskViewModel(@NonNull Application application) {
@@ -27,7 +27,7 @@ public class TaskViewModel extends AndroidViewModel{
 
     public LiveData<List<TaskItem>> getItems() {
         if (items == null) {
-            items = new MutableLiveData<List<TaskItem>>();
+            items = new MutableLiveData<>();
             loadItems();
         }
         return items;
@@ -50,7 +50,7 @@ public class TaskViewModel extends AndroidViewModel{
     }
 
     private void loadItems() {
-        items = (MutableLiveData<List<TaskItem>>) taskRepository.getAllItems();
+        items =  taskRepository.getAllItems();
     }
 
     private void loadItem(UUID id){
