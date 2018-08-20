@@ -2,13 +2,9 @@ package com.example.marik.maporganizer.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.location.Address;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +20,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 
-import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 //import com.example.marik.maporganizer.viewModel.TaskViewModel;
@@ -32,8 +27,6 @@ import com.example.marik.maporganizer.db.TaskItem;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-
 
 public class FragmentTaskCreation extends Fragment {
 
@@ -69,7 +62,6 @@ public class FragmentTaskCreation extends Fragment {
     private long mRemindTime;
     private int mAlertRadius=100;
     private TaskItem mTaskItem;
-
 
     public FragmentTaskCreation() {
     }
@@ -250,6 +242,10 @@ public class FragmentTaskCreation extends Fragment {
 
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
 
     private void openDatePicker() {
         new DatePickerDialog(getActivity(), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),

@@ -14,7 +14,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.activity.MapsActivity;
+import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.db.TaskRepository;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -119,7 +119,7 @@ public class GeofencerService extends IntentService {
 
     private void createNotification(String geofenceTransitionDetails) {
         // Create an explicit intent for  MaosActivity
-        Intent intent = new Intent(this, MapsActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 

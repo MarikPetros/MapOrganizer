@@ -30,7 +30,10 @@
     <string name="alert_text">You are near-by</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_info">Fragment infoA</string>
+    <string name="fragment_map">Fragment map</string>
+    <string name="fragment_creation">Fragment creation</string>
+    <string name="fragment_list">Fragment list</string>
     <string name="map">map</string>
     <string name="list">list</string>
     <string name="nearby">NearBy</string>
