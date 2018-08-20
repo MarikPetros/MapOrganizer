@@ -22,7 +22,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     }
 
     public void setList(List<TaskItem> list){
-        mItems = list;
+        mItems.clear();
+        mItems.addAll(list);
     }
 
 
@@ -37,14 +38,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
-
-        TaskItem taskItem = mItems.get(position);
-
-        holder.getTitle().setText(taskItem.getTitle());
-        holder.getDescription().setText(taskItem.getDescription());
-        holder.getDate().setText(taskItem.getDate().toString());
-        holder.getChoosedAddress().setText(taskItem.getAddress().toString());
-
+        holder.bindHolder(mItems.get(position));
     }
 
     @Override
@@ -55,8 +49,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     public void addItem(TaskItem item) {
         mItems.add(item);
         notifyItemInserted(mItems.size() - 1);
-
     }
+
 }
 
 

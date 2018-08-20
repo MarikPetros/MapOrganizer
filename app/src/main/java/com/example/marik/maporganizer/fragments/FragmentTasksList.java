@@ -1,11 +1,8 @@
 package com.example.marik.maporganizer.fragments;
 
-import android.app.Fragment;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,16 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 
 public class FragmentTasksList extends android.support.v4.app.Fragment {
@@ -33,7 +32,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     private RecyclerView mRecyclerView;
     private TaskViewModel mViewModel;
 
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
 
     public FragmentTasksList() {
     }
@@ -55,19 +54,19 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
 
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+//        mListener = null;
     }
 
 
@@ -80,6 +79,11 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         mAdapter = new TaskAdapter();
+        List<TaskItem> list = new ArrayList<>();
+        TaskItem taskItem = new TaskItem();
+        taskItem.setTitle("aviogdshgd");
+        list.add(taskItem);
+        mAdapter.setList(list);
         mRecyclerView.setAdapter(mAdapter);
         getTodoItemFromViewModel();
     }
@@ -89,14 +93,15 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
-                mAdapter.setList(taskItems);
+//                mAdapter.setList(taskItems);
+//                mAdapter.notifyDataSetChanged();
             }
         });
     }
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void onEditItem(UUID id);
     }
 }

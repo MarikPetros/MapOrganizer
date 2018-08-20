@@ -8,16 +8,14 @@
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/view_padding"
-        />
+        android:padding="@dimen/view_padding" />
 
     <TextView
         android:id="@+id/description_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
-        android:padding="@dimen/view_padding"
-        />
+        android:padding="@dimen/view_padding" />
 
     <TextView
         android:id="@+id/date_view"

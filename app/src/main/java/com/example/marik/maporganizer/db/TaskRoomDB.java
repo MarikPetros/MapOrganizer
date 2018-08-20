@@ -11,6 +11,8 @@ import android.content.Context;
 @TypeConverters(Converters.class)
 public abstract class TaskRoomDB extends RoomDatabase {
 
+    private static String DB_NAME="task_database";
+
     public abstract TaskDao mDao();
 
     private static TaskRoomDB sInstance;
@@ -20,7 +22,7 @@ public abstract class TaskRoomDB extends RoomDatabase {
             synchronized (TaskRoomDB.class) {
                 if (sInstance == null) {
                     sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                            TaskRoomDB.class, "task_database")
+                            TaskRoomDB.class, DB_NAME)
                             .build();                }
             }
         }

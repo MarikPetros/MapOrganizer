@@ -17,40 +17,52 @@ import java.util.UUID;
 @Entity(tableName = "task_item")
 public class TaskItem implements Parcelable {
 
+    public boolean isAttached() {
+        return isAttached;
+    }
+
+    public void setAttached(boolean attached) {
+        isAttached = attached;
+    }
+
     @PrimaryKey
+
     @NonNull
     private UUID mId;
 
-    @ColumnInfo(name="address")
+    @ColumnInfo(name = "address")
     private Address mAddress;
 
-    @ColumnInfo(name="choosed_address")
+    @ColumnInfo(name = "choosed_address")
     private String mChoosedAddress;
 
-    @ColumnInfo(name="title")
+    @ColumnInfo(name = "title")
     private String mTitle;
 
-    @ColumnInfo(name="description")
+    @ColumnInfo(name = "description")
     private String mDescription;
 
-    @ColumnInfo(name="image_uri")
+    @ColumnInfo(name = "attach_photo")
+    private boolean isAttached;
+
+
+    @ColumnInfo(name = "image_uri")
     private String mImageUri;
 
-    @ColumnInfo(name="date")
+    @ColumnInfo(name = "date")
     private Date mDate;
 
-    @ColumnInfo(name="remind")
+    @ColumnInfo(name = "remind")
     private boolean mReminder;
 
-    @ColumnInfo(name="remind_time")
+    @ColumnInfo(name = "remind_time")
     private long mRemindtime;
 
-    @ColumnInfo(name="notify_by_place")
+    @ColumnInfo(name = "notify_by_place")
     private boolean mNotifyByPlace;
 
-    @ColumnInfo(name="alert_radius")
+    @ColumnInfo(name = "alert_radius")
     private int mAlertRadius;
-
 
 
     public String getImageUri() {
@@ -84,7 +96,6 @@ public class TaskItem implements Parcelable {
     public void setId(@NonNull UUID id) {
         mId = id;
     }
-
 
 
     public TaskItem(String title, String description, Date date, String addressLine) {
@@ -175,6 +186,7 @@ public class TaskItem implements Parcelable {
         mChoosedAddress = in.readString();
         mTitle = in.readString();
         mDescription = in.readString();
+        isAttached = in.readByte() == 1;
         mImageUri = in.readString();
         mDate = new Date(in.readLong());
         mReminder = in.readByte() == 1;
@@ -206,6 +218,7 @@ public class TaskItem implements Parcelable {
         dest.writeString(mChoosedAddress);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
+        dest.writeByte((byte) (isAttached ? 1 : 2));
         dest.writeString(mImageUri);
         dest.writeLong(mDate.getTime());
         dest.writeByte((byte) (mReminder ? 1 : 0));
