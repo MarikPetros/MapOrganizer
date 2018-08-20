@@ -5,10 +5,8 @@ import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,24 +21,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-
 import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.UUID;
+
+import static android.app.Activity.RESULT_CANCELED;
 
 
 public class FragmentTaskCreation extends Fragment {
 
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final int PICK_IMAGE_ID = 1;
-    private static final String MODE_CREATION = "CREATE";
-    private static final String MODE_EDIT = "EDIT";
     private static final String remind15 = "15 minutes";
     private static final String remind30 = "30 minutes";
     private static final String remind45 = "45 minutes";
@@ -52,7 +49,7 @@ public class FragmentTaskCreation extends Fragment {
     private static final String[] spinner = {remind15, remind30, remind45, remind1,
             remind2, remind3, remind10, remindDay};
 
-   // TaskViewModel mViewModel;
+    TaskViewModel mViewModel;
     //   Address mAddress;
 
     private TextView mChoosedAddress;
@@ -60,29 +57,13 @@ public class FragmentTaskCreation extends Fragment {
     private TextView mDescription;
     private TextView mDate;
     private ImageView mPhoto;
-    private CheckBox mReminderCheckBox, mNotifybyPlaceCheckBox;
+    private CheckBox mReminderCheckBox, mNotifybyPlaceCheckBox, mAttachPhotoCheckBox;
     private Spinner mRemindSpinner;
     private String mImageUri;
     private Calendar mSelectedDate = Calendar.getInstance();
-
-    private String mMode;
     private long mRemindTime;
-    private int mAlertRadius=100;
+    private int mAlertRadius = 100;
     private TaskItem mTaskItem;
-
-
-    public FragmentTaskCreation() {
-    }
-
-
-    public static FragmentTaskCreation newInstance(TaskItem taskItem) {
-        FragmentTaskCreation fragment = new FragmentTaskCreation();
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_TASK_ITEM, taskItem);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -107,51 +88,68 @@ public class FragmentTaskCreation extends Fragment {
         }
     };
 
+    public FragmentTaskCreation() {
+    }
+
+
+    public static FragmentTaskCreation newInstance(TaskItem taskItem) {
+        FragmentTaskCreation fragment = new FragmentTaskCreation();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_TASK_ITEM, taskItem);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            if (getArguments() != null) {
-                mTaskItem = getArguments().getParcelable(ARG_TASK_ITEM);
-                if (mTaskItem == null) {
-                    mMode = MODE_CREATION;
-                } else {
-                    mMode = MODE_EDIT;
-                }
-            }
+            mTaskItem = getArguments().getParcelable(ARG_TASK_ITEM);
         }
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_task_creation, container, false);
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         init(view);
+
         updateDateLabel();
 
         if (mTaskItem != null) {
-            fillData(mTaskItem);
+            fillDataFromViewModel(mTaskItem.getId());
         }
     }
 
 
-   /* @Override
+    @Override
     public void onStop() {
         super.onStop();
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-        mViewModel.insertItem(getTaskItem());
 
-    }*/
 
-    private void fillData(TaskItem taskItem) {
+        mViewModel.insertItem(createTaskItem());
+
+    }
+
+
+    public void onPickImage(View view) {
+        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
+        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+    }
+
+    private void fillDataFromViewModel(UUID id) {
+        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+        TaskItem taskItem = mViewModel.getItem(id);
+        mTitle.setText(taskItem.getTitle());
+        mDescription.setText(taskItem.getDescription());
+        //mAttachPhotoCheckBox.setCheked(mTa)
+
+
     }
 
 
@@ -164,11 +162,33 @@ public class FragmentTaskCreation extends Fragment {
         mDate = root.findViewById(R.id.date);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
+        mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
+
 
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
+
+
+        mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mPhoto.setVisibility(View.VISIBLE);
+                } else {
+                    mPhoto.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        mPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPickImage(v);
+            }
+        });
 
         mReminderCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -181,6 +201,7 @@ public class FragmentTaskCreation extends Fragment {
                 }
             }
         });
+
         mRemindSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -248,6 +269,12 @@ public class FragmentTaskCreation extends Fragment {
             }
         });
 
+
+        // ViewModel
+
+        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+//        mViewModel.setItem(createTaskItem());
+
     }
 
 
@@ -270,14 +297,17 @@ public class FragmentTaskCreation extends Fragment {
 
     private TaskItem createTaskItem() {
 
+        if (mTaskItem == null)
+            mTaskItem = new TaskItem();
+
         mTaskItem.setChoosedAddress(mChoosedAddress.getText().toString());
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
-        // TODO   iMAGE URI SET
+        mTaskItem.setImageUri(mImageUri.toString());
         mTaskItem.setReminder(mReminderCheckBox.isChecked());
         mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-        if(mNotifybyPlaceCheckBox.isChecked()){
+        if (mNotifybyPlaceCheckBox.isChecked()) {
             mTaskItem.setAlertRadius(mAlertRadius);
 
         } else
@@ -285,21 +315,34 @@ public class FragmentTaskCreation extends Fragment {
         return mTaskItem;
     }
 
-    private void editTaskItem(TaskItem item){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_CANCELED) {
+            if (requestCode == PICK_IMAGE_ID) {
+                if (data.getExtras() == null) {
+                    Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                    mPhoto.setImageBitmap(bitmap);
+                } else {
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    mPhoto.setImageBitmap(photo);
+                }
+            }
+        }
+    }
+
+    private void editTaskItem(TaskItem item) {
 
         mChoosedAddress.setText(item.getChoosedAddress());
         mTitle.setText(item.getTitle());
         mDescription.setText(item.getDescription());
         //TODO IMAGE URI SET
         mReminderCheckBox.setChecked(item.isReminder());
-      // TODO ReMIND TIME  and AlertRadius SET
-
-
+        // TODO ReMIND TIME  and AlertRadius SET
 
 
     }
 
-    }
+}
 
 
 

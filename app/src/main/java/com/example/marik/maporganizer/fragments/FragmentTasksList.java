@@ -1,12 +1,8 @@
-/*
 package com.example.marik.maporganizer.fragments;
 
-import android.app.Fragment;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,22 +12,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 
 public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     private TaskAdapter mAdapter;
     private RecyclerView mRecyclerView;
-   // private TaskViewModel mViewModel;
+    private TaskViewModel mViewModel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -96,8 +94,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void onEditItem(UUID id);
     }
 }
-*/

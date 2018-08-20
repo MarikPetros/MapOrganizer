@@ -1,4 +1,4 @@
-/*
+
 package com.example.marik.maporganizer.viewModel;
 
 import android.app.Application;
@@ -18,11 +18,17 @@ public class TaskViewModel extends AndroidViewModel{
 
     private TaskRepository taskRepository ;
     private LiveData<List<TaskItem>> items;
+    private MutableLiveData<TaskItem> item=new MutableLiveData<>();
     private TaskItem mItem;
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
         taskRepository = TaskRepository.getRepository(application);
+    }
+
+
+    public void setItem(TaskItem taskItem){
+        item.setValue(taskItem);
     }
 
     public LiveData<List<TaskItem>> getItems() {
@@ -32,6 +38,8 @@ public class TaskViewModel extends AndroidViewModel{
         }
         return items;
     }
+
+
 
     public TaskItem getItem(UUID  id) {
         if (mItem == null) {
@@ -64,4 +72,4 @@ public class TaskViewModel extends AndroidViewModel{
 
 
 
-*/
+
