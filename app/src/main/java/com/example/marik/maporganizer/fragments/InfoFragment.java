@@ -92,9 +92,9 @@ public class InfoFragment extends Fragment implements View.OnClickListener{
 
     public void replaceFragment(Fragment someFragment) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.mini_frame, someFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.replace(R.id.mini_frame, someFragment)
+                .addToBackStack(null).commit();
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

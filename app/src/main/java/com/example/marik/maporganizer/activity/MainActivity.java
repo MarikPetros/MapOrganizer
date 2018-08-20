@@ -17,31 +17,21 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
-//import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 import com.example.marik.maporganizer.fragments.InfoFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,20 +41,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//import com.example.marik.maporganizer.fragments.FragmentTasksList;
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
-public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener, InfoFragment.OnFragmentInteractionListener{
+//import com.example.marik.maporganizer.fragments.FragmentTasksList;
+//import com.example.marik.maporganizer.viewModel.TaskViewModel;
+
+
+public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener,
+        InfoFragment.OnFragmentInteractionListener {
     public final static int PERMISSION_CODE = 26;
 
-     ViewPager viewPager;
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
-    private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance() ;
+    private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
 
     private FragmentActivity mFragmentActivity;
     private FragmentTaskCreation fragmentTaskCreation;
     private MapsFragment mMapsFragment;
     private BottomNavigationView mBottomNavigationView;
- ///   private FragmentTasksList mFragmentTasksList;
+    ///   private FragmentTasksList mFragmentTasksList;
 
     private RelativeLayout mLayout;
 
@@ -72,31 +68,30 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_main);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-//        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
-//        model.getItems().observe(this, new Observer<List<TaskItem>>() {
-//            @Override
-//            public void onChanged(@Nullable List<TaskItem> taskItems) {
-//                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
-//            }
-//        });
+        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
+        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+            }
+       });
 
 
         //mFragmentTasksList = new FragmentTasksList();
         fragmentTaskCreation = new FragmentTaskCreation();
         mMapsFragment = new MapsFragment();
+
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         setTabs();
-      // setupViewPager();
 
-
+        setFragment(mMapsFragment);
     }
 
 
@@ -105,50 +100,40 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     //-----------------------------Sections aka tabs -------------------------------------------
 
 
-    private void setFragment(Fragment fragment){
+    private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);//fragment container
+        fragmentTransaction.replace(R.id.fragment_container,fragment);//fragment container
         fragmentTransaction.commit();
-
-        }
-
-
-        public void setTabs(){
-                 mBottomNavigationView.setOnNavigationItemSelectedListener(
-                    new BottomNavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.mapNav:
-                                    setFragment(mMapsFragment);
-                                    return true;
-
-                                case R.id.listNav:
-                                    setFragment(fragmentTaskCreation);
-                                    return  true;
-
-                                    default: return false;
-                            }
-
-
-                        }
-                    });
-
-        }
-
-    private void setupViewPager(ViewPager viewPager) {
-        SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MapsFragment());
-
-        viewPager.setAdapter(adapter);
-
     }
 
 
-   // ---------------------------------------------------------------------------------------------
+    public void setTabs() {
+        mBottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.mapNav:
+                                setFragment(mMapsFragment);
+                                return true;
+
+                            case R.id.listNav:
+                                setFragment(fragmentTaskCreation);
+                                return true;
+
+                            default:
+                                return false;
+                        }
+
+
+                    }
+                });
+
+    }
+    // ---------------------------------------------------------------------------------------------
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this),Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -165,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
                             @Override
                             public void onClick(DialogInterface dialogInterface,int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(MapsActivity.this,
+                                ActivityCompat.requestPermissions(MainActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         PERMISSION_CODE);
                             }
@@ -237,13 +222,29 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
     }
 
 
-    private List<TaskItem> selectGeofencingTasks(List<TaskItem> taskItems){
+    private List<TaskItem> selectGeofencingTasks(List<TaskItem> taskItems) {
         List<TaskItem> items = new ArrayList<>();
-        for (TaskItem item : taskItems){
-            if (item.isNotifyByPlace()){
+        for (TaskItem item : taskItems) {
+            if (item.isNotifyByPlace()) {
                 items.add(item);
             }
         }
         return items;
     }
+
+//-------------------------------------------------------------------
+
+    private void doFragmentTransaction(Fragment fragment,boolean addToBackStack) {
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container,fragment);
+        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out);
+        if (addToBackStack) {
+            fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
+        }
+
+        fragmentTransaction.commit();
+    }
+
+
 }

@@ -48,7 +48,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_maps"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -61,12 +61,29 @@
         <service
             android:name=".service.GeofencerService"
             android:exported="false" />
-        <receiver android:name=".activity.MapsActivity$BootReceiver" >
+
+        <receiver android:name=".activity.MainActivity$BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".appwidget.TaskAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/task_appwidget_info" />
+        </receiver>
+
+        <activity android:name=".appwidget.TaskAppWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
