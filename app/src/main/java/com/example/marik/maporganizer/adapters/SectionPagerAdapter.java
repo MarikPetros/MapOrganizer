@@ -5,6 +5,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
+import com.example.marik.maporganizer.fragments.MapsFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 // stores fragments for tabs
@@ -13,6 +16,7 @@ import java.util.List;
 public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList= new ArrayList<>();
+
 
     public SectionPagerAdapter(FragmentManager fm) {
         super(fm);

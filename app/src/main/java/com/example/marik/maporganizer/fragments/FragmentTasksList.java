@@ -1,4 +1,3 @@
-/*
 package com.example.marik.maporganizer.fragments;
 
 import android.app.Fragment;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 //import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     private TaskAdapter mAdapter;
     private RecyclerView mRecyclerView;
-   // private TaskViewModel mViewModel;
+    private TaskViewModel mViewModel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -100,4 +100,3 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
-*/

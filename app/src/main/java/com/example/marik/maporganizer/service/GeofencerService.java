@@ -33,7 +33,8 @@ public class GeofencerService extends IntentService {
     private NotificationCompat.Builder mBuilder;
     private NotificationCompat.Builder mSummaryBuilder;
     private String explanation;
-    int notificationId;
+    private int notificationId;
+    private String dismissalId;
     private Location location;
     private TaskRepository taskRepository;
 
@@ -107,6 +108,9 @@ public class GeofencerService extends IntentService {
             // setting notification's id with first tasks UUID
             notificationId = ids.get(0);
 
+            // setting notification's dismissalId with first tasks UUID
+            dismissalId = ids.get(0).toString();
+
             //complete geofenceTransitionDetails text
             stringBuilder.append(addresses.get(0));
         }
@@ -121,6 +125,7 @@ public class GeofencerService extends IntentService {
 
         // Greate wearableExtender
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+        wearableExtender.setDismissalId(dismissalId);
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -158,7 +163,6 @@ public class GeofencerService extends IntentService {
                 .setGroup(GROUP_KEY_GEOFENCE_ALERT)
                 .extend(wearableExtender)
                 .setAutoCancel(true);
-
 
 
         mSummaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)

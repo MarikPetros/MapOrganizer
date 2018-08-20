@@ -32,11 +32,13 @@ import com.example.marik.maporganizer.adapters.SectionPagerAdapter;
 import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 //import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.fragments.InfoFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
 //import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,7 +49,8 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener, InfoFragment.OnFragmentInteractionListener{
+public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener,
+        InfoFragment.OnFragmentInteractionListener, FragmentTasksList.OnFragmentInteractionListener{
     public final static int PERMISSION_CODE = 26;
 
      ViewPager viewPager;
@@ -57,6 +60,7 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     private FragmentActivity mFragmentActivity;
     private FragmentTaskCreation fragmentTaskCreation;
+    private SectionPagerAdapter pagerAdapter;
     private MapsFragment mMapsFragment;
     private BottomNavigationView mBottomNavigationView;
  ///   private FragmentTasksList mFragmentTasksList;
@@ -69,18 +73,18 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager =  findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-//        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
-//        model.getItems().observe(this, new Observer<List<TaskItem>>() {
-//            @Override
-//            public void onChanged(@Nullable List<TaskItem> taskItems) {
-//                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
-//            }
-//        });
+        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
+        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+            }
+       });
 
 
         //mFragmentTasksList = new FragmentTasksList();
@@ -116,11 +120,13 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
                         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.mapNav:
-                                    setFragment(mMapsFragment);
+                                  //  setFragment(mMapsFragment);
+                                    setFragment(pagerAdapter.getItem(0));
                                     return true;
 
                                 case R.id.listNav:
-                                    setFragment(fragmentTaskCreation);
+                                    //setFragment(fragmentTaskCreation);
+                                    setFragment(pagerAdapter.getItem(1));
                                     return  true;
 
                                     default: return false;
@@ -133,10 +139,11 @@ public class MapsActivity extends AppCompatActivity implements MapsFragment.OnFr
         }
 
     private void setupViewPager(ViewPager viewPager) {
-        SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MapsFragment());
+        pagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
+        pagerAdapter.addFragment(new MapsFragment());
+        pagerAdapter.addFragment(new FragmentTasksList());
 
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(pagerAdapter);
 
     }
 

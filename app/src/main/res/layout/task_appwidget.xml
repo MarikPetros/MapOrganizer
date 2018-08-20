@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border3_9">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:padding="@dimen/widget_padding"
+        android:text="@string/maporganizer"
+        android:textColor="#03fafe"
+        android:textSize="28sp"
+        android:textStyle="italic|bold" />
+
+    <ListView
+        android:id="@+id/task_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textView" />
+
+</RelativeLayout>
