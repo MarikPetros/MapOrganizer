@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
+import com.example.marik.maporganizer.fragments.FragmentTasksList;
 import com.example.marik.maporganizer.fragments.InfoFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
@@ -40,6 +41,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 //import com.example.marik.maporganizer.fragments.FragmentTasksList;
 //import com.example.marik.maporganizer.viewModel.TaskViewModel;
@@ -57,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
 
     private FragmentActivity mFragmentActivity;
-    private FragmentTaskCreation fragmentTaskCreation;
     private MapsFragment mMapsFragment;
+    private FragmentTasksList mTaskListFragment;
     private BottomNavigationView mBottomNavigationView;
     ///   private FragmentTasksList mFragmentTasksList;
 
@@ -82,9 +84,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
             }
        });
 
-
-        //mFragmentTasksList = new FragmentTasksList();
-        fragmentTaskCreation = new FragmentTaskCreation();
+        mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
 
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
@@ -93,12 +93,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
         setFragment(mMapsFragment);
     }
-
-
-
-
-    //-----------------------------Sections aka tabs -------------------------------------------
-
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
@@ -119,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                                 return true;
 
                             case R.id.listNav:
-                                setFragment(fragmentTaskCreation);
+                                setFragment(mTaskListFragment);
                                 return true;
 
                             default:
@@ -210,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 
     public class BootReceiver extends BroadcastReceiver {
         @Override
