@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.TempMapFragment">
+    android:orientation="vertical"
+    tools:context=".fragments.TempMapFragment"
+   >
+
+    <AutoCompleteTextView
+        android:id="@+id/input_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_bar_size"
+        android:layout_toEndOf="@+id/search_icon"
+        android:layout_centerVertical="true"
+        android:textSize="15sp"
+        android:textColor="#000"
+        android:hint="@string/search_here"
+        android:imeOptions="actionSearch" />
 
     <SeekBar
         android:id="@+id/progress"
@@ -17,5 +30,6 @@
         android:id="@+id/tMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</FrameLayout>
+        android:layout_height="200dp"
+        android:layout_gravity="bottom"/>
+</LinearLayout>

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,7 @@ import android.widget.TimePicker;
 
 import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
+import com.example.marik.maporganizer.db.Converters;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
@@ -86,7 +88,7 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
             remind2, remind3, remind10, remindDay};
 
     TaskViewModel mViewModel;
-    //   Address mAddress;
+      Address mAddress;
 
     private TextView mChoosedAddress;
     private TextView mTitle;
@@ -157,7 +159,8 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         updateDateLabel();
 
         if (mTaskItem != null) {
-            fillDataFromViewModel(mTaskItem.getId());
+            mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+            mViewModel.loadItem(mTaskItem.getId());
         }
     }
 
@@ -166,8 +169,9 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
     public void onStop() {
         super.onStop();
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-
-
+        if (isExist) {
+            mViewModel.update(createTaskItem());
+        }
         mViewModel.insertItem(createTaskItem());
 
     }
@@ -280,6 +284,7 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
 
             }
         });
+
         mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -291,6 +296,7 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
 
             }
         });
+
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -308,8 +314,6 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
 
         // ViewModel
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-//        mViewModel.setItem(createTaskItem());
 
     }
 
@@ -331,49 +335,52 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         mDate.setText(dateFormat.format(mSelectedDate.getTime()));
     }
 
-    private TaskItem createTaskItem() {
+    boolean isExist = true;
 
-        if (mTaskItem == null)
-            mTaskItem = new TaskItem();
+    public TaskItem createTaskItem() {
 
+        if (mTaskItem == null) {
+            isExist = false;
+            mTaskItem = new TaskItem(UUID.randomUUID());
+        }
         mTaskItem.setChoosedAddress(mChoosedAddress.getText().toString());
+        mTaskItem.setAddress(Converters.toAddress(mChoosedAddress.getText().toString()));
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
-      //  mTaskItem.setImageUri(mImageUri.toString());
-        mTaskItem.setReminder(mReminderCheckBox.isChecked());
-//        mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
-        mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-        if (mNotifybyPlaceCheckBox.isChecked()) {
-            mTaskItem.setAlertRadius(mAlertRadius);
+        if (mAttachPhotoCheckBox.isChecked()) {
+            mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
+          //  mTaskItem.setImageUri(mImageUri.toString());
+        }
 
-        } else
-            mTaskItem.setAlertRadius(0);
-        return mTaskItem;
-    }
+        if(mReminderCheckBox.isChecked()){
+            mTaskItem.setReminder(mReminderCheckBox.isChecked());
+          //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+        }
+            mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
+            if (mNotifybyPlaceCheckBox.isChecked()) {
+                mTaskItem.setAlertRadius(mAlertRadius);
+            } else
+                mTaskItem.setAlertRadius(0);
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_CANCELED) {
-            if (requestCode == PICK_IMAGE_ID) {
-                if (data.getExtras() == null) {
-                    Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
-                    mPhoto.setImageBitmap(bitmap);
-                } else {
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    mPhoto.setImageBitmap(photo);
+            return mTaskItem;
+        }
+
+        @Override
+        public void onActivityResult ( int requestCode, int resultCode, Intent data){
+            if (resultCode != RESULT_CANCELED) {
+                if (requestCode == PICK_IMAGE_ID) {
+                    if (data.getExtras() == null) {
+                        Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                        mPhoto.setImageBitmap(bitmap);
+                    } else {
+                        Bitmap photo = (Bitmap) data.getExtras().get("data");
+                        mPhoto.setImageBitmap(photo);
+                    }
                 }
             }
         }
-    }
 
-    private void editTaskItem(TaskItem item) {
 
-        mChoosedAddress.setText(item.getChoosedAddress());
-        mTitle.setText(item.getTitle());
-        mDescription.setText(item.getDescription());
-        //TODO IMAGE URI SET
-        mReminderCheckBox.setChecked(item.isReminder());
-        // TODO ReMIND TIME  and AlertRadius SET
-    }
+
 
 }

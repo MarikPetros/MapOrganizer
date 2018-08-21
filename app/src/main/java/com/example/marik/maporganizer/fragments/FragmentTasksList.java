@@ -93,8 +93,8 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
-//                mAdapter.setList(taskItems);
-//                mAdapter.notifyDataSetChanged();
+                mAdapter.setList(taskItems);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }

@@ -33,12 +33,12 @@ public class Converters {
 
     }
     @TypeConverter
-    public static Address toString(String address){
+    public static Address toAddress(String address){
         return address==null? null: (new Address(Locale.getDefault()));
     }
 
     @TypeConverter
-    public static String toAddress(Address address){
+    public static String addressToString(Address address){
         return  address==null ? null:(new Address(Locale.getDefault())).toString();
     }
 }

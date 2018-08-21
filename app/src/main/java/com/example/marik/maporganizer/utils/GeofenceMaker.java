@@ -26,21 +26,28 @@ public class GeofenceMaker {
 
     private Geofence crateGeofence(TaskItem taskItem) // needed location and radius
     {
-        Geofence geofence;
-        geofence = new Geofence.Builder()
-                // Set the request ID of the geofence. This is a string to identify this
-                // geofence.
-                .setRequestId(taskItem.getId().toString())
-               // .setNotificationResponsiveness(NOTIFICATION_RESPONCIVENESS_VALUE)
-                .setCircularRegion(
-                        taskItem.getAddress().getLatitude(),
-                        taskItem.getAddress().getLongitude(),
-                        taskItem.getRadius()
-                )
-                .setExpirationDuration(NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL )
-                .setLoiteringDelay(1000 * 60 * 60 * 2)
-                .build();
+        Geofence geofence = new Geofence() {
+            @Override
+            public String getRequestId() {
+                return null;
+            }
+        };
+        if (taskItem !=null) {
+            geofence = new Geofence.Builder()
+                    // Set the request ID of the geofence. This is a string to identify this
+                    // geofence.
+                    .setRequestId(taskItem.getId().toString())
+                   // .setNotificationResponsiveness(NOTIFICATION_RESPONCIVENESS_VALUE)
+                    .setCircularRegion(
+                            taskItem.getAddress().getLatitude(),
+                            taskItem.getAddress().getLongitude(),
+                            taskItem.getRadius()
+                    )
+                    .setExpirationDuration(NEVER_EXPIRE)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL )
+                    .setLoiteringDelay(1000 * 60 * 60 * 2)
+                    .build();
+        }
         return geofence;
     }
 

@@ -57,11 +57,15 @@ public class TaskViewModel extends AndroidViewModel{
         taskRepository.delete(taskItem);
     }
 
-    private void loadItems() {
+    public void update(TaskItem taskItem){
+        taskRepository.update(taskItem);
+    }
+
+    public void loadItems() {
         items =  taskRepository.getAllItems();
     }
 
-    private void loadItem(UUID id){
+    public void loadItem(UUID id){
         mItem = taskRepository.getById(id);
     }
 

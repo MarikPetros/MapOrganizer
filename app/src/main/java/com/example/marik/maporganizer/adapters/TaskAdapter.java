@@ -37,8 +37,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final TaskHolder holder, final int position) {
         holder.bindHolder(mItems.get(position));
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                holder.getDeleteBtn().setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        holder.getDeleteBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeItem(holder.getAdapterPosition());
+
+            }
+        });
+
     }
 
     @Override
@@ -46,10 +61,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         return mItems.size();
     }
 
+    public void removeItem(int position){
+        mItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public void addItem(TaskItem item) {
         mItems.add(item);
         notifyItemInserted(mItems.size() - 1);
     }
+
 
 }
 

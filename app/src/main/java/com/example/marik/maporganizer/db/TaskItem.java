@@ -28,7 +28,7 @@ public class TaskItem implements Parcelable {
     @PrimaryKey
 
     @NonNull
-    private UUID mId;
+    public UUID mId;
 
     @ColumnInfo(name = "address")
     private Address mAddress;
@@ -64,11 +64,32 @@ public class TaskItem implements Parcelable {
     @ColumnInfo(name = "alert_radius")
     private int mAlertRadius;
 
+    public TaskItem() {
+    }
+
+    public TaskItem(UUID pId) {
+        mId = pId;
+    }
+
+    public TaskItem(String title, String description, Date date, String addressLine) {
+        mTitle = title;
+        mDescription = description;
+        mDate = date;
+        mChoosedAddress = addressLine;
+    }
+
+    @NonNull
+    public UUID getId() {
+        return mId;
+    }
+
+    public void setId(@NonNull UUID id) {
+        mId = id;
+    }
 
     public String getImageUri() {
         return mImageUri;
     }
-
 
     public void setImageUri(String imageUri) {
         mImageUri = imageUri;
@@ -82,28 +103,6 @@ public class TaskItem implements Parcelable {
         mAlertRadius = alertRadius;
     }
 
-
-    public TaskItem() {
-
-        setId(UUID.randomUUID());
-    }
-
-    @NonNull
-    public UUID getId() {
-        return mId;
-    }
-
-    public void setId(@NonNull UUID id) {
-        mId = id;
-    }
-
-
-    public TaskItem(String title, String description, Date date, String addressLine) {
-        mTitle = title;
-        mDescription = description;
-        mDate = date;
-        mChoosedAddress = addressLine;
-    }
 
     public Address getAddress() {
         return mAddress;

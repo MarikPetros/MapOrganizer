@@ -12,7 +12,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
 
@@ -48,7 +48,6 @@
             android:id="@+id/attach_photo_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginStart="@dimen/margin_left_right"
             android:layout_marginTop="@dimen/margin_top"
             android:text="Attach photo"
@@ -63,13 +62,13 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_top"
             android:src="@mipmap/ic_launcher"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attach_photo_checkbox" />
 
 
-        <!--</LinearLayout>-->
 
         <TextView
             android:id="@+id/date"
@@ -78,7 +77,6 @@
             android:layout_marginEnd="@dimen/margin_left_right"
             android:layout_marginStart="@dimen/margin_left_right"
             android:layout_marginTop="@dimen/margin_top"
-
             android:padding="@dimen/view_padding"
             android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
@@ -127,12 +125,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reminder_spinner" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/notify_by_place_checkbox">
+
 
             <TextView
                 android:id="@+id/location_text"
@@ -141,19 +134,38 @@
                 android:layout_marginEnd="@dimen/margin_left_right"
                 android:layout_marginStart="@dimen/margin_left_right"
                 android:layout_marginTop="@dimen/margin_top"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox"
                 android:padding="@dimen/view_padding"
                 android:text="@string/location"
                 android:textSize="@dimen/text_size"
                 android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/edit_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@id/location_text"
-                app:layout_constraintTop_toTopOf="@id/location_text" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/edit_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/location_text"
+            app:layout_constraintEnd_toEndOf="@id/location_text"
+            app:layout_constraintTop_toTopOf="@id/location_text" />
+
+
+        <!---->
+<!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--android:orientation="vertical">-->
+    <!---->
+    <!--<include layout="@layout/fragment_temp_map"/>-->
+
+<!--</LinearLayout>-->
+
 
 
     </android.support.constraint.ConstraintLayout>
+
+
 </ScrollView>
