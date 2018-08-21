@@ -70,8 +70,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         mItems.add(item);
         notifyItemInserted(mItems.size() - 1);
     }
-
-
 }
 
 

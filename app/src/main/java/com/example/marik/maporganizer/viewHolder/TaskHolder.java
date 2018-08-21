@@ -36,18 +36,8 @@ public class TaskHolder extends RecyclerView.ViewHolder {
         mDescription.setText(pTaskItem.getDescription());
         mDate.setText(pTaskItem.getDate().toString());
         mChoosedAddress.setText(pTaskItem.getAddress().toString());
-        mDeleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
     }
-
-
-
-
 
     public ImageView getDeleteBtn() {
         return mDeleteBtn;

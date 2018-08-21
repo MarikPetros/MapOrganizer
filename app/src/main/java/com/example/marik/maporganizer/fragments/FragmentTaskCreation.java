@@ -32,6 +32,7 @@ import com.example.marik.maporganizer.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.Converters;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.utils.DateUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.text.DateFormat;
@@ -347,6 +348,7 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         mTaskItem.setAddress(Converters.toAddress(mChoosedAddress.getText().toString()));
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
+        mTaskItem.setDate(mSelectedDate.getTime());
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
           //  mTaskItem.setImageUri(mImageUri.toString());

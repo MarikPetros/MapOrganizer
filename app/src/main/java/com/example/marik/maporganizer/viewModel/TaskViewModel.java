@@ -6,6 +6,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.location.Address;
 import android.support.annotation.NonNull;
 
 import com.example.marik.maporganizer.db.TaskItem;
@@ -39,7 +40,10 @@ public class TaskViewModel extends AndroidViewModel{
         return items;
     }
 
+public TaskItem getItemByAddress(Address address){
+        return null;
 
+}
 
     public TaskItem getItem(UUID  id) {
         if (mItem == null) {
