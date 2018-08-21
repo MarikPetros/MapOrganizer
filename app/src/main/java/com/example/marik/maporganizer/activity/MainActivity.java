@@ -16,19 +16,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
-
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 import com.example.marik.maporganizer.fragments.FragmentTasksList;
-import com.example.marik.maporganizer.fragments.InfoFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
@@ -37,52 +32,44 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
-//import com.example.marik.maporganizer.fragments.FragmentTasksList;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
-
-//import com.example.marik.maporganizer.fragments.FragmentTasksList;
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
-
-
-public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener,
-        InfoFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
     public final static int PERMISSION_CODE = 26;
 
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
-
-    private FragmentActivity mFragmentActivity;
     private MapsFragment mMapsFragment;
     private FragmentTasksList mTaskListFragment;
     private BottomNavigationView mBottomNavigationView;
-    ///   private FragmentTasksList mFragmentTasksList;
 
-    private RelativeLayout mLayout;
 
-    private  InfoFragment infoFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        init();
+    }
+
+
+    public void init(){
+
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
+        TaskViewModel model = ViewModelProviders.of(
+                this).get(TaskViewModel.class);
         model.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
                 mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
             }
-       });
+        });
 
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
@@ -90,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         setTabs();
-
         setFragment(mMapsFragment);
-    }
+        }
+
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;

@@ -22,7 +22,7 @@
     <string name="error_NotSpecified">Not specified error!</string>
     <string name="geofence_transition_invalid_type">d% is invalid GeofenceTransition type!</string>
     <string name="search">Search</string>
-    <string name="title_hint">title</string>
+    <string name="title_hint">Title</string>
     <string name="location">location</string>
     <string name="channel_name">Nearby locations</string>
     <string name="channel_description">Notifying about nearby location</string>

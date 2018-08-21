@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -92,7 +93,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         // Required empty public constructor
     }
 
-
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
@@ -155,8 +155,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -217,8 +215,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
-    InfoFragment fragment = InfoFragment.newInstance("map","info");
-
     private void onMapClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -243,27 +239,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        setThisFragment(fragment); //fix
+        //TODO fix
         return false;
     }
 
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        setThisFragment(fragment);
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(latLng.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
-    }
+        //Initializing a bottom sheet
+        BottomSheetDialogFragment bottomSheetDialogFragment = new FragmentTaskCreation();
 
+        //show it
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
 
-    public void setThisFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.mini_frame,fragment)
-                .setCustomAnimations(R.anim.slidi_in_from_bottom, 0)
-                .addToBackStack(null).commit();
     }
 
 
@@ -471,7 +464,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(getContext(),"Connection Failed",Toast.LENGTH_SHORT).show();
     }
 
 

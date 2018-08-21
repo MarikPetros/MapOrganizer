@@ -1,12 +1,18 @@
 package com.example.marik.maporganizer.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +40,37 @@ import java.util.UUID;
 import static android.app.Activity.RESULT_CANCELED;
 
 
-public class FragmentTaskCreation extends Fragment {
+public class FragmentTaskCreation extends  BottomSheetDialogFragment {
+
+    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                dismiss();
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet,float slideOffset) {
+        }
+    };
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void setupDialog(Dialog dialog,int style) {
+        super.setupDialog(dialog, style);
+        View contentView = View.inflate(getContext(), R.layout.fragment_task_creation, null);
+        dialog.setContentView(contentView);
+        CoordinatorLayout.LayoutParams layoutParams =
+                (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
+        CoordinatorLayout.Behavior behavior = layoutParams.getBehavior();
+        if (behavior != null && behavior instanceof BottomSheetBehavior) {
+            ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
+        }
+    }
+
+
 
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final int PICK_IMAGE_ID = 1;
@@ -303,9 +339,9 @@ public class FragmentTaskCreation extends Fragment {
         mTaskItem.setChoosedAddress(mChoosedAddress.getText().toString());
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
-        mTaskItem.setImageUri(mImageUri.toString());
+      //  mTaskItem.setImageUri(mImageUri.toString());
         mTaskItem.setReminder(mReminderCheckBox.isChecked());
-        mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+//        mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
         if (mNotifybyPlaceCheckBox.isChecked()) {
             mTaskItem.setAlertRadius(mAlertRadius);
@@ -338,11 +374,6 @@ public class FragmentTaskCreation extends Fragment {
         //TODO IMAGE URI SET
         mReminderCheckBox.setChecked(item.isReminder());
         // TODO ReMIND TIME  and AlertRadius SET
-
-
     }
 
 }
-
-
-

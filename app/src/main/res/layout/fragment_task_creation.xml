@@ -5,8 +5,8 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FragmentTaskCreation">
-    <!--android:background="#fff"-->
+    tools:context=".fragments.FragmentTaskCreation"
+    app:layout_behavior="@string/bottom_sheet_behavior">
 
 
     <android.support.constraint.ConstraintLayout
@@ -28,12 +28,6 @@
             android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal">-->
-
 
         <EditText
             android:id="@+id/description_text"
