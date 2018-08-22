@@ -38,6 +38,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.models.PlaceInfo;
+import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -68,6 +69,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.marik.maporganizer.utils.KeyboardUtil.hideKeyboard;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {

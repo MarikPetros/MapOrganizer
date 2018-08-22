@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.db.TaskRepository;
 import com.example.marik.maporganizer.viewHolder.TaskHolder;
 
 import java.util.ArrayList;
@@ -19,8 +20,9 @@ import java.util.UUID;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
-    List<TaskItem> mItems;
+   public List<TaskItem> mItems;
     Context mContext;
+    OnItemsListClicked mListClickedListener;
 
     public TaskAdapter(Context context)
     {
@@ -63,20 +65,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
                 setMessage("Do you want delete task?").setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeItem(holder.getAdapterPosition());
+                        int position=holder.getAdapterPosition();
+                        TaskItem taskItem=mItems.get(position);
+                        mListClickedListener.onRemove(taskItem.getId());
+                        notifyDataSetChanged();
+                      //  removeItem(holder.getAdapterPosition());
                         dialog.dismiss();
                     }
                 }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        holder.getDeleteBtn().setVisibility(View.INVISIBLE);
+                        holder.getDeleteBtn().setVisibility(View.GONE);
                     }
                 }).create().show();
 
             }
         });
+        holder.getDeleteBtn().setVisibility(View.GONE);
 
+    }
+
+    public void setListClickedListener(OnItemsListClicked listClickedListener) {
+        mListClickedListener = listClickedListener;
     }
 
     @Override
@@ -84,10 +95,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         return mItems.size();
     }
 
-    public void removeItem(int position){
-        mItems.remove(position);
-        notifyItemRemoved(position);
-    }
+public TaskItem getTaskAtPosition(int position){
+        return mItems.get(position);
+}
 
     public void addItem(TaskItem item) {
         mItems.add(item);
@@ -96,10 +106,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
 
     public interface OnItemsListClicked{
-
-        void onClickItem(TaskItem item);
-        void onLongClickItem();
-        void onDeleteClickItem(UUID id);
+        void onClickItem(TaskItem item, int id);
+        void onRemove(UUID id);
 
     }
 }

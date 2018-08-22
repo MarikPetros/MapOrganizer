@@ -21,23 +21,6 @@ public class TaskHolder extends RecyclerView.ViewHolder {
     private TextView mChoosedAddress;
     private ImageView mDeleteBtn;
 
-TaskAdapter.OnItemsListClicked mOnItemsListClicked=new TaskAdapter.OnItemsListClicked() {
-    @Override
-    public void onClickItem(TaskItem item) {
-
-
-    }
-
-    @Override
-    public void onLongClickItem() {
-
-    }
-
-    @Override
-    public void onDeleteClickItem(UUID id) {
-
-    }
-};
 
     public TaskHolder(View itemView) {
 

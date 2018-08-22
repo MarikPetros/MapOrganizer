@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -33,6 +34,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.Converters;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.utils.DateUtil;
+import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.text.DateFormat;
@@ -369,5 +371,12 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 }
             }
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        KeyboardUtil.hideKeyboard(getActivity());
+
     }
 }

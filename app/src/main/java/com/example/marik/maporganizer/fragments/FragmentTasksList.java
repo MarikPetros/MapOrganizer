@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -32,11 +33,28 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     private RecyclerView mRecyclerView;
     private TaskViewModel mViewModel;
 
-//    private OnFragmentInteractionListener mListener;
-
     public FragmentTasksList() {
     }
 
+    TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
+        @Override
+        public void onClickItem(TaskItem item, int position) {
+            openFragment(item);
+            TaskItem taskItem=mAdapter.getTaskAtPosition(position);
+            mViewModel.update(taskItem);
+
+
+        }
+
+        @Override
+        public void onRemove(UUID id) {
+                mAdapter.mItems.remove(id);
+                mViewModel.deleteItem(id);
+
+        }
+
+
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,7 +98,8 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         mAdapter = new TaskAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
-        getTodoItemsFromViewModel();
+        mAdapter.setListClickedListener(mListClickedListener);
+        getTaskItemsFromViewModel();
     }
 
     @Override
@@ -89,7 +108,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     }
 
-    public void getTodoItemsFromViewModel() {
+    public void getTaskItemsFromViewModel() {
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
@@ -100,9 +119,10 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         });
     }
 
+    private void openFragment(TaskItem item) {
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
+    }
 
-//    public interface OnFragmentInteractionListener {
-//
-//        void onEditItem(UUID id);
-//    }
+
 }
