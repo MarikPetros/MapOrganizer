@@ -98,9 +98,9 @@ public class GeofencerService extends IntentService {
             List<String> addresses = new ArrayList<>();
             for (Geofence g : triggeringGeofences) {
                 notificationId = Integer.parseInt(g.getRequestId());
-                Address itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getAddress();
+                String itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
                 ids.add(notificationId);
-                addresses.add(itemAddress.toString() + "/n");
+                addresses.add(itemAddress + "/n");
             }
             // making content for bigText
             explanation = getString(R.string.explanation) + addresses.toString();
