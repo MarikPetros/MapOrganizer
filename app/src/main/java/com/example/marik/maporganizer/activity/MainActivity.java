@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.FragmentTasksList;
@@ -32,11 +33,12 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
     public final static int PERMISSION_CODE = 26;
 
     private GeofencingClient mGeofencingClient;
@@ -56,14 +58,13 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     }
 
 
-    public void init(){
+    public void init() {
 
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-        TaskViewModel model = ViewModelProviders.of(
-                this).get(TaskViewModel.class);
+        TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
         model.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
@@ -74,17 +75,15 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
 
-        mBottomNavigationView = findViewById(R.id.nav_view_bar);
-
         setTabs();
         setFragment(mMapsFragment);
-        }
+    }
 
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container,fragment);//fragment container
+        fragmentTransaction.replace(R.id.fragment_container, fragment);//fragment container
         fragmentTransaction.commit();
     }
 
@@ -106,15 +105,13 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                             default:
                                 return false;
                         }
-
-
                     }
                 });
-
     }
+
     // ---------------------------------------------------------------------------------------------
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this),Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -127,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                 new AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface,int i) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MainActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -138,8 +135,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                         })
                         .create()
                         .show();
-
-
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
@@ -158,10 +153,10 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(this,GeofencerService.class);
+        Intent intent = new Intent(this, GeofencerService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.
+        mGeofencePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
@@ -169,15 +164,15 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     private void addGeofences() {
         checkLocationPermission();
-        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(),getGeofencePendingIntent())
-                .addOnSuccessListener(Objects.requireNonNull(this),new OnSuccessListener<Void>() {
+        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(), getGeofencePendingIntent())
+                .addOnSuccessListener(Objects.requireNonNull(this), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Geofences added
                         // ...
                     }
                 })
-                .addOnFailureListener(this,new OnFailureListener() {
+                .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Failed to add geofences
@@ -186,17 +181,12 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                 });
     }
 
-    // es der piti kargavorvi
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     public class BootReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null && intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-                    addGeofences();
+                addGeofences();
             }
         }
     }
@@ -214,11 +204,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
 //-------------------------------------------------------------------
 
-    private void doFragmentTransaction(Fragment fragment,boolean addToBackStack) {
+    private void doFragmentTransaction(Fragment fragment, boolean addToBackStack) {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container,fragment);
-        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out);
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         if (addToBackStack) {
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         }
@@ -226,5 +216,10 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         fragmentTransaction.commit();
     }
 
+    // es der piti kargavorvi
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 
 }

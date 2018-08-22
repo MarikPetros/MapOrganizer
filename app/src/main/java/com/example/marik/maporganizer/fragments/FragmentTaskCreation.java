@@ -55,7 +55,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
         @Override
-        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+        public void onSlide(@NonNull View bottomSheet,float slideOffset) {
         }
     };
 
@@ -183,14 +183,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
     }
 
+
     private void fillDataFromViewModel(UUID id) {
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
         TaskItem taskItem = mViewModel.getItem(id);
         mTitle.setText(taskItem.getTitle());
         mDescription.setText(taskItem.getDescription());
         //mAttachPhotoCheckBox.setCheked(mTa)
-
-
     }
 
 
@@ -205,13 +204,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
         mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
         mAddressLine = root.findViewById(R.id.addressLine);
-
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
-
-
         mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -222,7 +218,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 }
             }
         });
-
 
         mPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,9 +270,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                     default:
                         mRemindTime = 15;
                         break;
-
                 }
-
             }
 
             @Override
@@ -311,11 +304,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
             }
         });
-
-
         // ViewModel
-
-
     }
 
 
@@ -354,9 +343,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             //  mTaskItem.setImageUri(mImageUri.toString());
         }
 
-        if (mReminderCheckBox.isChecked()) {
+        if(mReminderCheckBox.isChecked()){
             mTaskItem.setReminder(mReminderCheckBox.isChecked());
-            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+          //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         }
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
         if (mNotifybyPlaceCheckBox.isChecked()) {
@@ -381,6 +370,4 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             }
         }
     }
-
-
 }

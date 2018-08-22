@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -37,6 +38,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.models.PlaceInfo;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -71,7 +73,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(70, 137));
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -88,6 +90,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private SupportMapFragment supportMapFragment;
 
     private OnFragmentInteractionListener mListener;
+    private TaskViewModel mViewModel;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -110,6 +113,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(Objects.requireNonNull(getActivity()),this)
                 .build();
+
+        mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
+
     }
 
 
@@ -117,7 +123,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_map,container,false);
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);//child manager?
         if (supportMapFragment == null) {
@@ -132,9 +138,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+
     @Override
-    public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view,savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initOnViewCreated(view);
     }
 
@@ -197,14 +204,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
                 checkLocationPermission();
             }
         } else {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
@@ -272,7 +279,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                 //Place current location marker
                 if (location != null) {
-                    LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
@@ -280,7 +287,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
                     //move map camera
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
 
                 }
             }
@@ -309,7 +316,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -322,9 +329,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 new AlertDialog.Builder(getContext())
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface,int i) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -346,7 +353,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],@NonNull int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -359,7 +366,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                         mMap.setMyLocationEnabled(true);
                         getCurrentLocation();
                     }
@@ -368,7 +375,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getContext(),"permission denied",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -385,12 +392,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
 
-        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(),mGoogleApiClient,LAT_LNG_BOUNDS,null);
+        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, LAT_LNG_BOUNDS, null);
         mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView,int actionId,KeyEvent keyEvent) {
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
@@ -407,7 +414,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 getCurrentLocation();
             }
         });
@@ -435,8 +441,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
-    private void moveCamera(LatLng latLng,float zoom,String title) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+    private void moveCamera(LatLng latLng, float zoom, String title) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         if (!title.equals("my location")) {
             MarkerOptions options = new MarkerOptions()
@@ -456,7 +462,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 assert inputManager != null;
                 inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -466,7 +472,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(getContext(),"Connection Failed",Toast.LENGTH_SHORT).show();
     }
-
 
     /*
    -----------------------------google places API autocomplete suggestions------------
@@ -511,8 +516,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     place.getViewport().getCenter().longitude),DEFAULT_ZOOM,mPlace.getName());
 
             places.release();
-
-
         }
     };
 
