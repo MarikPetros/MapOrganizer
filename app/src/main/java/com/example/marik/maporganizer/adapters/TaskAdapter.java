@@ -1,5 +1,8 @@
 package com.example.marik.maporganizer.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,12 +20,16 @@ import java.util.UUID;
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     List<TaskItem> mItems;
+    Context mContext;
 
-    public TaskAdapter() {
+    public TaskAdapter(Context context)
+    {
+        mContext=context;
         mItems = new ArrayList<>();
     }
 
     public void setList(List<TaskItem> list){
+
         mItems.clear();
         mItems.addAll(list);
     }
@@ -50,8 +57,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         holder.getDeleteBtn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeItem(holder.getAdapterPosition());
 
+                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+                builder.setTitle("DELETE").setIcon(R.drawable.ic_delete).
+                setMessage("Do you want delete task?").setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeItem(holder.getAdapterPosition());
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        holder.getDeleteBtn().setVisibility(View.INVISIBLE);
+                    }
+                }).create().show();
 
             }
         });

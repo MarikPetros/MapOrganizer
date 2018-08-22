@@ -78,7 +78,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     private void init(View view) {
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
-        mAdapter = new TaskAdapter();
+        mAdapter = new TaskAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         getTodoItemsFromViewModel();
     }

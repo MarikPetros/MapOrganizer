@@ -20,7 +20,7 @@ public class TaskItem implements Parcelable {
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name="_id")
+    @ColumnInfo(name = "_id")
     public UUID mId;
 
     @ColumnInfo(name = "address")
@@ -112,9 +112,7 @@ public class TaskItem implements Parcelable {
         mAddress = address;
     }
 
-    public String getChoosedAddress()
-    {
-        mChoosedAddress=mAddress.getAddressLine(0);
+    public String getChoosedAddress() {
         return mChoosedAddress;
     }
 

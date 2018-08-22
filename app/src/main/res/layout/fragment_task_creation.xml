@@ -22,7 +22,6 @@
             android:background="@color/colorPrimaryDark"
             android:padding="@dimen/view_padding"
             android:textSize="@dimen/text_size"
-
             android:textColor="@color/color_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
