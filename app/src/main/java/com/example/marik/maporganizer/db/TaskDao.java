@@ -18,7 +18,7 @@ public interface TaskDao {
    @Query("SELECT * FROM task_item ORDER BY date")
    LiveData< List<TaskItem>> getAll();
 
-    @Query("SELECT * FROM task_item WHERE mId = :id")
+    @Query("SELECT * FROM task_item WHERE _id = :id")
     TaskItem getById(UUID id);
 
     @Insert
@@ -27,8 +27,8 @@ public interface TaskDao {
     @Update
     void update(TaskItem item);
 
-    @Delete
-    void delete(TaskItem item);
+ @Query("DELETE FROM task_item WHERE _id in (:id) ")
+    void delete(UUID... id);
 
     @Query("DELETE FROM task_item")
     void deleteAll();

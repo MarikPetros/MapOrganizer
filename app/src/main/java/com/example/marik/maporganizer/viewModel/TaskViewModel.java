@@ -57,8 +57,8 @@ public TaskItem getItemByAddress(Address address){
         taskRepository.insert(taskItem);
     }
 
-    public void deleteItem(TaskItem taskItem){
-        taskRepository.delete(taskItem);
+    public void deleteItem(UUID id){
+        taskRepository.delete(id);
     }
 
     public void update(TaskItem taskItem){

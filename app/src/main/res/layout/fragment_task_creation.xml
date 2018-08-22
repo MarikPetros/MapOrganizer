@@ -5,8 +5,8 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FragmentTaskCreation"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    tools:context=".fragments.FragmentTaskCreation">
 
 
     <android.support.constraint.ConstraintLayout
@@ -15,6 +15,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/addressLine"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/address_line_height"
+            android:background="@color/colorPrimaryDark"
+            android:padding="@dimen/view_padding"
+            android:textSize="@dimen/text_size"
+
+            android:textColor="@color/color_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <EditText
             android:id="@+id/title_text"
@@ -22,12 +34,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_left_right"
             android:layout_marginStart="@dimen/margin_left_right"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:hint="@string/title_hint"
             android:padding="@dimen/view_padding"
             android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/addressLine" />
 
         <EditText
             android:id="@+id/description_text"
@@ -67,7 +79,6 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attach_photo_checkbox" />
-
 
 
         <TextView
@@ -126,20 +137,19 @@
             app:layout_constraintTop_toBottomOf="@+id/reminder_spinner" />
 
 
-
-            <TextView
-                android:id="@+id/location_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/margin_left_right"
-                android:layout_marginStart="@dimen/margin_left_right"
-                android:layout_marginTop="@dimen/margin_top"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox"
-                android:padding="@dimen/view_padding"
-                android:text="@string/location"
-                android:textSize="@dimen/text_size"
-                android:visibility="gone" />
+        <TextView
+            android:id="@+id/location_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_left_right"
+            android:layout_marginStart="@dimen/margin_left_right"
+            android:layout_marginTop="@dimen/margin_top"
+            android:padding="@dimen/view_padding"
+            android:text="@string/location"
+            android:textSize="@dimen/text_size"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox" />
 
         <ImageView
             android:id="@+id/edit_view"
@@ -150,20 +160,6 @@
             app:layout_constraintBottom_toBottomOf="@id/location_text"
             app:layout_constraintEnd_toEndOf="@id/location_text"
             app:layout_constraintTop_toTopOf="@id/location_text" />
-
-
-        <!---->
-<!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--android:orientation="vertical">-->
-    <!---->
-    <!--<include layout="@layout/fragment_temp_map"/>-->
-
-<!--</LinearLayout>-->
-
-
 
     </android.support.constraint.ConstraintLayout>
 

@@ -6,8 +6,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
+import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.db.TaskRepository;
+
+import java.util.UUID;
 
 
 public class TaskHolder extends RecyclerView.ViewHolder {
@@ -18,7 +21,23 @@ public class TaskHolder extends RecyclerView.ViewHolder {
     private TextView mChoosedAddress;
     private ImageView mDeleteBtn;
 
+TaskAdapter.OnItemsListClicked mOnItemsListClicked=new TaskAdapter.OnItemsListClicked() {
+    @Override
+    public void onClickItem(TaskItem item) {
 
+
+    }
+
+    @Override
+    public void onLongClickItem() {
+
+    }
+
+    @Override
+    public void onDeleteClickItem(UUID id) {
+
+    }
+};
 
     public TaskHolder(View itemView) {
 
@@ -35,7 +54,7 @@ public class TaskHolder extends RecyclerView.ViewHolder {
         mTitle.setText(pTaskItem.getTitle());
         mDescription.setText(pTaskItem.getDescription());
         mDate.setText(pTaskItem.getDate().toString());
-        mChoosedAddress.setText(pTaskItem.getAddress().toString());
+        mChoosedAddress.setText(pTaskItem.getAddress().getAddressLine(0));
 
     }
 

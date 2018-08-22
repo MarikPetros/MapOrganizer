@@ -44,8 +44,8 @@ public class TaskRepository {
         new UpdateAsyncTask(mDao).execute(taskItem);
     }
 
-    public void delete(TaskItem taskItem) {
-        new DeleteAsyncTask(mDao).execute(taskItem);
+    public void delete(UUID id) {
+        new DeleteAsyncTask(mDao).execute(id);
     }
 
 
@@ -80,7 +80,7 @@ public class TaskRepository {
     }
 
 
-    public static class DeleteAsyncTask extends AsyncTask<TaskItem, Void, Void> {
+    public static class DeleteAsyncTask extends AsyncTask<UUID, Void, Void> {
 
         private TaskDao mAsyncTaskDao;
 
@@ -89,8 +89,8 @@ public class TaskRepository {
         }
 
         @Override
-        protected Void doInBackground(TaskItem... params) {
-            mAsyncTaskDao.delete(params[0]);
+        protected Void doInBackground(UUID... ids) {
+            mAsyncTaskDao.delete(ids[0]);
             return null;
         }
     }

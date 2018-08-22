@@ -12,6 +12,7 @@ import com.example.marik.maporganizer.viewHolder.TaskHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
@@ -51,6 +52,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
             public void onClick(View v) {
                 removeItem(holder.getAdapterPosition());
 
+
             }
         });
 
@@ -69,6 +71,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     public void addItem(TaskItem item) {
         mItems.add(item);
         notifyItemInserted(mItems.size() - 1);
+    }
+
+
+    public interface OnItemsListClicked{
+
+        void onClickItem(TaskItem item);
+        void onLongClickItem();
+        void onDeleteClickItem(UUID id);
+
     }
 }
 

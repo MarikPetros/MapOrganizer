@@ -43,7 +43,7 @@ import java.util.UUID;
 import static android.app.Activity.RESULT_CANCELED;
 
 
-public class FragmentTaskCreation extends  BottomSheetDialogFragment {
+public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -55,13 +55,13 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         }
 
         @Override
-        public void onSlide(@NonNull View bottomSheet,float slideOffset) {
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
 
     @SuppressLint("RestrictedApi")
     @Override
-    public void setupDialog(Dialog dialog,int style) {
+    public void setupDialog(Dialog dialog, int style) {
         super.setupDialog(dialog, style);
         View contentView = View.inflate(getContext(), R.layout.fragment_task_creation, null);
         dialog.setContentView(contentView);
@@ -72,7 +72,6 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
     }
-
 
 
     private static final String ARG_TASK_ITEM = "arg.taskitem";
@@ -89,8 +88,9 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
             remind2, remind3, remind10, remindDay};
 
     TaskViewModel mViewModel;
-      Address mAddress;
+    Address mAddress;
 
+    private TextView mAddressLine;
     private TextView mChoosedAddress;
     private TextView mTitle;
     private TextView mDescription;
@@ -204,7 +204,7 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
         mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
-
+        mAddressLine = root.findViewById(R.id.addressLine);
 
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
@@ -351,38 +351,36 @@ public class FragmentTaskCreation extends  BottomSheetDialogFragment {
         mTaskItem.setDate(mSelectedDate.getTime());
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
-          //  mTaskItem.setImageUri(mImageUri.toString());
+            //  mTaskItem.setImageUri(mImageUri.toString());
         }
 
-        if(mReminderCheckBox.isChecked()){
+        if (mReminderCheckBox.isChecked()) {
             mTaskItem.setReminder(mReminderCheckBox.isChecked());
-          //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         }
-            mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-            if (mNotifybyPlaceCheckBox.isChecked()) {
-                mTaskItem.setAlertRadius(mAlertRadius);
-            } else
-                mTaskItem.setAlertRadius(0);
+        mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
+        if (mNotifybyPlaceCheckBox.isChecked()) {
+            mTaskItem.setAlertRadius(mAlertRadius);
+        } else
+            mTaskItem.setAlertRadius(0);
 
-            return mTaskItem;
-        }
+        return mTaskItem;
+    }
 
-        @Override
-        public void onActivityResult ( int requestCode, int resultCode, Intent data){
-            if (resultCode != RESULT_CANCELED) {
-                if (requestCode == PICK_IMAGE_ID) {
-                    if (data.getExtras() == null) {
-                        Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
-                        mPhoto.setImageBitmap(bitmap);
-                    } else {
-                        Bitmap photo = (Bitmap) data.getExtras().get("data");
-                        mPhoto.setImageBitmap(photo);
-                    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_CANCELED) {
+            if (requestCode == PICK_IMAGE_ID) {
+                if (data.getExtras() == null) {
+                    Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                    mPhoto.setImageBitmap(bitmap);
+                } else {
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    mPhoto.setImageBitmap(photo);
                 }
             }
         }
-
-
+    }
 
 
 }

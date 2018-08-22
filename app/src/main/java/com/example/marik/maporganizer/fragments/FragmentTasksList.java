@@ -79,16 +79,17 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         mAdapter = new TaskAdapter();
-        List<TaskItem> list = new ArrayList<>();
-        TaskItem taskItem = new TaskItem();
-        taskItem.setTitle("aviogdshgd");
-        list.add(taskItem);
-        mAdapter.setList(list);
         mRecyclerView.setAdapter(mAdapter);
-        getTodoItemFromViewModel();
+        getTodoItemsFromViewModel();
     }
 
-    public void getTodoItemFromViewModel() {
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    public void getTodoItemsFromViewModel() {
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
@@ -100,8 +101,8 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     }
 
 
-    public interface OnFragmentInteractionListener {
-
-        void onEditItem(UUID id);
-    }
+//    public interface OnFragmentInteractionListener {
+//
+//        void onEditItem(UUID id);
+//    }
 }

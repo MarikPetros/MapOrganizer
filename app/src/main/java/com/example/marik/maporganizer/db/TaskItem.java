@@ -17,17 +17,10 @@ import java.util.UUID;
 @Entity(tableName = "task_item")
 public class TaskItem implements Parcelable {
 
-    public boolean isAttached() {
-        return isAttached;
-    }
-
-    public void setAttached(boolean attached) {
-        isAttached = attached;
-    }
 
     @PrimaryKey
-
     @NonNull
+    @ColumnInfo(name="_id")
     public UUID mId;
 
     @ColumnInfo(name = "address")
@@ -103,6 +96,13 @@ public class TaskItem implements Parcelable {
         mAlertRadius = alertRadius;
     }
 
+    public boolean isAttached() {
+        return isAttached;
+    }
+
+    public void setAttached(boolean attached) {
+        isAttached = attached;
+    }
 
     public Address getAddress() {
         return mAddress;
@@ -112,7 +112,9 @@ public class TaskItem implements Parcelable {
         mAddress = address;
     }
 
-    public String getChoosedAddress() {
+    public String getChoosedAddress()
+    {
+        mChoosedAddress=mAddress.getAddressLine(0);
         return mChoosedAddress;
     }
 
