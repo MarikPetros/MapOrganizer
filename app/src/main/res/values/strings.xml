@@ -28,7 +28,6 @@
     <string name="channel_description">Notifying about nearby location</string>
     <string name="explanation">You have something to do at</string>
     <string name="alert_text">You are near-by</string>
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_info">Fragment infoA</string>
     <string name="fragment_map">Fragment map</string>
@@ -40,6 +39,11 @@
     <string name="nearTasks">Nearby tasks</string>
     <string name="some_messages">Some new messages</string>
     <string name="maporganizer">MapOrganizer</string>
+    <string name="service_not_available">service is not available</string>
+    <string name="invalid_lat_long_used">invalid lat long used</string>
+    <string name="no_address_found">no address found</string>
+    <string name="address_found">address is found</string>
+    <string name="no_location_data_provided">no location data provided</string>
 </resources>
 
 
