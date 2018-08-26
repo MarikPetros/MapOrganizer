@@ -83,12 +83,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.FetchAddressIntentService"
-            android:exported="false" />
-        <service
-            android:name=".service.NewIntentService"
-            android:exported="false"/>
     </application>
 
 </manifest>
