@@ -69,7 +69,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
                         TaskItem taskItem=mItems.get(position);
                         mListClickedListener.onRemove(taskItem.getId());
                         notifyDataSetChanged();
-                      //  removeItem(holder.getAdapterPosition());
                         dialog.dismiss();
                     }
                 }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

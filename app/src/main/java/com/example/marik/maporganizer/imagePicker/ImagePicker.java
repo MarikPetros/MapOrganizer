@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.example.marik.maporganizer.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class ImagePicker {
 
-    public static Uri selectedImage;
+    public static Uri selectedImageUri;
 
     private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;        // min pixels
     private static final String TAG = "ImagePicker";
@@ -81,14 +82,14 @@ public class ImagePicker {
                     imageReturnedIntent.getData().toString().contains(imageFile.toString()));
 
             if (isCamera) {     /** CAMERA **/
-                selectedImage = Uri.fromFile(imageFile);
+                selectedImageUri = Uri.fromFile(imageFile);
             } else {            /** ALBUM **/
-                selectedImage = imageReturnedIntent.getData();
+                selectedImageUri = imageReturnedIntent.getData();
             }
-            Log.d(TAG, "selectedImage: " + selectedImage);
+            Log.d(TAG, "selectedImage: " + selectedImageUri);
 
-            bm = getImageResized(context, selectedImage);
-            int rotation = getRotation(context, selectedImage, isCamera);
+            bm = getImageResized(context, selectedImageUri);
+            int rotation = getRotation(context, selectedImageUri, isCamera);
             bm = rotate(bm, rotation);
         }
         return bm;
@@ -194,6 +195,7 @@ public class ImagePicker {
         }//End of try-catch block
         return result;
     }
+
 
 
     private static Bitmap rotate(Bitmap bm, int rotation) {

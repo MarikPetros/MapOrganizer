@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -56,6 +58,7 @@ import java.util.Objects;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
@@ -111,7 +114,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public double mLongitude;
 
 
-    private TextView mChoosedAddress;
+    private AutoCompleteTextView mChoosedAddress;
     private TextView mTitle;
     private TextView mDescription;
     private TextView mDate;
@@ -237,8 +240,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
-                    // Utility.checkPermission(getContext());
-                     onPickImage(getView());
+                     Utility.checkPermission(getContext());
+                    onPickImage(getView());
 
                 } else {
                     mPhoto.setVisibility(View.GONE);
@@ -312,7 +315,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                FragmentTransaction fragmentTransaction = FragmentTaskCreation.this.getChildFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
+                fragmentTransaction.commit();
 
             }
         });
@@ -366,15 +371,16 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
         mTaskItem.setLatitude(mTaskItem.getLatitude());
-        mTaskItem.setLatitude(mTaskItem.getLongitude());
-        //   mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
+        mTaskItem.setLongitude(mTaskItem.getLongitude());
+        Log.v("fragmenti lat/lng", ""+ mTaskItem.getLatitude()+ ", "+ mTaskItem.getLongitude()+"");
+        mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
         Log.d("address", "" + mTaskItem.getChoosedAddress() + "");
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
-        //     mTaskItem.setDate(mSelectedDate.getTime());
+        mTaskItem.setDate(mSelectedDate.getTime());
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
-            mTaskItem.setImageUri(mImageUri);
+            //  mTaskItem.setImageUri(mImageUri);
         }
 
         if (mReminderCheckBox.isChecked()) {
@@ -400,13 +406,20 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
                 mPhoto.setImageBitmap(bitmap);
-                mImageUri = getImageUri(getActivity(), bitmap).toString();
+                //       mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
 
@@ -417,22 +430,22 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
 
     }
 
     public String getAddressFromLatitLong(double latitude, double longitude) {
-        String address = new GetAddressAsyncTask().execute(latitude, longitude).toString();
+        String address = null;
+        try {
+            address = new GetAddressAsyncTask().execute(latitude, longitude).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return address;
     }
 
@@ -445,9 +458,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
         private String getAddress(double latitude, double longitude) {
+            String street="aaa";
+            String area="bbb";
+
             StringBuilder result = new StringBuilder();
             try {
                 Geocoder geocoder = null;
+                ;
                 // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 geocoder = new Geocoder(getActivity(), Locale.getDefault());
                 //}
@@ -455,16 +472,17 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 if (addresses.size() > 0) {
                     Address address = addresses.get(0);
 
-                    result.append(address.getAddressLine(0));
-                    //getThoroughfare());
-//                    result.append(address.getLocality()).append("\n");
-//                    result.append(address.getCountryName());
+                    street = result.append(address.getAddressLine(0)).toString();
+                    area = result.append(address.getLocality()).toString();
+                    //  result.append(address.getAdminArea());
+
+
                 }
             } catch (IOException e) {
                 Log.e("tag", e.getMessage());
             }
-
-            return result.toString();
+            String ad = street + ", " + area;
+            return ad;
         }
 
     }

@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <AutoCompleteTextView
             android:id="@+id/addressLine"
             android:layout_width="match_parent"
             android:layout_height="@dimen/address_line_height"
@@ -23,7 +23,9 @@
             android:padding="@dimen/view_padding"
             android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:imeOptions="actionSearch"
+            />
 
 
         <EditText

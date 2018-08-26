@@ -35,7 +35,7 @@ public class TaskHolder extends RecyclerView.ViewHolder {
 
         mTitle.setText(pTaskItem.getTitle());
         mDescription.setText(pTaskItem.getDescription());
-    //    mDate.setText(DateUtil.formatDateToLongStyle(pTaskItem.getDate()));
+        mDate.setText(DateUtil.formatDateToLongStyle(pTaskItem.getDate()));
         mChoosedAddress.setText(pTaskItem.getChoosedAddress());
 
     }

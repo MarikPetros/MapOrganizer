@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -306,6 +307,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         TaskItem taskItem = new TaskItem();
         taskItem.setLatitude(latLng.latitude);
         taskItem.setLongitude(latLng.longitude);
+        Log.v("mapi lat/lng", ""+latLng.latitude+", "+latLng.longitude+"");
         mViewModel.insertItem(taskItem);
         //Initializing a bottom sheet
        // BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
