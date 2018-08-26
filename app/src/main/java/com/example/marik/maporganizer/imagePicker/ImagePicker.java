@@ -36,9 +36,9 @@ public class ImagePicker {
 
     public static Intent getPickImageIntent(Context context) {
         Intent chooserIntent = null;
-        boolean check = Utility.checkPermission(context);
+        //boolean check = Utility.checkPermission(context);
         List<Intent> intentList = new ArrayList<>();
-        if (check) {
+       // if (check) {
             Intent pickIntent = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -46,7 +46,7 @@ public class ImagePicker {
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(context)));
             intentList = addIntentsToList(context, intentList, pickIntent);
             intentList = addIntentsToList(context, intentList, takePhotoIntent);
-        }
+       // }
         if (intentList.size() > 0) {
             chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
                     context.getString(R.string.pick_image_intent_text));

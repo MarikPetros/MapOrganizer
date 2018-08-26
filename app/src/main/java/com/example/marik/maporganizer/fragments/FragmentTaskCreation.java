@@ -41,6 +41,7 @@ import com.example.marik.maporganizer.db.TaskDao;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.imagePicker.Utility;
 import com.example.marik.maporganizer.utils.DateUtil;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
@@ -236,6 +237,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
+                    // Utility.checkPermission(getContext());
                      onPickImage(getView());
 
                 } else {
