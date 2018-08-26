@@ -75,7 +75,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in TaskAppWidgetProvider.
         Bundle extras = new Bundle();
-        extras.putInt(TaskAppWidgetProvider.EXTRA_ITEM, position);
+    //    extras.putInt(TaskAppWidgetProvider.EXTRA_ITEM, position);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         rv.setOnClickFillInIntent(R.id.widget_item_text, fillInIntent);
