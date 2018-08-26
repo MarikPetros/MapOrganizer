@@ -21,7 +21,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.db.TaskRepository;
-import com.example.marik.maporganizer.db.TaskRoomDB;
+import com.example.marik.maporganizer.db.TaskDataBase;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private final Context mContext;
     private List<TaskItem> mTaskWidgetItems = new ArrayList<>(); // Widgeti item piti lini
     private final int mAppWidgetId;
-    private TaskRoomDB taskRoomDB;
+    private TaskDataBase taskRoomDB;
 
     public ListRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -41,7 +41,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onCreate() {
-        taskRoomDB = TaskRoomDB.getDatabase(mContext);
+        taskRoomDB = TaskDataBase.getDataBase(mContext);
         mTaskWidgetItems.addAll(taskRoomDB.mDao().getAllTaskItems());
     }
 

@@ -7,6 +7,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.location.Address;
+import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.example.marik.maporganizer.db.TaskItem;
@@ -14,6 +15,7 @@ import com.example.marik.maporganizer.db.TaskRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class TaskViewModel extends AndroidViewModel{
 
@@ -40,7 +42,11 @@ public class TaskViewModel extends AndroidViewModel{
         return items;
     }
 
-public TaskItem getItemByAddress(Address address){
+public TaskItem getItemByLocation(double latitude, double longitude){
+        if(mItem==null){
+            mItem=new TaskItem();
+        }
+        taskRepository.getItemByLocation(latitude, longitude);
         return null;
 
 }
@@ -70,7 +76,13 @@ public TaskItem getItemByAddress(Address address){
     }
 
     public void loadItem(UUID id){
-        mItem = taskRepository.getById(id);
+        try {
+            mItem = taskRepository.getById(id);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

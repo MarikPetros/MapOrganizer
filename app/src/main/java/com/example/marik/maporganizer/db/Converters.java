@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.db;
 
 import android.arch.persistence.room.TypeConverter;
 import android.location.Address;
+import android.location.Location;
 
 import com.google.android.gms.location.places.AddPlaceRequest;
 
@@ -17,7 +18,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public static String toLong(UUID value) {
+    public static String toString(UUID value) {
         return value == null ? null : value.toString();
     }
 
@@ -32,13 +33,27 @@ public class Converters {
         return value == null ? null : value.getTime();
 
     }
+
     @TypeConverter
-    public static Address toAddress(String address){
-        return address==null? null: (new Address(Locale.getDefault()));
+    public static String fromLocation(Location location) {
+        if (location==null) {
+            return(null);
+        }
+
+        return(String.format(Locale.US, "%f,%f", location.getLatitude(),
+                location.getLongitude()));
     }
 
     @TypeConverter
-    public static String addressToString(Address address){
-        return  address==null ? null:(new Address(Locale.getDefault())).toString();
-    }
-}
+    public static Location toLocation(String latlon) {
+        if (latlon==null) {
+            return(null);
+        }
+        String[] pieces=latlon.split(",");
+        Location result=new Location("");
+
+        result.setLatitude(Double.parseDouble(pieces[0]));
+        result.setLongitude(Double.parseDouble(pieces[1]));
+
+        return(result);
+    }}

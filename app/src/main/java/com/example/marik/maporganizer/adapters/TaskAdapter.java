@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.db.TaskRepository;
-import com.example.marik.maporganizer.viewHolder.TaskHolder;
+import com.example.marik.maporganizer.adapters.viewHolder.TaskHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     @Override
     public void onBindViewHolder(@NonNull final TaskHolder holder, final int position) {
         holder.bindHolder(mItems.get(position));
+
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

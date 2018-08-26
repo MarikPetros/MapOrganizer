@@ -1,4 +1,4 @@
-package com.example.marik.maporganizer;
+package com.example.marik.maporganizer.imagePicker;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,12 +15,17 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.example.marik.maporganizer.R;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ImagePicker {
+
+    public static Uri selectedImage;
 
     private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;        // min pixels
     private static final String TAG = "ImagePicker";
@@ -31,18 +36,17 @@ public class ImagePicker {
 
     public static Intent getPickImageIntent(Context context) {
         Intent chooserIntent = null;
-
+        boolean check = Utility.checkPermission(context);
         List<Intent> intentList = new ArrayList<>();
-
-        Intent pickIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        pickIntent.putExtra("return-data", true);
-        pickIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(context)));
-
-        intentList = addIntentsToList(context, intentList, pickIntent);
-        intentList = addIntentsToList(context, intentList, takePhotoIntent);
-
+        if (check) {
+            Intent pickIntent = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePhotoIntent.putExtra("return-data", true);
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(context)));
+            intentList = addIntentsToList(context, intentList, pickIntent);
+            intentList = addIntentsToList(context, intentList, takePhotoIntent);
+        }
         if (intentList.size() > 0) {
             chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
                     context.getString(R.string.pick_image_intent_text));
@@ -71,10 +75,11 @@ public class ImagePicker {
         Bitmap bm = null;
         File imageFile = getTempFile(context);
         if (resultCode == Activity.RESULT_OK) {
-            Uri selectedImage;
+
             boolean isCamera = (imageReturnedIntent == null ||
-                    imageReturnedIntent.getData() == null  ||
+                    imageReturnedIntent.getData() == null ||
                     imageReturnedIntent.getData().toString().contains(imageFile.toString()));
+
             if (isCamera) {     /** CAMERA **/
                 selectedImage = Uri.fromFile(imageFile);
             } else {            /** ALBUM **/

@@ -41,13 +41,13 @@ public class GeofenceMaker {
                     .setRequestId(taskItem.getId().toString())
                     // .setNotificationResponsiveness(NOTIFICATION_RESPONCIVENESS_VALUE)
                     .setCircularRegion(
-                            taskItem.getAddress().getLatitude(),
-                            taskItem.getAddress().getLongitude(),
+                            taskItem.getLatitude(),
+                            taskItem.getLongitude(),
                             taskItem.getAlertRadius()
                     )
                     .setExpirationDuration(NEVER_EXPIRE)
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )
-                   // .setLoiteringDelay(1000 * 60)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL )
+                    .setLoiteringDelay(1000 * 60 * 60 * 2)
                     .build();
         }
         return geofence;

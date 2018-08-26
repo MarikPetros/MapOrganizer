@@ -24,6 +24,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
 import static android.content.ContentValues.TAG;
@@ -112,7 +113,14 @@ public class GeofencerService extends IntentService {
             for (Geofence g : triggeringGeofences) {
    //           notifText = g.getRequestId(); /// This is for test
                 notificationId =Integer.parseInt(g.getRequestId());
-                String itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
+                String itemAddress = null;
+                try {
+                    itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 ids.add(notificationId);
                 addresses.add(itemAddress + "/n");
             }

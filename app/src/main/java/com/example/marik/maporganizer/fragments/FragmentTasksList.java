@@ -3,6 +3,7 @@ package com.example.marik.maporganizer.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,12 +39,9 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
         @Override
-        public void onClickItem(TaskItem item, int position) {
-            openFragment(item);
-            TaskItem taskItem=mAdapter.getTaskAtPosition(position);
-            mViewModel.update(taskItem);
-
-
+        public void onClickItem(TaskItem item, int position)
+        {
+                      editTask(mViewModel.getItem(item.getId()));
         }
 
         @Override
@@ -119,10 +117,20 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         });
     }
 
-    private void openFragment(TaskItem item) {
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
-        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
-    }
+public void editTask(TaskItem taskItem){
+    BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem);
+    bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
+    /*FragmentTaskCreation.OnTaskFragmentInteraction taskFragmentInteractionListener=new FragmentTaskCreation.OnTaskFragmentInteraction() {
+        @Override
+        public void onAddTask(TaskItem item) {
+            //mListClickedListener.onClickItem();
+        }
 
+        @Override
+        public void onEditTask(TaskItem item) {
+
+        }
+    };*/
+}
 
 }

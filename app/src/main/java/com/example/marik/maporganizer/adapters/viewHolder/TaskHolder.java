@@ -1,4 +1,4 @@
-package com.example.marik.maporganizer.viewHolder;
+package com.example.marik.maporganizer.adapters.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -6,11 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.db.TaskRepository;
-
-import java.util.UUID;
+import com.example.marik.maporganizer.fragments.MapsFragment;
+import com.example.marik.maporganizer.utils.DateUtil;
+import com.google.android.gms.maps.model.LatLng;
 
 
 public class TaskHolder extends RecyclerView.ViewHolder {
@@ -36,8 +35,8 @@ public class TaskHolder extends RecyclerView.ViewHolder {
 
         mTitle.setText(pTaskItem.getTitle());
         mDescription.setText(pTaskItem.getDescription());
-        mDate.setText(pTaskItem.getDate().toString());
-        mChoosedAddress.setText(pTaskItem.getAddress().getAddressLine(0));
+    //    mDate.setText(DateUtil.formatDateToLongStyle(pTaskItem.getDate()));
+        mChoosedAddress.setText(pTaskItem.getChoosedAddress());
 
     }
 
@@ -45,3 +44,4 @@ public class TaskHolder extends RecyclerView.ViewHolder {
         return mDeleteBtn;
     }
 }
+

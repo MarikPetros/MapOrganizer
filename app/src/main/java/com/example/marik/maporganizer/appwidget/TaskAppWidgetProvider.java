@@ -4,7 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
-import com.example.marik.maporganizer.db.TaskRoomDB;
+import com.example.marik.maporganizer.db.TaskDataBase;
+
 
 public class TaskAppWidgetProvider extends AppWidgetProvider {
 
@@ -12,6 +13,6 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-        TaskRoomDB taskRoomDB = TaskRoomDB.getDatabase(context);
+        TaskDataBase taskRoomDB = TaskDataBase.getDataBase(context);
     }
 }

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class TaskRepository {
     private static TaskRepository REPO_INSTANCE;
@@ -16,7 +17,7 @@ public class TaskRepository {
     private LiveData<List<TaskItem>> mItemList;
 
     private TaskRepository(Application application) {
-        TaskRoomDB db = TaskRoomDB.getDatabase(application);
+        TaskDataBase db = TaskDataBase.getDataBase(application);
         mDao = db.mDao();
         mItemList = mDao.getAll();
     }
@@ -32,10 +33,22 @@ public class TaskRepository {
         return mItemList;
     }
 
-    public TaskItem getById(UUID id) {
-        return mDao.getById(id);
+    public TaskItem getById(UUID id) throws ExecutionException, InterruptedException {
+        TaskItem taskItem = (new LoadAsyncTask(mDao).execute(id)).get();
+        return taskItem;
     }
 
+public TaskItem getItemByLocation(double latitude, double longitude){
+    TaskItem taskItem= null;
+    try {
+        taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude).get());
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    }
+    return taskItem;
+}
     public void insert(TaskItem taskItem) {
         new InsertAsyncTask(mDao).execute(taskItem);
     }
@@ -94,6 +107,38 @@ public class TaskRepository {
             return null;
         }
     }
+
+    public static class GetByLocationAsyncTask extends  AsyncTask<Double, Void, TaskItem>{
+
+
+        private TaskDao mAsyncTaskDao;
+
+        GetByLocationAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected TaskItem doInBackground(Double... params) {
+            mAsyncTaskDao.getItemByLocation(params[0], params[1]);
+            return null;
+        }
+    }
+
+    public static class LoadAsyncTask extends AsyncTask<UUID, Void, TaskItem> {
+
+        private TaskDao mAsyncTaskDao;
+
+        LoadAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected TaskItem doInBackground(UUID... params) {
+            mAsyncTaskDao.getById(params[0]);
+            return null;
+        }
+    }
+
 
 }
 

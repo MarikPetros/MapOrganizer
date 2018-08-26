@@ -5,16 +5,22 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -30,21 +36,25 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.marik.maporganizer.ImagePicker;
-import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.Converters;
+import com.example.marik.maporganizer.db.TaskDao;
+import com.example.marik.maporganizer.imagePicker.ImagePicker;
+import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.utils.DateUtil;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
-
-import static android.app.Activity.RESULT_CANCELED;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
@@ -90,8 +100,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private static final String remindDay = "1 day";
     private static final String[] spinner = {remind15, remind30, remind45, remind1,
             remind2, remind3, remind10, remindDay};
-
+    Context mContext;
+    List<Address> addresses = null;
+    Address resultAddress;
+    String addressLine;
+    Bitmap bitmap;
     TaskViewModel mViewModel;
+    public double mLatitude;
+    public double mLongitude;
+
 
     private TextView mChoosedAddress;
     private TextView mTitle;
@@ -142,10 +159,19 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+//            TaskItem taskItem=
             mTaskItem = getArguments().getParcelable(ARG_TASK_ITEM);
+            Log.d("mtaskitem", "" + mTaskItem.getLatitude() + " " + mTaskItem.getLongitude() + "");
+
         }
     }
 
@@ -163,7 +189,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
         if (mTaskItem != null) {
             mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-            mViewModel.loadItem(mTaskItem.getId());
+            mViewModel.getItem(mTaskItem.getId());
         }
     }
 
@@ -172,11 +198,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onStop() {
         super.onStop();
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-        if (isExist) {
+        if (!isEmptyTask()) {
             mViewModel.update(createTaskItem());
-        }
-        mViewModel.insertItem(createTaskItem());
-
+        } else
+            mViewModel.deleteItem(createTaskItem().getId());
     }
 
 
@@ -185,28 +210,19 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
     }
 
+    private void init(final View root) {
 
-    private void fillDataFromViewModel(UUID id) {
-        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
-        TaskItem taskItem = mViewModel.getItem(id);
-        mTitle.setText(taskItem.getTitle());
-        mDescription.setText(taskItem.getDescription());
-        //mAttachPhotoCheckBox.setCheked(mTa)
-    }
-
-
-    private void init(View root) {
-
-        mChoosedAddress = root.findViewById(R.id.location_text);
+        mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
-        mPhoto = root.findViewById(R.id.photo);
         mDate = root.findViewById(R.id.date);
+        mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
+        mPhoto = root.findViewById(R.id.photo);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
-        mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
+
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()), android.R.layout.simple_spinner_item, spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
 
@@ -220,6 +236,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
+                     onPickImage(getView());
+
                 } else {
                     mPhoto.setVisibility(View.GONE);
                 }
@@ -229,7 +247,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPickImage(v);
+
             }
         });
 
@@ -244,6 +262,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 }
             }
         });
+
 
         mRemindSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -278,7 +297,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                         mRemindTime = 15;
                         break;
                 }
+
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -289,11 +310,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mChoosedAddress.setVisibility(View.VISIBLE);
-                } else {
-                    mChoosedAddress.setVisibility(View.GONE);
-                }
+
 
             }
         });
@@ -342,53 +359,113 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     boolean isExist = true;
 
     public TaskItem createTaskItem() {
-
-        if (mTaskItem == null) {
+        if (isEmptyTask()) {
             isExist = false;
-            mTaskItem = new TaskItem(UUID.randomUUID());
         }
-        mTaskItem.setChoosedAddress(mChoosedAddress.getText().toString());
-        mTaskItem.setAddress(Converters.toAddress(mChoosedAddress.getText().toString()));
+
+        mTaskItem.setLatitude(mTaskItem.getLatitude());
+        mTaskItem.setLatitude(mTaskItem.getLongitude());
+        //   mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
+        Log.d("address", "" + mTaskItem.getChoosedAddress() + "");
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
-        mTaskItem.setDate(mSelectedDate.getTime());
+        //     mTaskItem.setDate(mSelectedDate.getTime());
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
-            //  mTaskItem.setImageUri(mImageUri.toString());
+            mTaskItem.setImageUri(mImageUri);
         }
 
         if (mReminderCheckBox.isChecked()) {
-            mTaskItem.setReminder(mReminderCheckBox.isChecked());
-            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+            if (mReminderCheckBox.isChecked()) {
+                mTaskItem.setReminder(mReminderCheckBox.isChecked());
+                //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+                // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+            }
+            mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
+            if (mNotifybyPlaceCheckBox.isChecked()) {
+                mTaskItem.setAlertRadius(mAlertRadius);
+            } else
+                mTaskItem.setAlertRadius(0);
         }
-        mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-        if (mNotifybyPlaceCheckBox.isChecked()) {
-            mTaskItem.setAlertRadius(mAlertRadius);
-        } else
-            mTaskItem.setAlertRadius(0);
-
         return mTaskItem;
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_CANCELED) {
-            if (requestCode == PICK_IMAGE_ID) {
-                if (data.getExtras() == null) {
-                    Bitmap bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
-                    mPhoto.setImageBitmap(bitmap);
-                } else {
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    mPhoto.setImageBitmap(photo);
-                }
-            }
+        switch (requestCode) {
+            case PICK_IMAGE_ID:
+                bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+
+                mPhoto.setImageBitmap(bitmap);
+                mImageUri = getImageUri(getActivity(), bitmap).toString();
+
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
 
+
+    private boolean isEmptyTask() {
+        if ((mTitle.getText().toString().isEmpty()) && (mDescription.getText().toString().isEmpty()))
+            return true;
+        else return false;
+    }
+
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
+    public void onResume() {
+        super.onResume();
         KeyboardUtil.hideKeyboard(getActivity());
 
     }
+
+    public String getAddressFromLatitLong(double latitude, double longitude) {
+        String address = new GetAddressAsyncTask().execute(latitude, longitude).toString();
+        return address;
+    }
+
+    public class GetAddressAsyncTask extends AsyncTask<Double, Void, String> {
+
+        @Override
+        protected String doInBackground(Double... params) {
+
+            return getAddress(params[0], params[1]);
+        }
+
+        private String getAddress(double latitude, double longitude) {
+            StringBuilder result = new StringBuilder();
+            try {
+                Geocoder geocoder = null;
+                // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                //}
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                if (addresses.size() > 0) {
+                    Address address = addresses.get(0);
+
+                    result.append(address.getAddressLine(0));
+                    //getThoroughfare());
+//                    result.append(address.getLocality()).append("\n");
+//                    result.append(address.getCountryName());
+                }
+            } catch (IOException e) {
+                Log.e("tag", e.getMessage());
+            }
+
+            return result.toString();
+        }
+
+    }
+
+
 }

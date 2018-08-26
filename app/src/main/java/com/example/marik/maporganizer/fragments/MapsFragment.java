@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -22,6 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ import android.widget.Toast;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
+import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.models.PlaceInfo;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
@@ -68,7 +71,9 @@ import com.google.maps.android.clustering.ClusterManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.example.marik.maporganizer.utils.KeyboardUtil.hideKeyboard;
 
@@ -114,16 +119,18 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .Builder(Objects.requireNonNull(getContext()))
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(Objects.requireNonNull(getActivity()),this)
+                .enableAutoManage(Objects.requireNonNull(getActivity()), this)
                 .build();
 
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
+        mViewModel.getItems();
 
     }
 
+//TODO method getlocation setMarkers
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
@@ -133,13 +140,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             supportMapFragment = SupportMapFragment.newInstance();
-            transaction.replace(R.id.map,supportMapFragment).commit();
+            transaction.replace(R.id.map, supportMapFragment).commit();
         }
         supportMapFragment.getMapAsync(this);
 
         return rootView;
     }
-
 
 
     @Override
@@ -191,7 +197,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(),"Map is Ready",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Map is Ready", Toast.LENGTH_SHORT).show();
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -253,6 +259,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return false;
     }
 
+    public Location getLocation(LatLng latLng) {
+        Location targetLocation = new Location("");//provider name is unnecessary
+        targetLocation.setLatitude(latLng.latitude);//your coords of course
+        targetLocation.setLongitude(latLng.longitude);
+        return targetLocation;
+    }
+
 
     @Override
     public void onMapLongClick(LatLng latLng) {
@@ -261,8 +274,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .title(latLng.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
+        TaskItem taskItem = new TaskItem();
+        taskItem.setLatitude(latLng.latitude);
+        taskItem.setLongitude(latLng.longitude);
+        mViewModel.insertItem(taskItem);
         //Initializing a bottom sheet
-        BottomSheetDialogFragment bottomSheetDialogFragment = new FragmentTaskCreation();
+       // BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
 
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
@@ -301,15 +319,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public Location getCurrentLocation() {
         checkLocationPermission();
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(Objects.requireNonNull(getActivity()),new OnSuccessListener<Location>() {
+                .addOnSuccessListener(Objects.requireNonNull(getActivity()), new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
                             mCurrentLocation = location;
-                            moveCamera(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()),
-                                    DEFAULT_ZOOM,"my location");
+                            moveCamera(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
+                                    DEFAULT_ZOOM, "my location");
                         }
                     }
                 });
@@ -431,7 +449,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         Geocoder geocoder = new Geocoder(getActivity());
         List<Address> list = new ArrayList<>();
         try {
-            list = geocoder.getFromLocationName(searchString,1);
+            list = geocoder.getFromLocationName(searchString, 1);
         } catch (IOException e) {
         }
 
@@ -439,7 +457,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             Address address = list.get(0);
 
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
-            moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM,address.getAddressLine(0));
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
         }
     }
 
@@ -463,9 +481,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             View currentFocusedView = activity.getCurrentFocus();
             if (currentFocusedView != null) {
                 assert inputManager != null;
-                inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -473,7 +491,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getContext(),"Connection Failed",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
     }
 
     /*
@@ -481,13 +499,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
    */
     private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent,View view,int position,long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             hideKeyboard((getActivity()));
 
             final AutocompletePrediction mAutocompletePrediction = mPlaceAutocompleteAdapter.getItem(position);
             final String placeId = Objects.requireNonNull(mAutocompletePrediction).getPlaceId();
 
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mPLacesUbdDetailsCallback);
         }
     };
@@ -516,7 +534,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             }
 
             moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude,
-                    place.getViewport().getCenter().longitude),DEFAULT_ZOOM,mPlace.getName());
+                    place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace.getName());
 
             places.release();
         }
@@ -527,9 +545,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     //
     private void setUpClusterer() {
         // Position the map.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200,-44.503490),14));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200, -44.503490), 14));
 
-        mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()),mMap);
+        mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()), mMap);
 
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -552,10 +570,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             double offset = i / 60d;
             lat = lat + offset;
             lng = lng + offset;
-            Clusters offsetItem = new Clusters(lat,lng);
+            Clusters offsetItem = new Clusters(lat, lng);
             mClusterManager.addItem(offsetItem);
         }
     }
+
 
 
     public interface OnFragmentInteractionListener {

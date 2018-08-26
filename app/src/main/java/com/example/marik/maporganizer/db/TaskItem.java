@@ -7,6 +7,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.location.Address;
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -22,9 +23,15 @@ public class TaskItem implements Parcelable {
     @NonNull
     @ColumnInfo(name = "_id")
     public UUID mId;
+//
+//    @ColumnInfo(name = "location")
+//    private Location mLocation;
 
-    @ColumnInfo(name = "address")
-    private Address mAddress;
+    @ColumnInfo(name = "latitude")
+    private double mLatitude;
+
+    @ColumnInfo(name = "longitude")
+    private double mLongitude;
 
     @ColumnInfo(name = "choosed_address")
     private String mChoosedAddress;
@@ -38,14 +45,13 @@ public class TaskItem implements Parcelable {
     @ColumnInfo(name = "attach_photo")
     private boolean isAttached;
 
-
     @ColumnInfo(name = "image_uri")
     private String mImageUri;
 
     @ColumnInfo(name = "date")
     private Date mDate;
 
-    @ColumnInfo(name = "remind")
+    @ColumnInfo(name = "isremind")
     private boolean mReminder;
 
     @ColumnInfo(name = "remind_time")
@@ -55,14 +61,12 @@ public class TaskItem implements Parcelable {
     private boolean mNotifyByPlace;
 
     @ColumnInfo(name = "alert_radius")
-    private int mAlertRadius;
+    private int mAlertRadius=100;
 
     public TaskItem() {
+        setId(UUID.randomUUID());
     }
 
-    public TaskItem(UUID pId) {
-        mId = pId;
-    }
 
     public TaskItem(String title, String description, Date date, String addressLine) {
         mTitle = title;
@@ -104,12 +108,20 @@ public class TaskItem implements Parcelable {
         isAttached = attached;
     }
 
-    public Address getAddress() {
-        return mAddress;
+    public double getLatitude() {
+        return mLatitude;
     }
 
-    public void setAddress(Address address) {
-        mAddress = address;
+    public void setLatitude(double latitude) {
+        mLatitude = latitude;
+    }
+
+    public double getLongitude() {
+        return mLongitude;
+    }
+
+    public void setLongitude(double longitude) {
+        mLongitude = longitude;
     }
 
     public String getChoosedAddress() {
@@ -172,8 +184,13 @@ public class TaskItem implements Parcelable {
         return CREATOR;
     }
 
+
+    String idToString = Converters.toString(mId);
+
     protected TaskItem(Parcel in) {
-        mAddress = in.readParcelable(Address.class.getClassLoader());
+        idToString = in.readString();
+        mLatitude = in.readDouble();
+        mLongitude = in.readDouble();
         mChoosedAddress = in.readString();
         mTitle = in.readString();
         mDescription = in.readString();
@@ -203,15 +220,18 @@ public class TaskItem implements Parcelable {
         return 0;
     }
 
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(mAddress, flags);
+        dest.writeDouble(mLatitude);
+        dest.writeDouble(mLongitude);
+        dest.writeString(idToString);
         dest.writeString(mChoosedAddress);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
+        dest.writeLong(mDate.getTime());
         dest.writeByte((byte) (isAttached ? 1 : 2));
         dest.writeString(mImageUri);
-        dest.writeLong(mDate.getTime());
         dest.writeByte((byte) (mReminder ? 1 : 0));
         dest.writeLong(mRemindtime);
         dest.writeByte((byte) (mNotifyByPlace ? 1 : 0));

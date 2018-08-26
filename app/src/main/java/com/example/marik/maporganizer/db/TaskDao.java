@@ -24,6 +24,9 @@ public interface TaskDao {
     @Query("SELECT * FROM task_item WHERE _id = :id")
     TaskItem getById(UUID id);
 
+    @Query("SELECT *FROM task_item  WHERE  latitude=:latitude AND longitude=:longitude")
+    TaskItem getItemByLocation(double latitude, double longitude);
+
     @Insert
     void insert(TaskItem item);
 
