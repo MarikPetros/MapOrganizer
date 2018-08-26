@@ -2,9 +2,11 @@ package com.example.marik.maporganizer.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,7 +25,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,13 +36,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.cluster.Clusters;
+import com.example.marik.maporganizer.cluster.ClusterRenderer;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.models.PlaceInfo;
-import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -67,21 +66,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 
-import static com.example.marik.maporganizer.utils.KeyboardUtil.hideKeyboard;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener,
+        GoogleApiClient.ConnectionCallbacks{
+
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(70, 137));
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
+    private static final int[] COLORS = new int[]{R.color.color_grey,R.color.colorPrimaryDark,R.color.color_white,R.color.colorPrimary,R.color.primary_dark_material_light};
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -96,9 +94,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private ClusterManager<Clusters> mClusterManager;
     private Marker mMarker;
     private SupportMapFragment supportMapFragment;
+    protected Location mLastLocation;
+
+    private FragmentTaskCreation mFragmentTaskCreation;
 
     private OnFragmentInteractionListener mListener;
     private TaskViewModel mViewModel;
+
 
     public MapsFragment() {
         // Required empty public constructor
@@ -122,35 +124,59 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .enableAutoManage(Objects.requireNonNull(getActivity()), this)
                 .build();
 
+         }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems();
+        mViewModel.getItems().observe(this,new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                setMarkerState(taskItems);
+            }
+        });
 
     }
 
-//TODO method getlocation setMarkers
+    private void setMarkerState(List<TaskItem> taskItems) {
+        for (TaskItem item : taskItems) {
+            LatLng latLng = new LatLng(item.getLatitude(),item.getLongitude() );
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(latLng.toString())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        }
+
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_map,container,false);
 
-        supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);//child manager?
+        supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (supportMapFragment == null) {
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             supportMapFragment = SupportMapFragment.newInstance();
-            transaction.replace(R.id.map, supportMapFragment).commit();
+            transaction.replace(R.id.map,supportMapFragment).commit();
         }
         supportMapFragment.getMapAsync(this);
+
 
         return rootView;
     }
 
 
+
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view,savedInstanceState);
         initOnViewCreated(view);
     }
 
@@ -197,7 +223,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(), "Map is Ready", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(),"Map is Ready",Toast.LENGTH_SHORT).show();
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -213,14 +239,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
                 mMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
                 checkLocationPermission();
             }
         } else {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
@@ -240,6 +266,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.position(latLng);
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
                 // Clears the previously touched position
+
                 mMap.clear();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.addMarker(markerOptions);
@@ -253,9 +280,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         setUpClusterer();
     }
 
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         //TODO fix
+
         return false;
     }
 
@@ -288,6 +317,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+    //-----------------------------------------------------------
+
+
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -300,7 +332,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                 //Place current location marker
                 if (location != null) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
                     markerOptions.title("Current Position");
@@ -308,7 +340,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
                     //move map camera
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
 
                 }
             }
@@ -337,7 +369,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -350,9 +382,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 new AlertDialog.Builder(getContext())
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(DialogInterface dialogInterface,int i) {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -374,7 +406,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -387,7 +419,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
                         mMap.setMyLocationEnabled(true);
                         getCurrentLocation();
                     }
@@ -396,7 +428,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"permission denied",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -416,9 +448,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, LAT_LNG_BOUNDS, null);
         mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
+
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+            public boolean onEditorAction(TextView textView,int actionId,KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
@@ -449,7 +482,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         Geocoder geocoder = new Geocoder(getActivity());
         List<Address> list = new ArrayList<>();
         try {
-            list = geocoder.getFromLocationName(searchString, 1);
+            list = geocoder.getFromLocationName(searchString,1);
         } catch (IOException e) {
         }
 
@@ -457,13 +490,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             Address address = list.get(0);
 
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
+            moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM,address.getAddressLine(0));
         }
     }
 
-
-    private void moveCamera(LatLng latLng, float zoom, String title) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    private void moveCamera(LatLng latLng,float zoom,String title) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
         if (!title.equals("my location")) {
             MarkerOptions options = new MarkerOptions()
@@ -474,6 +506,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         hideKeyboard(getActivity());
     }
 
+
     private void hideKeyboard(Activity activity) {
         try {
             InputMethodManager inputManager = (InputMethodManager) activity
@@ -481,9 +514,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             View currentFocusedView = activity.getCurrentFocus();
             if (currentFocusedView != null) {
                 assert inputManager != null;
-                inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -491,21 +524,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(),"Connection Failed",Toast.LENGTH_SHORT).show();
     }
+
 
     /*
    -----------------------------google places API autocomplete suggestions------------
    */
     private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent,View view,int position,long id) {
             hideKeyboard((getActivity()));
 
             final AutocompletePrediction mAutocompletePrediction = mPlaceAutocompleteAdapter.getItem(position);
             final String placeId = Objects.requireNonNull(mAutocompletePrediction).getPlaceId();
 
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
             placeResult.setResultCallback(mPLacesUbdDetailsCallback);
         }
     };
@@ -534,27 +568,31 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             }
 
             moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude,
-                    place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace.getName());
+                    place.getViewport().getCenter().longitude),DEFAULT_ZOOM,mPlace.getName());
 
             places.release();
+
+
         }
     };
-
 
     //-----------------------Marker clustering-------------
     //
     private void setUpClusterer() {
-        // Position the map.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200, -44.503490), 14));
+        // Position the map
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.177200,-44.503490),14));
 
-        mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()), mMap);
+        mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()),mMap);
+        mClusterManager.setRenderer(new ClusterRenderer(getContext(),mMap,mClusterManager));
 
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
 
-        addItems();
+
+        mClusterManager.cluster();
+        // addItems();
     }
 
 
@@ -575,6 +613,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
 
 
     public interface OnFragmentInteractionListener {

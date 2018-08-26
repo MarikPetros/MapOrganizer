@@ -34,12 +34,11 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
     public final static int PERMISSION_CODE = 26;
 
     private GeofencingClient mGeofencingClient;
@@ -55,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
+      init();
+
     }
 
-
-    public void init() {
-
+    public void init(){
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
@@ -81,15 +79,18 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
 
+
         setTabs();
+
         setFragment(mMapsFragment);
     }
+
 
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);//fragment container
+        fragmentTransaction.replace(R.id.fragment_container,fragment);//fragment container
         fragmentTransaction.commit();
     }
 
@@ -130,9 +131,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                 new AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(DialogInterface dialogInterface,int i) {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MainActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -159,10 +160,10 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(this, GeofencerService.class);
+        Intent intent = new Intent(this,GeofencerService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.
+        mGeofencePendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.
                 FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
@@ -201,11 +202,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
 //-------------------------------------------------------------------
 
-    private void doFragmentTransaction(Fragment fragment, boolean addToBackStack) {
+    private void doFragmentTransaction(Fragment fragment,boolean addToBackStack) {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        fragmentTransaction.replace(R.id.fragment_container,fragment);
+        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out);
         if (addToBackStack) {
             fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         }

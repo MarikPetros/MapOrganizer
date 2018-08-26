@@ -28,7 +28,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.adapters.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.models.PlaceInfo;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -63,7 +62,7 @@ public class TempMapFragment extends Fragment implements OnMapReadyCallback {
     private Circle circle;
     private EditText desiredRadius;
     private int radius = 100;
-    private AutoCompleteTextView autoCompleteTextView;
+    private AutoCompleteTextView mAutoCompleteTextView;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
     private Marker mMarker;
@@ -85,8 +84,8 @@ public class TempMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        autoCompleteTextView = view.findViewById(R.id.radius_input_search);
-        ImageView search = view.findViewById(R.id.radius_search_icon);
+        mAutoCompleteTextView = view.findViewById(R.id.radius_input_search);
+        ImageView mSearch = view.findViewById(R.id.radius_search_icon);
         desiredRadius = view.findViewById(R.id.editTextRadius);
         ImageView saveBtn = view.findViewById(R.id.radius_save_img);
 
@@ -108,6 +107,8 @@ public class TempMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         onMapClick();
+
+        initSearch();
     }
 
     private void onMapClick() {
@@ -153,15 +154,16 @@ public class TempMapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+//-------------------------Autocomplete
 
     private void initSearch() {
 
-        autoCompleteTextView.setOnItemClickListener(mAutoCompleteClickListener);
+        mAutoCompleteTextView.setOnItemClickListener(mAutoCompleteClickListener);
 
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, LAT_LNG_BOUNDS, null);
-        autoCompleteTextView.setAdapter(mPlaceAutocompleteAdapter);
+        mAutoCompleteTextView.setAdapter(mPlaceAutocompleteAdapter);
 
-        autoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mAutoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
@@ -177,7 +179,7 @@ public class TempMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void geoLocate() {
-        String searchString = autoCompleteTextView.getText().toString();
+        String searchString = mAutoCompleteTextView.getText().toString();
 
         Geocoder geocoder = new Geocoder(getActivity());
         List<Address> list = new ArrayList<>();

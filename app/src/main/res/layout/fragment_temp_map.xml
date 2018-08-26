@@ -21,20 +21,18 @@
             android:layout_height="15dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:src="@drawable/ic_search_black_24dp" />
+            android:src="@drawable/ic_search_black_24dp"/>
 
         <AutoCompleteTextView
             android:id="@+id/radius_input_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/radius_search_icon"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/search_icon"
-            android:gravity="center"
-            android:hint="@string/search_here"
-            android:imeOptions="actionSearch"
+            android:textSize="15sp"
             android:textColor="#000"
-            android:textSize="15sp" />
-
+            android:hint="@string/search_here"
+            android:imeOptions="actionSearch" />
 
     </RelativeLayout>
 

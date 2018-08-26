@@ -13,6 +13,6 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-        TaskDataBase taskRoomDB = TaskDataBase.getDataBase(context);
+       TaskDataBase taskRoomDB = TaskDataBase.getDataBase(context);
     }
 }

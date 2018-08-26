@@ -1,4 +1,4 @@
-package com.example.marik.maporganizer.adapters;
+package com.example.marik.maporganizer.fragments;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -52,7 +52,7 @@ public class PlaceAutocompleteAdapter
     }
 
 
-     // Returns the number of results received in the last autocomplete query.
+    // Returns the number of results received in the last autocomplete query.
 
     @Override
     public int getCount() {
@@ -60,7 +60,7 @@ public class PlaceAutocompleteAdapter
     }
 
 
-     // Returns an item from the last autocomplete query.
+    // Returns an item from the last autocomplete query.
 
     @Override
     public AutocompletePrediction getItem(int position) {
@@ -87,7 +87,7 @@ public class PlaceAutocompleteAdapter
     }
 
 
-     // Returns the filter for the current set of autocomplete results.
+    // Returns the filter for the current set of autocomplete results.
 
     @NonNull
     @Override
