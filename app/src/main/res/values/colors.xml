@@ -6,4 +6,6 @@
     <color name="color_white">#fff</color>
     <color name="color_grey">#c3c3c3</color>
     <color name="color_item">#AAAACCFF</color>
+    <color name="color_compass_forground">#00fff0</color>
+    <color name="color_compass_background">#00ffffff</color>
 </resources>

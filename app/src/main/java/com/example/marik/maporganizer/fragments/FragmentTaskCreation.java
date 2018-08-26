@@ -16,6 +16,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -57,7 +59,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
         @Override
-        public void onSlide(@NonNull View bottomSheet,float slideOffset) {
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
 
@@ -90,9 +92,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             remind2, remind3, remind10, remindDay};
 
     TaskViewModel mViewModel;
-    Address mAddress;
 
-    private TextView mAddressLine;
     private TextView mChoosedAddress;
     private TextView mTitle;
     private TextView mDescription;
@@ -205,11 +205,16 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
         mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
-        mAddressLine = root.findViewById(R.id.addressLine);
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()), android.R.layout.simple_spinner_item, spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
+
+        setListeners();
+    }
+
+
+    private void setListeners() {
         mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -293,6 +298,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             }
         });
 
+        mChoosedAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = FragmentTaskCreation.this.getChildFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
+                fragmentTransaction.commit();
+            }
+        });
+
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,9 +320,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
             }
         });
-        // ViewModel
     }
-
 
     private void openDatePicker() {
         new DatePickerDialog(getActivity(), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),
@@ -345,9 +357,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             //  mTaskItem.setImageUri(mImageUri.toString());
         }
 
-        if(mReminderCheckBox.isChecked()){
+        if (mReminderCheckBox.isChecked()) {
             mTaskItem.setReminder(mReminderCheckBox.isChecked());
-          //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         }
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
         if (mNotifybyPlaceCheckBox.isChecked()) {

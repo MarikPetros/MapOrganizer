@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
@@ -68,10 +69,15 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         model.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
-                mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+                if (taskItems != null) {
+                    mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
+                }else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
             }
         });
-
+       //----------------Geofencing test-----------------------------------
+     //   mGeofenceMaker.crateTestGeofenceList();
+//        addGeofences();
+//-------------------------------------------------------------
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
 
@@ -169,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Geofences added
-                        // ...
+                        Toast.makeText(getApplicationContext(),"Geofence successfuly added", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -177,18 +183,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                     public void onFailure(@NonNull Exception e) {
                         // Failed to add geofences
                         e.printStackTrace();
+                        Toast.makeText(getApplicationContext(),"Geofencees failed", Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
-
-    public class BootReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() != null && intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-                addGeofences();
-            }
-        }
     }
 
 

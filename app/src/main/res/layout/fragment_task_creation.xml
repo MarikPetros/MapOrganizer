@@ -160,6 +160,18 @@
             app:layout_constraintEnd_toEndOf="@id/location_text"
             app:layout_constraintTop_toTopOf="@id/location_text" />
 
+        <android.support.v7.widget.ContentFrameLayout
+            android:id="@+id/frame_in_creator"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintTop_toBottomOf="@id/location_text"
+            app:layout_constraintStart_toStartOf="parent"
+            android:padding="@dimen/_padding"
+            android:layout_margin="@dimen/margin"
+            >
+            <!-- <include layout="@layout/fragment_temp_map"/>-->
+        </android.support.v7.widget.ContentFrameLayout>
+
     </android.support.constraint.ConstraintLayout>
 
 

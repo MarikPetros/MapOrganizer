@@ -9,9 +9,11 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
@@ -43,12 +45,14 @@ public class GeofencerService extends IntentService {
         taskRepository = TaskRepository.getRepository(getApplication());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());
             Log.e(TAG, errorMessage);
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -59,7 +63,7 @@ public class GeofencerService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
             // Get the geofences that were triggered. A single event can trigger
             // multiple geofences.
@@ -75,13 +79,18 @@ public class GeofencerService extends IntentService {
             // Send notification and log the transition details.
             sendNotification(geofenceTransitionDetails);
             Log.i(TAG, geofenceTransitionDetails);
+            Toast.makeText(getApplicationContext(),geofenceTransitionDetails, Toast.LENGTH_LONG).show();
+
         } else {
             // Log the error.
             Log.e(TAG, getString(R.string.geofence_transition_invalid_type,
                     geofenceTransition));
+            Toast.makeText(getApplicationContext(),R.string.geofence_transition_invalid_type, Toast.LENGTH_LONG).show();
+
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void sendNotification(String geofenceTransitionDetails) {
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -92,12 +101,17 @@ public class GeofencerService extends IntentService {
     private String getGeofenceTransitionDetails(GeofencerService geofencerService, int geofenceTransition, List<Geofence> triggeringGeofences) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
+        //For test
+  //      String notifText = "datark a";
+
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             stringBuilder.append(getString(R.string.alert_text));
             List<Integer> ids = new ArrayList<>();
             List<String> addresses = new ArrayList<>();
+ //           int i=0;
             for (Geofence g : triggeringGeofences) {
-                notificationId = Integer.parseInt(g.getRequestId());
+   //           notifText = g.getRequestId(); /// This is for test
+                notificationId =Integer.parseInt(g.getRequestId());
                 String itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
                 ids.add(notificationId);
                 addresses.add(itemAddress + "/n");
@@ -113,10 +127,12 @@ public class GeofencerService extends IntentService {
 
             //complete geofenceTransitionDetails text
             stringBuilder.append(addresses.get(0));
+//            stringBuilder.append(notifText);
         }
         return stringBuilder.toString();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createNotification(String geofenceTransitionDetails) {
         // Create an explicit intent for  MaosActivity
         Intent intent = new Intent(this, MainActivity.class);
@@ -142,6 +158,7 @@ public class GeofencerService extends IntentService {
             channel.enableVibration(true);
             channel.setShowBadge(true);
             channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);

@@ -15,8 +15,11 @@ import java.util.UUID;
 @Dao
 public interface TaskDao {
 
-   @Query("SELECT * FROM task_item ORDER BY date")
-   LiveData< List<TaskItem>> getAll();
+    @Query("SELECT * FROM task_item ORDER BY date")
+    LiveData<List<TaskItem>> getAll();
+
+    @Query("SELECT * FROM task_item ORDER BY date")
+    List<TaskItem> getAllTaskItems();
 
     @Query("SELECT * FROM task_item WHERE _id = :id")
     TaskItem getById(UUID id);
@@ -27,7 +30,7 @@ public interface TaskDao {
     @Update
     void update(TaskItem item);
 
- @Query("DELETE FROM task_item WHERE _id in (:id) ")
+    @Query("DELETE FROM task_item WHERE _id in (:id) ")
     void delete(UUID... id);
 
     @Query("DELETE FROM task_item")

@@ -168,14 +168,6 @@ public class TaskItem implements Parcelable {
         mNotifyByPlace = notifyByPlace;
     }
 
-    public int getRadius() {
-        return mAlertRadius;
-    }
-
-    public void setRadius(int radius) {
-        mAlertRadius = radius;
-    }
-
     public static Creator<TaskItem> getCREATOR() {
         return CREATOR;
     }

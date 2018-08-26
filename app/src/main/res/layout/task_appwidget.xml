@@ -21,4 +21,14 @@
         android:layout_height="match_parent"
         android:layout_below="@id/textView" />
 
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@drawable/border3_9"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+        android:text="@string/empty_view_text"
+        android:textSize="20sp" />
 </RelativeLayout>

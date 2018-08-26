@@ -7,7 +7,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -16,34 +15,34 @@
         tools:context=".activity.MainActivity" />
 
     <RelativeLayout
-            android:id="@+id/search_relative"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/white_border">
+    android:id="@+id/search_relative"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    android:background="@drawable/white_border">
 
-            <ImageView
-                android:id="@+id/search_icon"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_search_black_24dp"/>
+    <ImageView
+        android:id="@+id/search_icon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_search_black_24dp"/>
 
-            <AutoCompleteTextView
-                android:id="@+id/input_search"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@+id/search_icon"
-                android:layout_centerVertical="true"
-                android:textSize="15sp"
-                android:textColor="#000"
-                android:hint="@string/search_here"
-                android:imeOptions="actionSearch" />
+    <AutoCompleteTextView
+        android:id="@+id/input_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/search_icon"
+        android:layout_centerVertical="true"
+        android:textSize="15sp"
+        android:textColor="#000"
+        android:hint="@string/search_here"
+        android:imeOptions="actionSearch" />
 
-    </RelativeLayout>
+</RelativeLayout>
 
 
 

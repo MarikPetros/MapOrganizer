@@ -6,7 +6,6 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality. 
     -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -62,12 +61,9 @@
             android:name=".service.GeofencerService"
             android:exported="false" />
 
-        <receiver android:name=".activity.MainActivity$BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
+        <service
+            android:name=".appwidget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver android:name=".appwidget.TaskAppWidgetProvider">
             <intent-filter>
@@ -81,7 +77,7 @@
 
         <activity android:name=".appwidget.TaskAppWidgetConfigureActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
     </application>
