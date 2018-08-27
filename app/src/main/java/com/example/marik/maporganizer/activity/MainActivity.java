@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
       init();
 
+
     }
 
     public void init(){
@@ -81,18 +82,28 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
         setTabs();
 
-        setFragment(mMapsFragment);
+        setFragment(mMapsFragment, true);
 
     }
 
-
-
+    private void setFragment(Fragment fragment, boolean addToBackStack) {
+        assert getFragmentManager() != null;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, fragment, "map");
+        fragmentTransaction.addToBackStack("map");//fragment container
+        fragmentTransaction.commit();
+    }
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container,fragment);//fragment container
-        fragmentTransaction.commit();
+        if (fragment instanceof MapsFragment) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.fragment_container,fragment);
+            fragmentTransaction.addToBackStack("other fragment");
+            fragmentTransaction.commit();
+        }
 
     }
 

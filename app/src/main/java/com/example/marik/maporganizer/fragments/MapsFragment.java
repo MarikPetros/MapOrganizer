@@ -64,6 +64,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,11 +119,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .enableAutoManage(Objects.requireNonNull(getActivity()), this)
                 .build();
 
+
          }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems();
@@ -132,18 +134,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 setMarkerState(taskItems);
             }
         });
-
     }
 
     private void setMarkerState(List<TaskItem> taskItems) {
         for (TaskItem item : taskItems) {
-            LatLng latLng = new LatLng(item.getLatitude(),item.getLongitude() );
+            LatLng latLng = new LatLng(item.getLatitude(), item.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .title(latLng.toString())
+                    //.title(latLng.toString())
                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));
         }
-
     }
 
 
@@ -178,6 +178,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onPause() {
         mGoogleApiClient.stopAutoManage(getActivity());
         mGoogleApiClient.disconnect();
+
         super.onPause();
     }
 
@@ -250,6 +251,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+    }
 
     private void onMapClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -258,7 +265,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 // Creating a marker
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+             //   markerOptions.title(latLng.latitude + " : " + latLng.longitude);
                 // Clears the previously touched position
 
              //   mMap.clear();
@@ -277,10 +284,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
         //TODO fix
+        double positionLat = marker.getPosition().latitude;
+        double positionLng = marker.getPosition().longitude;
+        TaskItem item =  mViewModel.getItemByLocation(positionLat, positionLng);
+        //Initializing a bottom sheet
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item );
+
+        //show it
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
 
         return false;
     }
+
 
 
     @Override
@@ -489,8 +506,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (!title.equals("my location")) {
             MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title(title);
+                    .position(latLng);
+                  //  .title(title);
             mMarker = mMap.addMarker(options);
         }
         hideKeyboard(getActivity());
@@ -574,6 +591,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()),mMap);
         mClusterManager.setRenderer(new ClusterRenderer(getContext(),mMap,mClusterManager));
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<Clusters>() {
+            @Override
+            public boolean onClusterClick(Cluster<Clusters> cluster) {
+                return false;
+            }
+        });
+
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<Clusters>() {
+            @Override
+            public boolean onClusterClick(Cluster<Clusters> cluster) {
+                return false;
+            }
+        });
 
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
