@@ -6,13 +6,11 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -79,8 +77,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
-    private static final int[] COLORS = new int[]{R.color.color_grey,R.color.colorPrimaryDark,R.color.color_white,R.color.colorPrimary,R.color.primary_dark_material_light};
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(44,137));
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
@@ -95,10 +92,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private ClusterManager<Clusters> mClusterManager;
     private Marker mMarker;
     private SupportMapFragment supportMapFragment;
-    protected Location mLastLocation;
-
-    private FragmentTaskCreation mFragmentTaskCreation;
-
     private OnFragmentInteractionListener mListener;
     private TaskViewModel mViewModel;
 
@@ -148,7 +141,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
                     .title(latLng.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                   .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));
         }
 
     }
@@ -268,9 +261,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
                 // Clears the previously touched position
 
-                mMap.clear();
+             //   mMap.clear();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.addMarker(markerOptions);
+               // mMap.addMarker(markerOptions);
             }
 
         });
@@ -289,28 +282,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return false;
     }
 
-    public Location getLocation(LatLng latLng) {
-        Location targetLocation = new Location("");//provider name is unnecessary
-        targetLocation.setLatitude(latLng.latitude);//your coords of course
-        targetLocation.setLongitude(latLng.longitude);
-        return targetLocation;
-    }
-
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mMap.addMarker(new MarkerOptions()
+        /*mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title(latLng.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                .title(latLng.toString()));
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));*/
 
         TaskItem taskItem = new TaskItem();
         taskItem.setLatitude(latLng.latitude);
         taskItem.setLongitude(latLng.longitude);
         Log.v("mapi lat/lng", ""+latLng.latitude+", "+latLng.longitude+"");
         mViewModel.insertItem(taskItem);
+
         //Initializing a bottom sheet
-       // BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
 
         //show it
@@ -336,9 +322,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 if (location != null) {
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                     MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(latLng);
-                    markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                    markerOptions.position(latLng)
+                            .title("Current Position")
+                            .icon(BitmapDescriptorFactory
+                            .fromResource(R.drawable.kid_icon));
+
                     mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
                     //move map camera

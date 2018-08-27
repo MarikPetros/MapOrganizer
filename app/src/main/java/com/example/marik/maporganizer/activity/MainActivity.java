@@ -2,10 +2,9 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -83,7 +82,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         setTabs();
 
         setFragment(mMapsFragment);
+
     }
+
 
 
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container,fragment);//fragment container
         fragmentTransaction.commit();
+
     }
 
 
@@ -114,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                         }
                     }
                 });
+
+
     }
 
     // ---------------------------------------------------------------------------------------------
