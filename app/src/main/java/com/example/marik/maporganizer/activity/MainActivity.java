@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         });
        //----------------Geofencing test-----------------------------------
      //   mGeofenceMaker.crateTestGeofenceList();
-//        addGeofences();
+//        addGeofences();  //            ?????????????????
 //-------------------------------------------------------------
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
