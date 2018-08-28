@@ -11,8 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:src="@drawable/briefcase_24"
         tools:ignore="ContentDescription" />
+    <!--android:src="@drawable/briefcase_24"-->
+
+
 
     <TextView
         android:id="@+id/widget_item_text"

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-//import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 
 public class FragmentTasksList extends android.support.v4.app.Fragment {
@@ -40,24 +39,19 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
         @Override
-        public void onClickItem(TaskItem item, int position) {
-            editTask(mViewModel.getItem(item.getId()));
+        public void onClickItem(TaskItem item) {
+//            item = mViewModel.getItem(item.getId());
+            BottomSheetDialogFragment bottomSheetDialogFragment =FragmentTaskCreation.newInstance(item);
+            bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
         }
 
         @Override
         public void onRemove(UUID id) {
             mAdapter.mItems.remove(id);
             mViewModel.deleteItem(id);
-           /* mViewModel.getItems().observe(Objects.requireNonNull(getActivity()), new Observer<List<TaskItem>>() {
-                @Override
-                public void onChanged(@Nullable List<TaskItem> taskItems) {
-                    if (taskItems != null) {
-                        GeofenceManager geofenceManager = GeofenceManager.getInstance(getActivity());
-                        geofenceManager.addGeofences(taskItems);
-                    }
-                }
-            });*/
+
         }
+
     };
 
     @Override
@@ -96,14 +90,14 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init(view);
     }
-
     private void init(View view) {
+
+        getTaskItemsFromViewModel();
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         mAdapter = new TaskAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setListClickedListener(mListClickedListener);
-        getTaskItemsFromViewModel();
     }
 
     @Override
@@ -126,17 +120,18 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     public void editTask(TaskItem taskItem) {
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem);
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
-    /*FragmentTaskCreation.OnTaskFragmentInteraction taskFragmentInteractionListener=new FragmentTaskCreation.OnTaskFragmentInteraction() {
-        @Override
-        public void onAddTask(TaskItem item) {
-            //mListClickedListener.onClickItem();
-        }
 
-        @Override
-        public void onEditTask(TaskItem item) {
-
-        }
-    };*/
+//        FragmentTaskCreation.OnTaskFragmentInteraction taskFragmentInteractionListener = new FragmentTaskCreation.OnTaskFragmentInteraction() {
+//            @Override
+//            public void onAddTask(TaskItem item) {
+//                mViewModel.insertItem(item);
+//            }
+//
+//            @Override
+//            public void onEditTask(TaskItem item) {
+//                mViewModel.update(item);
+//            }
+//        };
     }
 
 }

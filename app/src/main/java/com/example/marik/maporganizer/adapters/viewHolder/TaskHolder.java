@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.adapters.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +19,7 @@ public class TaskHolder extends RecyclerView.ViewHolder {
     private TextView mDate;
     private TextView mTitle;
     private TextView mChoosedAddress;
-    private ImageView mDeleteBtn;
+    private CheckBox mDeleteCheckBox;
 
 
     public TaskHolder(View itemView) {
@@ -28,7 +29,7 @@ public class TaskHolder extends RecyclerView.ViewHolder {
         mDescription = itemView.findViewById(R.id.description_view);
         mDate = itemView.findViewById(R.id.date_view);
         mChoosedAddress = itemView.findViewById(R.id.location_view);
-        mDeleteBtn=itemView.findViewById(R.id.delete_btn);
+        mDeleteCheckBox=itemView.findViewById(R.id.delete_checkbox);
     }
 
     public void bindHolder(TaskItem pTaskItem) {
@@ -40,8 +41,8 @@ public class TaskHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public ImageView getDeleteBtn() {
-        return mDeleteBtn;
+    public CheckBox getDeleteCheckBox() {
+        return mDeleteCheckBox;
     }
 }
 

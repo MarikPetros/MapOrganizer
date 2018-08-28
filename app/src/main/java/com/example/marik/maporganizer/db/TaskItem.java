@@ -69,6 +69,7 @@ public class TaskItem implements Parcelable {
 
 
     public TaskItem(String title, String description, Date date, String addressLine) {
+        this();
         mTitle = title;
         mDescription = description;
         mDate = date;
@@ -196,7 +197,8 @@ public class TaskItem implements Parcelable {
         mDescription = in.readString();
         isAttached = in.readByte() == 1;
         mImageUri = in.readString();
-        mDate = new Date(in.readLong());
+        long dateMillis = in.readLong();
+        mDate = dateMillis > 0 ? new Date(in.readLong()) : null;
         mReminder = in.readByte() == 1;
         mRemindtime = in.readLong();
         mNotifyByPlace = in.readByte() == 1;
@@ -229,7 +231,7 @@ public class TaskItem implements Parcelable {
         dest.writeString(mChoosedAddress);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
-        dest.writeLong(mDate.getTime());
+        dest.writeLong(mDate == null ? -1 : mDate.getTime());
         dest.writeByte((byte) (isAttached ? 1 : 2));
         dest.writeString(mImageUri);
         dest.writeByte((byte) (mReminder ? 1 : 0));

@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.marik.maporganizer.R;
+import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.cluster.ClusterRenderer;
 import com.example.marik.maporganizer.db.TaskItem;
@@ -304,14 +305,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .title(latLng.toString()));
                 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));*/
 
-        TaskItem taskItem = new TaskItem();
-        taskItem.setLatitude(latLng.latitude);
-        taskItem.setLongitude(latLng.longitude);
-        Log.v("mapi lat/lng", ""+latLng.latitude+", "+latLng.longitude+"");
-        mViewModel.insertItem(taskItem);
-
         //Initializing a bottom sheet
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem );
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(latLng);
 
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
