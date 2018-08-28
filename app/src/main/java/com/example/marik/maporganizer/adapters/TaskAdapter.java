@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.adapters.viewHolder.TaskHolder;
+import com.example.marik.maporganizer.utils.GeofenceManager;
 
 import java.util.ArrayList;
 import java.util.List;

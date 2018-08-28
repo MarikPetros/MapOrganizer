@@ -20,7 +20,7 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
     public static final String EXTRA_ITEM = "com.example.marik.maporganizer.appwidget.EXTRA_ITEM";
 
 
-    /*@Override
+    @Override
     public void onReceive(Context context, Intent intent) {
         AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (Objects.requireNonNull(intent.getAction()).equals(TOAST_ACTION)) {
@@ -30,7 +30,7 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
             Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
         }
         super.onReceive(context, intent);
-    }*/
+    }
 
 
     @Override
@@ -59,7 +59,7 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
             // object above.
             rv.setEmptyView(R.id.task_list, R.id.empty_view);
 
-      /*      // Here we setup the a pending intent template. Individuals items of a collection
+            // Here we setup the a pending intent template. Individuals items of a collection
             // cannot setup their own pending intents, instead, the collection as a whole can
             // setup a pending intent template, and the individual items can set a fillInIntent
             // to create unique before on an item to item basis.
@@ -70,7 +70,6 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
             PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.task_list, toastPendingIntent);
-*/
             appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds[i],
                     R.id.task_list);

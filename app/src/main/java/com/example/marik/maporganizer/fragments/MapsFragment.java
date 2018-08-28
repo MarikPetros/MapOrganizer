@@ -248,14 +248,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         onMapClick();
         initSearch();
-
     }
+
 
     @Override
     public void onResume() {
         super.onResume();
-
-
     }
 
     private void onMapClick() {
@@ -291,7 +289,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         TaskItem item =  mViewModel.getItemByLocation(positionLat, positionLng);
         //Initializing a bottom sheet
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item );
-
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
 

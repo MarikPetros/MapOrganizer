@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/border3_9">
+    android:background="@color/color_white">
 
     <TextView
         android:id="@+id/textView"
@@ -11,14 +11,16 @@
         android:gravity="center|top"
         android:padding="@dimen/widget_padding"
         android:text="@string/maporganizer"
-        android:textColor="#03fafe"
-        android:textSize="28sp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/color_white"
+        android:textSize="20sp"
         android:textStyle="italic|bold" />
 
     <ListView
         android:id="@+id/task_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/color_white"
         android:layout_below="@id/textView" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,8 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:background="@drawable/border3_9"
-        android:textColor="#ff0000"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:text="@string/empty_view_text"
         android:textSize="20sp" />

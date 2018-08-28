@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -46,6 +47,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.imagePicker.Utility;
 import com.example.marik.maporganizer.utils.DateUtil;
+import com.example.marik.maporganizer.utils.GeofenceManager;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -241,7 +243,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
-                     Utility.checkPermission(getContext());
+                    Utility.checkPermission(getContext());
                     onPickImage(getView());
 
                 } else {
@@ -320,17 +322,19 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
                 fragmentTransaction.commit();
 
+               /* mViewModel.getItems().observe(Objects.requireNonNull(getActivity()), new Observer<List<TaskItem>>() {
+                    @Override
+                    public void onChanged(@Nullable List<TaskItem> taskItems) {
+                        if (taskItems != null) {
+                            GeofenceManager geofenceManager = GeofenceManager.getInstance(getActivity());
+                            geofenceManager.addGeofences(taskItems);
+
+                        }
+                    }
+                });*/
             }
         });
 
-        mChoosedAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = FragmentTaskCreation.this.getChildFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
-                fragmentTransaction.commit();
-            }
-        });
 
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,6 +368,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mDate.setText(dateFormat.format(mSelectedDate.getTime()));
     }
 
+
     boolean isExist = true;
 
     public TaskItem createTaskItem() {
@@ -373,7 +378,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
         mTaskItem.setLatitude(mTaskItem.getLatitude());
         mTaskItem.setLongitude(mTaskItem.getLongitude());
-        Log.v("fragmenti lat/lng", ""+ mTaskItem.getLatitude()+ ", "+ mTaskItem.getLongitude()+"");
+        Log.v("fragmenti lat/lng", "" + mTaskItem.getLatitude() + ", " + mTaskItem.getLongitude() + "");
         mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
         Log.d("address", "" + mTaskItem.getChoosedAddress() + "");
         mTaskItem.setTitle(mTitle.getText().toString());
@@ -459,8 +464,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
         private String getAddress(double latitude, double longitude) {
-            String street="aaa";
-            String area="bbb";
+            String street = "aaa";
+            String area = "bbb";
 
             StringBuilder result = new StringBuilder();
             try {

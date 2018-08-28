@@ -6,6 +6,5 @@
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/task_appwidget"
     android:resizeMode="horizontal|vertical"
-    android:configure="com.example.marik.maporganizer.appwidget.TaskAppWidgetConfigureActivity"
     android:widgetCategory="home_screen">
 </appwidget-provider>

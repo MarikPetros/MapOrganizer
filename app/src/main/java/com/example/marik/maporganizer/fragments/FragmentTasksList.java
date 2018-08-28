@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.adapters.TaskAdapter;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.utils.GeofenceManager;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 
 import java.util.ArrayList;
@@ -39,19 +40,24 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
         @Override
-        public void onClickItem(TaskItem item, int position)
-        {
-                      editTask(mViewModel.getItem(item.getId()));
+        public void onClickItem(TaskItem item, int position) {
+            editTask(mViewModel.getItem(item.getId()));
         }
 
         @Override
         public void onRemove(UUID id) {
-                mAdapter.mItems.remove(id);
-                mViewModel.deleteItem(id);
-
+            mAdapter.mItems.remove(id);
+            mViewModel.deleteItem(id);
+           /* mViewModel.getItems().observe(Objects.requireNonNull(getActivity()), new Observer<List<TaskItem>>() {
+                @Override
+                public void onChanged(@Nullable List<TaskItem> taskItems) {
+                    if (taskItems != null) {
+                        GeofenceManager geofenceManager = GeofenceManager.getInstance(getActivity());
+                        geofenceManager.addGeofences(taskItems);
+                    }
+                }
+            });*/
         }
-
-
     };
 
     @Override
@@ -117,9 +123,9 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         });
     }
 
-public void editTask(TaskItem taskItem){
-    BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem);
-    bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
+    public void editTask(TaskItem taskItem) {
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem);
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
     /*FragmentTaskCreation.OnTaskFragmentInteraction taskFragmentInteractionListener=new FragmentTaskCreation.OnTaskFragmentInteraction() {
         @Override
         public void onAddTask(TaskItem item) {
@@ -131,6 +137,6 @@ public void editTask(TaskItem taskItem){
 
         }
     };*/
-}
+    }
 
 }
