@@ -483,7 +483,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-        
+
     }
 
 
@@ -521,8 +521,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                     Address address = addresses.get(0);
 
                     result.append(address.getAddressLine(0));
-
-
                 }
             } catch (IOException e) {
                 Log.e("tag", e.getMessage());

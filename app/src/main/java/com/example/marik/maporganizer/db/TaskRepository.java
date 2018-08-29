@@ -34,8 +34,7 @@ public class TaskRepository {
     }
 
     public TaskItem getById(UUID id) throws ExecutionException, InterruptedException {
-        TaskItem taskItem = (new LoadAsyncTask(mDao).execute(id)).get();
-        return taskItem;
+        return (new LoadAsyncTask(mDao).execute(id)).get();
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {
@@ -112,7 +111,6 @@ public class TaskRepository {
 
     public static class GetByLocationAsyncTask extends AsyncTask<Double, Void, TaskItem> {
 
-
         private TaskDao mAsyncTaskDao;
 
         GetByLocationAsyncTask(TaskDao dao) {
@@ -121,8 +119,7 @@ public class TaskRepository {
 
         @Override
         protected TaskItem doInBackground(Double... params) {
-            mAsyncTaskDao.getItemByLocation(params[0], params[1]);
-            return null;
+            return mAsyncTaskDao.getItemByLocation(params[0], params[1]);
         }
     }
 
@@ -136,8 +133,7 @@ public class TaskRepository {
 
         @Override
         protected TaskItem doInBackground(UUID... params) {
-            mAsyncTaskDao.getById(params[0]);
-            return null;
+            return mAsyncTaskDao.getById(params[0]);
         }
     }
 
