@@ -236,6 +236,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 mViewModel.update(updateTaskItemValues());
             }
         }
+
+        //adding Geofences
+        if (!mViewModel.getAllTaskItems().isEmpty()) {
+            ((MainActivity) Objects.requireNonNull(getActivity())).addGeofences();
+        }
     }
 
     public void onPickImage(View view) {
@@ -244,6 +249,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
     private void init(final View root) {
+
         mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);

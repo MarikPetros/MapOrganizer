@@ -47,7 +47,13 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         public void onRemove(UUID id) {
             mAdapter.mItems.remove(id);
             mViewModel.deleteItem(id);
+
+            //refreshing Geofences
+            if (!mViewModel.getAllTaskItems().isEmpty()) {
+                ((MainActivity) Objects.requireNonNull(getActivity())).addGeofences();
+            }
         }
+
     };
 
     @Override
