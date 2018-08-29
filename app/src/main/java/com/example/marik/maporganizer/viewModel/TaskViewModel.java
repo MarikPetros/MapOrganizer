@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.db.TaskRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -40,6 +41,18 @@ public class TaskViewModel extends AndroidViewModel {
             loadItems();
         }
         return items;
+    }
+
+    public List<TaskItem> getAllTaskItems() {
+        List<TaskItem> allItems = new ArrayList<>();
+        try {
+            allItems = taskRepository.getAllTaskItems();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return allItems;
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {

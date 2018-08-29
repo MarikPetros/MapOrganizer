@@ -37,6 +37,10 @@ public class TaskRepository {
         return (new LoadAsyncTask(mDao).execute(id)).get();
     }
 
+    public List<TaskItem> getAllTaskItems() throws ExecutionException, InterruptedException {
+        return (new GetAllTaskItemsAsyncTask(mDao).execute()).get();
+    }
+
     public TaskItem getItemByLocation(double latitude, double longitude) {
         TaskItem taskItem = null;
         try {
@@ -137,6 +141,18 @@ public class TaskRepository {
         }
     }
 
+    public static class GetAllTaskItemsAsyncTask extends AsyncTask<Void, Void,List<TaskItem>> {
 
+        private TaskDao mAsyncTaskDao;
+
+        GetAllTaskItemsAsyncTask(TaskDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected List<TaskItem> doInBackground(Void... params) {
+            return mAsyncTaskDao.getAllTaskItems();
+        }
+    }
 }
 
