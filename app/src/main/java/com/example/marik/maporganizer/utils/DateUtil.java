@@ -6,8 +6,13 @@ import java.util.Date;
 
 public final class DateUtil {
     public static String formatDateToLongStyle(Date date) {
-        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
-        return format.format(date);
+        if (date != null) {
+            DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
+            return format.format(date);
+        }
+        else {
+            return "";
+        }
     }
 }
 

@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     }
 
 
-
-
     private void setFragment(Fragment fragment, boolean addToBackStack) {
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

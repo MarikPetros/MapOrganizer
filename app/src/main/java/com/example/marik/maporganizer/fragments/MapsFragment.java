@@ -133,8 +133,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .enableAutoManage(Objects.requireNonNull(getActivity()),this)
                 .build();
 
+        }
 
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -845,7 +845,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 lineOptions.width(10);
                 lineOptions.color(Color.BLUE);
 
-                Log.d("onPostExecute","onPostExecute lineoptions decoded");
 
             }
 

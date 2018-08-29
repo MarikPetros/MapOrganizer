@@ -387,7 +387,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
     private void filldata() {
-        mSelectedDate.setTime(mTaskItem.getDate());
+        if (mTaskItem.getDate() != null) {
+            mSelectedDate.setTime(mTaskItem.getDate());
+        }
         updateDateLabel();
 
         mTitle.setText(mTaskItem.getTitle());
