@@ -41,11 +41,9 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
     public final static int PERMISSION_CODE = 26;
 
-/*
-    private GeofencingClient mGeofencingClient;
+    private  GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
-*/
     private MapsFragment mMapsFragment;
     private FragmentTasksList mTaskListFragment;
     private BottomNavigationView mBottomNavigationView;
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     public void init(){
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
-/*
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
@@ -76,10 +73,9 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                 }else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
             }
         });
-*/
        //----------------Geofencing test-----------------------------------
      //   mGeofenceMaker.crateTestGeofenceList();
-//        addGeofences();  //            ?????????????????
+//       addGeofences();  //            ?????????????????
 //-------------------------------------------------------------
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
@@ -137,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     }
 
     // ---------------------------------------------------------------------------------------------
-/*
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -171,13 +166,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
             }
         }
     }
-*/
 
 
     /**
      * -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
      */
-/*
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
@@ -223,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         return items;
     }
 
-*/
 //-------------------------------------------------------------------
 
     private void doFragmentTransaction(Fragment fragment,boolean addToBackStack) {

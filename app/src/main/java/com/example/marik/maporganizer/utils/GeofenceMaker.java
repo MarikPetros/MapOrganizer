@@ -95,11 +95,13 @@ public class GeofenceMaker {
     }
 
     public GeofencingRequest getGeofencingRequestOfList() {
-        GeofencingRequest request;
-        request = new GeofencingRequest.Builder().
-                addGeofences(mGeofenceList).
-                setInitialTrigger(INITIAL_TRIGGER_ENTER).
-                build();
+        GeofencingRequest request = new GeofencingRequest.Builder().addGeofence(crateGeofence(new TaskItem())).build();
+        if (!mGeofenceList.isEmpty()) {
+            request = new GeofencingRequest.Builder().
+                    addGeofences(mGeofenceList).
+                    setInitialTrigger(INITIAL_TRIGGER_ENTER).
+                    build();
+        }
 
         return request;
     }

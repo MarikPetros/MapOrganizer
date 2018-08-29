@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,13 +36,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
+import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.utils.DateUtil;
-import com.example.marik.maporganizer.utils.GeofenceManager;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -56,6 +53,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
@@ -92,8 +90,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final String ARG_LAT = "arg.lat";
     private static final String ARG_LNG = "arg.lng";
-
     private static final int PICK_IMAGE_ID = 1;
+
     private static final String remind15 = "15 minutes";
     private static final String remind30 = "30 minutes";
     private static final String remind45 = "45 minutes";
@@ -246,7 +244,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
     private void init(final View root) {
-
         mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
@@ -538,7 +535,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
     }
-
+//----------------------------------------------------------------------------------------------------------------
 
 }
 

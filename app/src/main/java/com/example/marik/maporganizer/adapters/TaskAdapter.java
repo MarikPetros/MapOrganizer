@@ -1,14 +1,10 @@
 package com.example.marik.maporganizer.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.SupportActionModeWrapper;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +15,6 @@ import android.widget.CompoundButton;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.adapters.viewHolder.TaskHolder;
-import com.example.marik.maporganizer.utils.GeofenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
