@@ -38,17 +38,19 @@ public class TaskRepository {
         return taskItem;
     }
 
-public TaskItem getItemByLocation(double latitude, double longitude){
-    TaskItem taskItem= null;
-    try {
-        taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude).get());
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
+    public TaskItem getItemByLocation(double latitude, double longitude) {
+        TaskItem taskItem = null;
+        try {
+            taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude).get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return taskItem;
     }
-    return taskItem;
-}
+
+
     public void insert(TaskItem taskItem) {
         new InsertAsyncTask(mDao).execute(taskItem);
     }
@@ -108,7 +110,7 @@ public TaskItem getItemByLocation(double latitude, double longitude){
         }
     }
 
-    public static class GetByLocationAsyncTask extends  AsyncTask<Double, Void, TaskItem>{
+    public static class GetByLocationAsyncTask extends AsyncTask<Double, Void, TaskItem> {
 
 
         private TaskDao mAsyncTaskDao;

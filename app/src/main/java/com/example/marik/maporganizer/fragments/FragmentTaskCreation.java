@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,11 +37,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.utils.DateUtil;
+import com.example.marik.maporganizer.utils.GeofenceManager;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -388,12 +391,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mAttachPhotoCheckBox.setChecked(mTaskItem.isAttached());
         // TODO  mPhoto.setImageBitmap(mTaskItem.getImageUri());
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
-        if (mReminderCheckBox.isChecked())
+        if (mReminderCheckBox.isChecked()) {
             //   switch(mRemindSpinner.)
             //   mRemindSpinner.setSelection();
             //TODO  //     switch (mRemindSpinner.getItemIdAtPosition()){
             //    case :
-            mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+        }
+        mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
     }
 
     private void openDatePicker() {
@@ -451,7 +455,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
                 mPhoto.setImageBitmap(bitmap);
-                       mImageUri = getImageUri(getActivity(), bitmap).toString();
+                mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
@@ -479,8 +483,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-
+        
     }
+
 
     public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.OnResultListener pOnResultListener) {
         new GetAddressAsyncTask(getActivity(), pOnResultListener).execute(latitude, longitude);

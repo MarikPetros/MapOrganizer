@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class TaskViewModel extends AndroidViewModel{
+public class TaskViewModel extends AndroidViewModel {
 
-    private TaskRepository taskRepository ;
+    private TaskRepository taskRepository;
     private LiveData<List<TaskItem>> items;
-    private MutableLiveData<TaskItem> item=new MutableLiveData<>();
+    private MutableLiveData<TaskItem> item = new MutableLiveData<>();
     private TaskItem mItem;
 
     public TaskViewModel(@NonNull Application application) {
@@ -30,7 +30,7 @@ public class TaskViewModel extends AndroidViewModel{
     }
 
 
-    public void setItem(TaskItem taskItem){
+    public void setItem(TaskItem taskItem) {
         item.setValue(taskItem);
     }
 
@@ -42,16 +42,14 @@ public class TaskViewModel extends AndroidViewModel{
         return items;
     }
 
-public TaskItem getItemByLocation(double latitude, double longitude){
-        if(mItem==null){
-            mItem=new TaskItem();
+    public TaskItem getItemByLocation(double latitude, double longitude) {
+        if (mItem == null) {
+            mItem = new TaskItem();
         }
-        taskRepository.getItemByLocation(latitude, longitude);
-        return null;
+        return taskRepository.getItemByLocation(latitude, longitude);
+    }
 
-}
-
-    public TaskItem getItem(UUID  id) {
+    public TaskItem getItem(UUID id) {
         if (mItem == null) {
             mItem = new TaskItem();
             loadItem(id);
@@ -59,23 +57,23 @@ public TaskItem getItemByLocation(double latitude, double longitude){
         return mItem;
     }
 
-    public void insertItem(TaskItem taskItem){
+    public void insertItem(TaskItem taskItem) {
         taskRepository.insert(taskItem);
     }
 
-    public void deleteItem(UUID id){
+    public void deleteItem(UUID id) {
         taskRepository.delete(id);
     }
 
-    public void update(TaskItem taskItem){
+    public void update(TaskItem taskItem) {
         taskRepository.update(taskItem);
     }
 
     public void loadItems() {
-        items =  taskRepository.getAllItems();
+        items = taskRepository.getAllItems();
     }
 
-    public void loadItem(UUID id){
+    public void loadItem(UUID id) {
         try {
             mItem = taskRepository.getById(id);
         } catch (ExecutionException e) {
