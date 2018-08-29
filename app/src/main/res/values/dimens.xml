@@ -10,6 +10,7 @@
     <dimen name="margin_left_right">10dp</dimen>
     <dimen name="margin_start">10dp</dimen>
     <dimen name="text_size">18sp</dimen>
+    <dimen name="widget_content_text_size">16sp</dimen>
     <dimen name="widget_text_size">24sp</dimen>
     <dimen name="search_bar_size">40dp</dimen>
     <dimen name="address_line_height">70dp</dimen>

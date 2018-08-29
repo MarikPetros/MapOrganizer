@@ -22,6 +22,7 @@
         android:layout_marginTop="@dimen/margin_top"
         android:layout_toEndOf="@id/imageViewCompass"
         android:maxLines="3"
+        android:textSize="@dimen/widget_content_text_size"
         android:textColor="@android:color/black" />
     <!--android:inputType="textPostalAddress"-->
 </RelativeLayout>
