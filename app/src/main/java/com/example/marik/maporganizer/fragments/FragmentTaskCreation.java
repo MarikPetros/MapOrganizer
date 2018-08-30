@@ -36,8 +36,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.marik.maporganizer.activity.MainActivity;
+import com.example.marik.maporganizer.activity.TempMapActivity;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
@@ -265,6 +267,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
         mFrameLayout = root.findViewById(R.id.frame_in_creator);
+
         setListeners();
     }
 
@@ -346,21 +349,22 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             }
         });
 
+
         mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    FragmentTransaction fragmentTransaction = FragmentTaskCreation.this.getChildFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
-                    fragmentTransaction.commit();
+                    Intent intent = new Intent(getActivity(),TempMapActivity.class);
+                    startActivity(intent);
                 }
-                if (!isChecked) {
-                    mFrameLayout.setVisibility(View.GONE);
-
+                else {
+                   // mFrameLayout.setVisibility(View.GONE);
+                    Toast.makeText(getContext(),"failed to open activity",Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
+
 
         mChoosedAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -403,6 +407,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             //TODO  //     switch (mRemindSpinner.getItemIdAtPosition()){
             //    case :
         }
+
+
         mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
     }
 

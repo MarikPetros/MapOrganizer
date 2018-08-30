@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/radius_search_relative"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/white_border">
+
+        <ImageView
+            android:id="@+id/radius_search_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_search_black_24dp"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/radius_input_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/radius_search_icon"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:hint="@string/search_here"
+            android:imeOptions="actionSearch" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_padding"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextRadius"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:background="@drawable/white_border"
+            android:ems="12"
+            android:gravity="center"
+            android:hint="@string/radius_in_meters"
+            android:inputType="number"
+            android:padding="@dimen/_padding"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/radius_save_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/checkbox_on_background"
+            android:layout_marginTop="@dimen/margin_top"
+            android:layout_marginStart="@dimen/margin_start"
+            android:elevation="@dimen/button_elevation"
+            android:padding="@dimen/_padding" />
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/tMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_margin="@dimen/margin"
+        android:layout_gravity="bottom" />
+</LinearLayout>

@@ -47,6 +47,7 @@
     <string name="no_address_found">no address found</string>
     <string name="address_found">address is found</string>
     <string name="no_location_data_provided">no location data provided</string>
+    <string name="title_activity_temp_map">TempMapActivity</string>
 </resources>
 
 
