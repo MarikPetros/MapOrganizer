@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
       init();
 
 
+
     }
 
     public void init(){
@@ -73,18 +75,17 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
                 }else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
             }
         });
-       //----------------Geofencing test-----------------------------------
-     //   mGeofenceMaker.crateTestGeofenceList();
-//       addGeofences();  //            ?????????????????
-//-------------------------------------------------------------
+
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
 
-
         setTabs();
 
+        ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(GeofencerService.TRIGGERING_LOCATIONS);
+        if (locations != null && locations.size() > 0){
+            setFragment(MapsFragment.newInstance(locations),true);
+        }
         setFragment(mMapsFragment, true);
-
     }
 
 

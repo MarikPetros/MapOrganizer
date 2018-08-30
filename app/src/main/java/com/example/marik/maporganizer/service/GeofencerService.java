@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -32,6 +33,7 @@ import static android.content.ContentValues.TAG;
 public class GeofencerService extends IntentService {
     int SUMMARY_ID = 0;
     String GROUP_KEY_GEOFENCE_ALERT = "com.example.marik.maporganizer.GEOFENCE_ALERT";
+    public static final String TRIGGERING_LOCATIONS = "com.example.marik.maporganizer.TRIGGERING_LOCATION";
 
     private NotificationCompat.Builder mBuilder;
     private NotificationCompat.Builder mSummaryBuilder;
@@ -80,13 +82,13 @@ public class GeofencerService extends IntentService {
             // Send notification and log the transition details.
             sendNotification(geofenceTransitionDetails);
             Log.i(TAG, geofenceTransitionDetails);
-            Toast.makeText(getApplicationContext(),geofenceTransitionDetails, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), geofenceTransitionDetails, Toast.LENGTH_LONG).show();
 
         } else {
             // Log the error.
             Log.e(TAG, getString(R.string.geofence_transition_invalid_type,
                     geofenceTransition));
-            Toast.makeText(getApplicationContext(),R.string.geofence_transition_invalid_type, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.geofence_transition_invalid_type, Toast.LENGTH_LONG).show();
 
         }
     }
@@ -103,16 +105,16 @@ public class GeofencerService extends IntentService {
         StringBuilder stringBuilder = new StringBuilder();
 
         //For test
-  //      String notifText = "datark a";
+        //      String notifText = "datark a";
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             stringBuilder.append(getString(R.string.alert_text));
             List<Integer> ids = new ArrayList<>();
             List<String> addresses = new ArrayList<>();
- //           int i=0;
+            //           int i=0;
             for (Geofence g : triggeringGeofences) {
-   //           notifText = g.getRequestId(); /// This is for test
-                notificationId =Integer.parseInt(g.getRequestId());
+                //           notifText = g.getRequestId(); /// This is for test
+                notificationId = Integer.parseInt(g.getRequestId());
                 String itemAddress = null;
                 try {
                     itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
@@ -144,6 +146,9 @@ public class GeofencerService extends IntentService {
     private void createNotification(String geofenceTransitionDetails) {
         // Create an explicit intent for  MaosActivity
         Intent intent = new Intent(this, MainActivity.class);
+        ArrayList<Location> locations = new ArrayList<>();
+        locations.add(location);
+        intent.putParcelableArrayListExtra(TRIGGERING_LOCATIONS, locations);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
