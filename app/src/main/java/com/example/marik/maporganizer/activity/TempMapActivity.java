@@ -1,9 +1,17 @@
 package com.example.marik.maporganizer.activity;
 
+import android.Manifest;
+import android.app.FragmentManager;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+
 import com.example.marik.maporganizer.R;
+
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,8 +25,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.marik.maporganizer.fragments.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.models.PlaceInfo;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -29,6 +40,8 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,12 +52,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
-public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(70, 137));
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
 
     private GoogleMap mMap;
     private Circle circle;
@@ -55,6 +69,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleApiClient mGoogleApiClient;
     private Marker mMarker;
     private PlaceInfo mPlace;
+    private ImageView mGps;
 
 
     @Override
@@ -62,20 +77,26 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp_map);
 
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        overridePendingTransition(R.anim.slide_in,R.anim.slide_out);
 
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(Objects.requireNonNull(this))
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this,this)
+                .build();
         init();
     }
-
-
 
 
     public void init() {
 
         mAutoCompleteTextView = findViewById(R.id.radius_input_search);
+        mGps = findViewById(R.id.ic_gps);
         ImageView mSearch = findViewById(R.id.radius_search_icon);
         desiredRadius = findViewById(R.id.editTextRadius);
         ImageView saveBtn = findViewById(R.id.radius_save_img);
+        ImageView fixedMarker = findViewById(R.id.fixedPin);
 
         // Make circle radius from content of EditText
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -94,12 +115,48 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        // Showing / hiding your current location
+        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(false);
+            return;
+        }
+
+
+        // Enable / Disable zooming controls
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
+
+        // Enable / Disable my location button
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        // Enable / Disable Compass icon
+        googleMap.getUiSettings().setCompassEnabled(false);
+
+        // Enable / Disable Rotate gesture`enter code here`
+        googleMap.getUiSettings().setRotateGesturesEnabled(false);
+
+        // Enable / Disable zooming functionality
+        googleMap.getUiSettings().setZoomGesturesEnabled(false);
+
+
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                LatLng midLatLng = mMap.getCameraPosition().target;
+                getAddress(midLatLng.latitude, midLatLng.longitude);
+
+            }
+        });
+
+
+
         onMapClick();
 
         initSearch();
 
-        onMapClick();
     }
+
 
     private void onMapClick() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -118,6 +175,37 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
     }
+
+    public String getAddress(double latitude, double longitude) {
+        StringBuilder result = new StringBuilder();
+        try {
+
+            System.out.println("get address");
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses.size() > 0) {
+                System.out.println("size====" + addresses.size());
+                Address address = addresses.get(0);
+
+                for (int i = 0; i <= addresses.get(0).getMaxAddressLineIndex(); i++) {
+                    if (i == addresses.get(0).getMaxAddressLineIndex()) {
+                        result.append(addresses.get(0).getAddressLine(i));
+                    } else {
+                        result.append(addresses.get(0).getAddressLine(i) + ",");
+                    }
+                }
+                System.out.println("ad==" + address);
+                System.out.println("result---" + result.toString());
+
+                mAutoCompleteTextView.setText(result.toString()); //  AutoCompleteTextView for setting  string address
+            }
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+
+        return result.toString();
+    }
+
 
     private void drawCircle(LatLng point) {
 
@@ -163,7 +251,15 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
 
                     geoLocate();
                 }
+
                 return false;
+            }
+        });
+
+        mGps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //getCurrentLocation();
             }
         });
     }
@@ -187,6 +283,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         }
 
     }
+
 
 
     private void moveCamera(LatLng latLng, float zoom, String title) {
@@ -248,12 +345,10 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         }
     };
 
-        /*mGps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getCurrentLocation();  ///                                       sa petq kga
-            }
-        });*/
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
+    }
 }
 
