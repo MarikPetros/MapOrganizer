@@ -286,7 +286,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void onMapClick() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
 
         //  to retrieve provider
         Criteria criteria = new Criteria();
@@ -329,9 +329,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                     // Start downloading json data from Google Directions API
                     FetchUrl.execute(url);
-                    //move map camera
+
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
                 }
 
             }
