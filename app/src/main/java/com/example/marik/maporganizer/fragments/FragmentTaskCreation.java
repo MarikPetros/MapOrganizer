@@ -36,13 +36,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import com.example.marik.maporganizer.activity.MainActivity;
-import com.example.marik.maporganizer.activity.TempMapActivity;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.utils.DateUtil;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -55,7 +53,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
@@ -68,6 +65,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 dismiss();
             }
         }
+
 
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
@@ -92,8 +90,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final String ARG_LAT = "arg.lat";
     private static final String ARG_LNG = "arg.lng";
-    private static final int PICK_IMAGE_ID = 1;
 
+    private static final int PICK_IMAGE_ID = 1;
     private static final String remind15 = "15 minutes";
     private static final String remind30 = "30 minutes";
     private static final String remind45 = "45 minutes";
@@ -215,7 +213,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         init(view);
-        //TODO fix this
         filldata();
         getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude(), new GetAddressAsyncTask.OnResultListener() {
             @Override
@@ -238,11 +235,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             if (!isEmptyTask()) {
                 mViewModel.update(updateTaskItemValues());
             }
-        }
-
-        //adding Geofences
-        if (!mViewModel.getAllTaskItems().isEmpty()) {
-            ((MainActivity) Objects.requireNonNull(getActivity())).addGeofences();
         }
     }
 
@@ -267,7 +259,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
         mFrameLayout = root.findViewById(R.id.frame_in_creator);
-
         setListeners();
     }
 
@@ -349,22 +340,21 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             }
         });
 
-
         mNotifybyPlaceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Intent intent = new Intent(getActivity(),TempMapActivity.class);
-                    startActivity(intent);
+                    FragmentTransaction fragmentTransaction = FragmentTaskCreation.this.getChildFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_in_creator, new TempMapFragment());
+                    fragmentTransaction.commit();
                 }
-                else {
-                   // mFrameLayout.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),"failed to open activity",Toast.LENGTH_SHORT).show();
+                if (!isChecked) {
+                    mFrameLayout.setVisibility(View.GONE);
+
                 }
 
             }
         });
-
 
         mChoosedAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -391,9 +381,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     }
 
     private void filldata() {
-        if (mTaskItem.getDate() != null) {
-            mSelectedDate.setTime(mTaskItem.getDate());
-        }
+        mSelectedDate.setTime(mTaskItem.getDate());
         updateDateLabel();
 
         mTitle.setText(mTaskItem.getTitle());
@@ -401,15 +389,12 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mAttachPhotoCheckBox.setChecked(mTaskItem.isAttached());
         // TODO  mPhoto.setImageBitmap(mTaskItem.getImageUri());
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
-        if (mReminderCheckBox.isChecked()) {
+        if (mReminderCheckBox.isChecked())
             //   switch(mRemindSpinner.)
             //   mRemindSpinner.setSelection();
             //TODO  //     switch (mRemindSpinner.getItemIdAtPosition()){
             //    case :
-        }
-
-
-        mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+            mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
     }
 
     private void openDatePicker() {
@@ -435,6 +420,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             isExist = false;
             mTaskItem = new TaskItem();
         }
+        Log.v("fragmenti lat/lng", "" + mTaskItem.getLatitude() + ", " + mTaskItem.getLongitude() + "");
+//        mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
+        Log.d("address", "" + mTaskItem.getChoosedAddress() + "");
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
         mTaskItem.setDate(mSelectedDate.getTime());
@@ -464,10 +452,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_IMAGE_ID:
-                bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+              //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
-                mPhoto.setImageBitmap(bitmap);
-                mImageUri = getImageUri(getActivity(), bitmap).toString();
+             //   mPhoto.setImageBitmap(bitmap);
+             //   mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
@@ -495,8 +483,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-    }
 
+    }
 
     public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.OnResultListener pOnResultListener) {
         new GetAddressAsyncTask(getActivity(), pOnResultListener).execute(latitude, longitude);
@@ -532,6 +520,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                     Address address = addresses.get(0);
 
                     result.append(address.getAddressLine(0));
+//                    result.append(address.getLocality());
+                    //  result.append(address.getAdminArea());
+
+
                 }
             } catch (IOException e) {
                 Log.e("tag", e.getMessage());
@@ -550,7 +542,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         }
 
     }
-//----------------------------------------------------------------------------------------------------------------
+
+//    public void setFragmentInteraction(OnTaskFragmentInteraction fragmentInteraction) {
+//        mListener = fragmentInteraction;
+//    }
+//
+//    public interface OnTaskFragmentInteraction {
+//    void onAddTask(TaskItem item);
+//    void onEditTask(TaskItem item);
+
 
 }
 

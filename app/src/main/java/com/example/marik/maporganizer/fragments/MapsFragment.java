@@ -381,25 +381,18 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return false;
     }
 
-
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mMap.addMarker(new MarkerOptions()
+        /*mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(latLng.toString()));
-                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));
-
-        TaskItem taskItem = new TaskItem();
-        taskItem.setLatitude(latLng.latitude);
-        taskItem.setLongitude(latLng.longitude);
-        Log.v("map's lat/lng","" + latLng.latitude + ", " + latLng.longitude + "");
-        mViewModel.insertItem(taskItem);
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));*/
 
         //Initializing a bottom sheet
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(latLng);
 
         //show it
-        bottomSheetDialogFragment.show(getChildFragmentManager(),bottomSheetDialogFragment.getTag());
+        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
 
     }
 
