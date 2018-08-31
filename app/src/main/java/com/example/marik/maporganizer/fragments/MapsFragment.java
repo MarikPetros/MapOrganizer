@@ -372,9 +372,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         double positionLat = marker.getPosition().latitude;
         double positionLng = marker.getPosition().longitude;
         TaskItem item = mViewModel.getItemByLocation(positionLat,positionLng);
-        //Initializing a bottom sheet
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
-
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(),bottomSheetDialogFragment.getTag());
 
