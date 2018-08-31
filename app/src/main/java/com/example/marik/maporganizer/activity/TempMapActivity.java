@@ -3,6 +3,7 @@ package com.example.marik.maporganizer.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +52,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 
-public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener ,
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener {
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
 
@@ -64,7 +67,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleApiClient mGoogleApiClient;
     private Marker mMarker;
     private PlaceInfo mPlace;
-    private ImageView mGps;
 
 
     @Override
@@ -92,7 +94,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void init() {
 
         mAutoCompleteTextView = findViewById(R.id.radius_input_search);
-        mGps = findViewById(R.id.ic_gps);
         ImageView mSearch = findViewById(R.id.radius_search_icon);
         desiredRadius = findViewById(R.id.editTextRadius);
         ImageView saveBtn = findViewById(R.id.radius_save_img);
@@ -117,27 +118,20 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         mMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        // Showing / hiding your current location
+        // Showing current location
         if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            googleMap.setMyLocationEnabled(false);
+            googleMap.setMyLocationEnabled(true);
             return;
         }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMyLocationClickListener(this);
 
-
-        // Enable / Disable zooming controls
-        googleMap.getUiSettings().setZoomControlsEnabled(false);
-
-        // Enable / Disable my location button
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-        // Enable / Disable Compass icon
-        googleMap.getUiSettings().setCompassEnabled(false);
-
-        // Enable / Disable Rotate gesture`enter code here`
-        googleMap.getUiSettings().setRotateGesturesEnabled(false);
-
-        // Enable / Disable zooming functionality
-        googleMap.getUiSettings().setZoomGesturesEnabled(false);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
 
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -259,12 +253,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         hideKeyboard();
 
-        mGps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //getCurrentLocation();
-            }
-        });
+
     }
 
     private void geoLocate() {
@@ -358,6 +347,16 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+
     }
 }
 

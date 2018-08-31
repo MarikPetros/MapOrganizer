@@ -241,6 +241,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000); // ten second interval

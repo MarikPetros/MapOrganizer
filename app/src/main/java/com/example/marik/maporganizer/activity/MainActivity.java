@@ -57,9 +57,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
       init();
 
+      }
 
-
-    }
 
     public void init(){
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
