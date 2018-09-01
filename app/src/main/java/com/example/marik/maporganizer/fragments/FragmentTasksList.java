@@ -1,8 +1,12 @@
 package com.example.marik.maporganizer.fragments;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static android.app.Notification.VISIBILITY_PUBLIC;
 
 
 public class FragmentTasksList extends android.support.v4.app.Fragment {

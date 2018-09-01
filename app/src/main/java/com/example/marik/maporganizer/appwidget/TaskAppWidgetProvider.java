@@ -6,11 +6,15 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskDataBase;
+import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 
 import java.util.Objects;
 
@@ -26,8 +30,14 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
         if (Objects.requireNonNull(intent.getAction()).equals(TOAST_ACTION)) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
-            int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
-            Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
+          //  int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+            TaskItem item = intent.getParcelableExtra(EXTRA_ITEM);
+            //Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
+            if (item != null) {
+                Toast.makeText(context, "You have a job here at " + item.getDate().toString(), Toast.LENGTH_SHORT).show();
+            }else Toast.makeText(context, "Sorry. Can't get item ", Toast.LENGTH_SHORT).show();
+
+
         }
         super.onReceive(context, intent);
     }

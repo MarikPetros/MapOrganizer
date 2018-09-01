@@ -24,12 +24,12 @@ public class Converters {
 
 
     @TypeConverter
-    public static Date toDate(Long value) {
+    public static Date longToDate(Long value) {
         return value == null ? null : new Date(value);
     }
 
     @TypeConverter
-    public static Long toLong(Date value) {
+    public static Long dateToLong(Date value) {
         return value == null ? null : value.getTime();
 
     }

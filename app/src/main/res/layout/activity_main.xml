@@ -13,7 +13,20 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+<!--
+        <ImageView
+            android:id="@+id/augmented_reality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:background="@drawable/circle"
+            android:padding="@dimen/_padding"
+            android:text="@string/ar" />
+-->
+
+    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,13 +34,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/nav_view_bar"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/nav_view_bar"
+            android:clipToPadding="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/nav_view_bar"

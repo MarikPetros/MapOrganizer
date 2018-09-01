@@ -11,15 +11,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:glEsVersion="0x20000" android:required="true" />
     <uses-feature android:name="android.hardware.camera2" android:required="true" />
-
-    <uses-feature
-        android:glEsVersion="0x20000"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera2"
-        android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -46,6 +40,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="optional" />
 
         <activity
             android:name=".activity.MainActivity"
@@ -74,6 +71,14 @@
                 android:resource="@xml/task_appwidget_info" />
         </receiver>
 
+        <receiver
+            android:name=".receiver.NotificationAlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.marik.maporganizer.ACTION_NOTIFY_AT_TIME" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".activity.TempMapActivity"
             android:label="@string/title_activity_temp_map"

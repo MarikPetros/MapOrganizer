@@ -1,8 +1,10 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -13,6 +15,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,9 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,11 +41,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.marik.maporganizer.activity.TempMapActivity;
-import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.R;
+import com.example.marik.maporganizer.activity.MainActivity;
+import com.example.marik.maporganizer.activity.TempMapActivity;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.utils.DateUtil;
+import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.maps.model.LatLng;
@@ -55,6 +58,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import static android.content.Context.ALARM_SERVICE;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
@@ -68,11 +74,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             }
         }
 
-
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
+    private AlarmManager alarmManager;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -92,7 +98,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private static final String ARG_TASK_ITEM = "arg.taskitem";
     private static final String ARG_LAT = "arg.lat";
     private static final String ARG_LNG = "arg.lng";
-
     private static final int PICK_IMAGE_ID = 1;
     private static final String remind15 = "15 minutes";
     private static final String remind30 = "30 minutes";
@@ -124,9 +129,16 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private long mRemindTime;
     private int mAlertRadius = 100;
     private TaskItem mTaskItem;
+    private boolean reminderIsChecked; ///////////should be deleted
 //    OnTaskFragmentInteraction mListener;
 
     private boolean isNewCreated = true;
+
+    //for timed notification
+    public final static String ACTION_NOTIFY_NOTIFY_AT_TIME = "com.example.marik.maporganizer.ACTION_NOTIFY_AT_TIME";
+    public final static String ITEM_EXTRA = "com.example.marik.maporganizer.NOTIFYING_TASK_ITEM";
+    public final static String TIME_NOTIFIER = "com.example.marik.maporganizer.TIME_NOTIFIER";
+
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -195,6 +207,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 mTaskItem.setLongitude(args.getDouble(ARG_LNG));
             }
         }
+
+        alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
     }
 
 
@@ -215,6 +229,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         init(view);
+
+        updateDateLabel();
+
         filldata();
         getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude(), new GetAddressAsyncTask.OnResultListener() {
             @Override
@@ -237,6 +254,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             if (!isEmptyTask()) {
                 mViewModel.update(updateTaskItemValues());
             }
+        }
+
+        //adding Geofences
+        if (!mViewModel.getAllTaskItems().isEmpty()) {
+            ((MainActivity) Objects.requireNonNull(getActivity())).addGeofences();
+        }
+
+        if (reminderIsChecked) {
+            setAlarmManager();
         }
     }
 
@@ -291,7 +317,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mRemindSpinner.setVisibility(View.VISIBLE);
-
+                    reminderIsChecked = true;
                 } else {
                     mRemindSpinner.setVisibility(View.GONE);
                 }
@@ -305,40 +331,38 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 String item = (String) parent.getItemAtPosition(position);
                 switch (item) {
                     case remind15:
-                        mRemindTime = 15;
+                        mRemindTime = 15 * 60 * 60 * 1000;
                         break;
                     case remind30:
-                        mRemindTime = 30;
+                        mRemindTime = 30 * 60 * 60 * 1000;
                         break;
                     case remind45:
-                        mRemindTime = 45;
+                        mRemindTime = 45 * 60 * 60 * 1000;
                         break;
                     case remind1:
-                        mRemindTime = 60;
+                        mRemindTime = 60 * 60 * 60 * 1000;
                         break;
                     case remind2:
-                        mRemindTime = 120;
+                        mRemindTime = 120 * 60 * 60 * 1000;
                         break;
                     case remind3:
-                        mRemindTime = 180;
+                        mRemindTime = 180 * 60 * 60 * 1000;
                         break;
-                    case remind10:
-                        mRemindTime = 600;
+                    /*case remind10:
+                        mRemindTime = 600 * 60 * 60 * 1000;
                         break;
                     case remindDay:
-                        mRemindTime = 1440;
-                        break;
+                        mRemindTime = 1440 * 60 * 60 * 1000;
+                        break;*/
                     default:
-                        mRemindTime = 15;
+                        mRemindTime = 15 * 60 * 60 * 1000;
                         break;
                 }
-
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                mRemindTime = 15 * 60 * 60 * 1000;
             }
         });
 
@@ -346,17 +370,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Intent intent = new Intent(getActivity(),TempMapActivity.class);
+                    Intent intent = new Intent(getActivity(), TempMapActivity.class);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     // mFrameLayout.setVisibility(View.GONE);
-                    Toast.makeText(getContext(),"failed to open activity",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "failed to open activity", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
-
 
         mChoosedAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,7 +388,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 fragmentTransaction.commit();
             }
         });
-
 
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -392,16 +413,16 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         mAttachPhotoCheckBox.setChecked(mTaskItem.isAttached());
         // TODO  mPhoto.setImageBitmap(mTaskItem.getImageUri());
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
-        if (mReminderCheckBox.isChecked())
+        if (mReminderCheckBox.isChecked()) {
             //   switch(mRemindSpinner.)
             //   mRemindSpinner.setSelection();
             //TODO  //     switch (mRemindSpinner.getItemIdAtPosition()){
-            //    case :
-            mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+        } //    case :
+        mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
     }
 
     private void openDatePicker() {
-        new DatePickerDialog(getActivity(), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),
+        new DatePickerDialog(Objects.requireNonNull(getActivity()), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),
                 mSelectedDate.get(Calendar.MONTH),
                 mSelectedDate.get(Calendar.DAY_OF_MONTH)).show();
     }
@@ -437,7 +458,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         if (mReminderCheckBox.isChecked()) {
             if (mReminderCheckBox.isChecked()) {
                 mTaskItem.setReminder(mReminderCheckBox.isChecked());
-
                 //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
                 // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
             }
@@ -455,10 +475,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_IMAGE_ID:
-              //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
-             //   mPhoto.setImageBitmap(bitmap);
-             //   mImageUri = getImageUri(getActivity(), bitmap).toString();
+                //   mPhoto.setImageBitmap(bitmap);
+                //   mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
@@ -486,8 +506,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-
     }
+
 
     public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.OnResultListener pOnResultListener) {
         new GetAddressAsyncTask(getActivity(), pOnResultListener).execute(latitude, longitude);
@@ -555,5 +575,27 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 //    void onEditTask(TaskItem item);
 
 
+    /*
+   ----------------------------------- Setting AlarmManager for notification by time -----------------------------------------------------------------------------
+   */
+
+    private void setAlarmManager() {
+        long alertTime = 0;
+        if (mTaskItem != null) {
+            alertTime = mTaskItem.getDate().getTime() - mRemindTime;
+        }
+        int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
+
+        Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
+        notifyIntent.putExtra(ITEM_EXTRA, mTaskItem);
+        PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
+        (mContext, notificationId, notifyIntent, 0);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
+        }
+    }
 }
 

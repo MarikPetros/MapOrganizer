@@ -192,6 +192,7 @@ public class GeofencerService extends IntentService {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setGroup(GROUP_KEY_GEOFENCE_ALERT)
                 .extend(wearableExtender)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);
 
 
@@ -206,6 +207,7 @@ public class GeofencerService extends IntentService {
                 //specify which group this notification belongs to
                 .setGroup(GROUP_KEY_GEOFENCE_ALERT)
                 .extend(wearableExtender)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 //set this notification as the summary for the group
                 .setGroupSummary(true);
     }
