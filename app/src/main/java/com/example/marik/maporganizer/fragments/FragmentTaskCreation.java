@@ -138,6 +138,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public final static String ACTION_NOTIFY_NOTIFY_AT_TIME = "com.example.marik.maporganizer.ACTION_NOTIFY_AT_TIME";
     public final static String ITEM_EXTRA = "com.example.marik.maporganizer.NOTIFYING_TASK_ITEM";
     public final static String TIME_NOTIFIER = "com.example.marik.maporganizer.TIME_NOTIFIER";
+    public final static String TASK_DATE = "com.example.marik.maporganizer.TASK_DATE";
 
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -584,17 +585,19 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         if (mTaskItem != null) {
             alertTime = mTaskItem.getDate().getTime() - mRemindTime;
         }
+        long taskDate = mTaskItem.getDate().getTime();
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
 
         Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
         notifyIntent.putExtra(ITEM_EXTRA, mTaskItem);
+        notifyIntent.putExtra(TASK_DATE,taskDate);
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
         (mContext, notificationId, notifyIntent, 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         }
     }
 }

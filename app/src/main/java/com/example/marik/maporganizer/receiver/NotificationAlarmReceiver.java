@@ -20,6 +20,7 @@ import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 import java.util.Date;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TASK_DATE;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 
 public class NotificationAlarmReceiver extends BroadcastReceiver {
@@ -28,6 +29,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // an Intent broadcast.
         TaskItem mTaskItem = intent.getParcelableExtra(FragmentTaskCreation.ITEM_EXTRA);
+        long taskDate = intent.getLongExtra(TASK_DATE,0);
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
 
         String mDismissNotificationId = mTaskItem.getChoosedAddress();
@@ -67,7 +69,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
             }
         }
 
-        Date date =  mTaskItem.getDate();
+        Date date =  new Date(taskDate);
        /* if(date == null){
             date = new Date(System.currentTimeMillis() + 60*60*1000);
         }*/
