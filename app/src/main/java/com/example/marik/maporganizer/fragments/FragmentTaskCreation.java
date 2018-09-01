@@ -78,7 +78,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
-    private AlarmManager alarmManager;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -126,13 +125,14 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private Spinner mRemindSpinner;
     private String mImageUri;
     private Calendar mSelectedDate = Calendar.getInstance();
-    private long mRemindTime;
+    private long mRemindTime = 15 * 60 * 1000;
     private int mAlertRadius = 100;
     private TaskItem mTaskItem;
-    private boolean reminderIsChecked; ///////////should be deleted
+    private boolean reminderIsChecked;
 //    OnTaskFragmentInteraction mListener;
 
     private boolean isNewCreated = true;
+    private AlarmManager alarmManager;
 
     //for timed notification
     public final static String ACTION_NOTIFY_NOTIFY_AT_TIME = "com.example.marik.maporganizer.ACTION_NOTIFY_AT_TIME";
@@ -332,38 +332,38 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 String item = (String) parent.getItemAtPosition(position);
                 switch (item) {
                     case remind15:
-                        mRemindTime = 15 * 60 * 60 * 1000;
+                        mRemindTime = 15 * 60 * 1000;
                         break;
                     case remind30:
-                        mRemindTime = 30 * 60 * 60 * 1000;
+                        mRemindTime = 30 * 60 * 1000;
                         break;
                     case remind45:
-                        mRemindTime = 45 * 60 * 60 * 1000;
+                        mRemindTime = 45 * 60 * 1000;
                         break;
                     case remind1:
-                        mRemindTime = 60 * 60 * 60 * 1000;
+                        mRemindTime = 60 * 60 * 1000;
                         break;
                     case remind2:
-                        mRemindTime = 120 * 60 * 60 * 1000;
+                        mRemindTime = 120 * 60 * 1000;
                         break;
                     case remind3:
-                        mRemindTime = 180 * 60 * 60 * 1000;
+                        mRemindTime = 180 * 60 * 1000;
                         break;
-                    /*case remind10:
-                        mRemindTime = 600 * 60 * 60 * 1000;
+                    case remind10:
+                        mRemindTime = 600 * 60 * 1000;
                         break;
                     case remindDay:
-                        mRemindTime = 1440 * 60 * 60 * 1000;
-                        break;*/
+                        mRemindTime = 1440 * 60 * 1000;
+                        break;
                     default:
-                        mRemindTime = 15 * 60 * 60 * 1000;
+                        mRemindTime = 15 *  60 * 1000;
                         break;
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mRemindTime = 15 * 60 * 60 * 1000;
+                mRemindTime = 15 * 60 * 1000;
             }
         });
 
@@ -592,7 +592,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         notifyIntent.putExtra(ITEM_EXTRA, mTaskItem);
         notifyIntent.putExtra(TASK_DATE,taskDate);
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
-        (mContext, notificationId, notifyIntent, 0);
+        (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);

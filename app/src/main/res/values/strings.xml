@@ -55,6 +55,9 @@
     <string name="timed_notification_channel_description">Notifying at real time</string>
     <string name="scheduled_job">Scheduled job!</string>
     <string name="title_activity_temp_map">TempMapActivity</string>
+    <string name="timed_notifications">Timed notifications</string>
+    <string name="timted_group_title">Jobs to do</string>
+    <string name="timed_messages">New timed messages</string>
 </resources>
 
 

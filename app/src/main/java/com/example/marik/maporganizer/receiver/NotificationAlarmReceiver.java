@@ -31,6 +31,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         TaskItem mTaskItem = intent.getParcelableExtra(FragmentTaskCreation.ITEM_EXTRA);
         long taskDate = intent.getLongExtra(TASK_DATE,0);
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
+        String GROUP_KEY_TIMED_NOTIF = "com.example.marik.maporganizer.TIMED_NOTIFICATIONS";
 
         String mDismissNotificationId = mTaskItem.getChoosedAddress();
 
@@ -85,8 +86,24 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .extend(wearableExtender)
                 .setContentIntent(pendingIntent)
+                .setGroup(GROUP_KEY_TIMED_NOTIF)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);
+
+      NotificationCompat.Builder  mSummaryBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(context.getString(R.string.timed_notifications))
+                //set content text to support devices running API level < 24
+                .setContentText("New timed messages")
+                .setSmallIcon(R.drawable.ic_notif_nearby)
+                //build summary info into InboxStyle template
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .setBigContentTitle(context.getString(R.string.timted_group_title)))
+                //specify which group this notification belongs to
+                .setGroup(GROUP_KEY_TIMED_NOTIF)
+                .extend(wearableExtender)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                //set this notification as the summary for the group
+                .setGroupSummary(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(notificationId, mBuilder.build());
