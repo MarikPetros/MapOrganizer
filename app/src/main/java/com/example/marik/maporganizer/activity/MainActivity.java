@@ -2,7 +2,6 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -20,7 +19,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ActionMode;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -35,14 +33,15 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
     public final static int PERMISSION_CODE = 26;
 
-    private  GeofencingClient mGeofencingClient;
+    private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
     private MapsFragment mMapsFragment;
@@ -55,23 +54,23 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-      init();
+        init();
 
-      }
+    }
 
 
-    public void init(){
+    public void init() {
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         TaskViewModel model = ViewModelProviders.of(this).get(TaskViewModel.class);
-        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+        model.getItems().observe(this,new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
                 if (taskItems != null) {
                     mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
-                }else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
+                } else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
             }
         });
 
@@ -81,17 +80,17 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         setTabs();
 
         ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(GeofencerService.TRIGGERING_LOCATIONS);
-        if (locations != null && locations.size() > 0){
+        if (locations != null && locations.size() > 0) {
             setFragment(MapsFragment.newInstance(locations),true);
         }
-        setFragment(mMapsFragment, true);
+        setFragment(mMapsFragment,true);
     }
 
 
-    private void setFragment(Fragment fragment, boolean addToBackStack) {
+    private void setFragment(Fragment fragment,boolean addToBackStack) {
         assert getFragmentManager() != null;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, fragment, "map");
+        fragmentTransaction.add(R.id.fragment_container,fragment,"map");
         fragmentTransaction.addToBackStack("map");//fragment container
         fragmentTransaction.commit();
     }
@@ -136,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     // ---------------------------------------------------------------------------------------------
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this),Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -189,20 +188,20 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     public void addGeofences() {
         checkLocationPermission();
-        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(), getGeofencePendingIntent())
-                .addOnSuccessListener(Objects.requireNonNull(this), new OnSuccessListener<Void>() {
+        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(),getGeofencePendingIntent())
+                .addOnSuccessListener(Objects.requireNonNull(this),new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Geofences added
-                        Toast.makeText(getApplicationContext(),"Geofence successfuly added", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Geofence successfuly added",Toast.LENGTH_LONG).show();
                     }
                 })
-                .addOnFailureListener(this, new OnFailureListener() {
+                .addOnFailureListener(this,new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Failed to add geofences
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(),"Geofencees failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Geofencees failed",Toast.LENGTH_LONG).show();
                     }
                 });
     }

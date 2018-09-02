@@ -128,7 +128,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         mMap.setOnMyLocationClickListener(this);
 
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+      //  googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setRotateGesturesEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);

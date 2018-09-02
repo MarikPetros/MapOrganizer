@@ -12,11 +12,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.util.Date;
 import java.util.UUID;
 
 @Entity(tableName = "task_item")
-public class TaskItem implements Parcelable {
+public class TaskItem implements Parcelable, ClusterItem {
 
 
     @PrimaryKey
@@ -133,8 +136,18 @@ public class TaskItem implements Parcelable {
         mChoosedAddress = choosedAddress;
     }
 
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(mLatitude, mLongitude);
+    }
+
     public String getTitle() {
         return mTitle;
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
     }
 
     public void setTitle(String title) {

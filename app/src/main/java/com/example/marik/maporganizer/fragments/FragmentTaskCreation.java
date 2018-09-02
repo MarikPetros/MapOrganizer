@@ -65,6 +65,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
+
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
         @Override
@@ -73,6 +74,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                 dismiss();
             }
         }
+
 
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
@@ -128,6 +130,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     private long mRemindTime = 15 * 60 * 1000;
     private int mAlertRadius = 100;
     private TaskItem mTaskItem;
+    private OnDirectionsClickListener mOndirectionsClickListener;
     private boolean reminderIsChecked;
 //    OnTaskFragmentInteraction mListener;
 
@@ -163,6 +166,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
             updateDateLabel();
         }
     };
+
 
     public FragmentTaskCreation() {
     }
@@ -437,8 +441,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
         mDate.setText(dateFormat.format(mSelectedDate.getTime()));
     }
-
     boolean isExist = true;
+
 
     public TaskItem updateTaskItemValues() {
         if (isEmptyTask()) {
@@ -459,6 +463,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         if (mReminderCheckBox.isChecked()) {
             if (mReminderCheckBox.isChecked()) {
                 mTaskItem.setReminder(mReminderCheckBox.isChecked());
+
                 //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
                 // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
             }
@@ -476,10 +481,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_IMAGE_ID:
-                //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+              //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
-                //   mPhoto.setImageBitmap(bitmap);
-                //   mImageUri = getImageUri(getActivity(), bitmap).toString();
+             //   mPhoto.setImageBitmap(bitmap);
+             //   mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
@@ -507,18 +512,18 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-    }
 
+    }
 
     public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.OnResultListener pOnResultListener) {
         new GetAddressAsyncTask(getActivity(), pOnResultListener).execute(latitude, longitude);
     }
 
-
     public static class GetAddressAsyncTask extends AsyncTask<Double, Void, String> {
 
         private Geocoder mGeocoder;
         private OnResultListener mOnResultListener;
+
 
         GetAddressAsyncTask(Context context, OnResultListener pCallback) {
             mGeocoder = new Geocoder(context, Locale.getDefault());
@@ -560,11 +565,16 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         protected void onPostExecute(String s) {
             mOnResultListener.onResult(s);
         }
-
         interface OnResultListener {
             void onResult(String pAddress);
+
         }
 
+    }
+
+    //TODO delegation for directions
+    interface OnDirectionsClickListener {
+        void onDirectionClick(LatLng pLatLng);
     }
 
 //    public void setFragmentInteraction(OnTaskFragmentInteraction fragmentInteraction) {

@@ -47,10 +47,13 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/white_grey_border_bottom"
+        android:background="@color/colorPrimaryDark"
         android:soundEffectsEnabled="true"
         android:visibility="visible"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@drawable/bnv_tab_item_foreground"
+        app:itemTextColor="@drawable/bnv_tab_item_foreground"
+       />
 
     </RelativeLayout>
 
