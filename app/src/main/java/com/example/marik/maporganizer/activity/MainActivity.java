@@ -41,13 +41,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import com.google.ar.core.ArCoreApk;
+//import com.google.ar.core.ArCoreApk;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.example.marik.maporganizer.appwidget.TaskAppWidgetProvider.ITEM_INDEX;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
 public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
@@ -85,10 +86,14 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
         setTabs();
 
-        setFragment(mMapsFragment, true);
+        setFragment(mMapsFragment);
 
         if (getIntent().hasExtra(ITEM_INDEX)) {
             launchInfoFragment();
+        }
+
+        if (getIntent().hasExtra(TIME_NOTIFIER)) {
+            launchMapsFragmentfromNotification();
         }
 
         if (getIntent().hasExtra(TRIGGERING_LOCATIONS)) {
@@ -96,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         }
 
         // Enable AR related functionality on ARCore supported devices only.
-        maybeEnableArButton();
+     //   maybeEnableArButton();
     }
 
-    private void maybeEnableArButton() {
+   /* private void maybeEnableArButton() {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
         if (availability.isTransient()) {
             // Re-query at 5Hz while compatibility is checked in the background.
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
             mArButton.setVisibility(View.INVISIBLE);
             mArButton.setEnabled(false);
         }
-    }
+    }*/
 
     private void createGeofencesList() {
         model = ViewModelProviders.of(this).get(TaskViewModel.class);
@@ -152,32 +157,30 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     private void launchMapsFragmentByGeofence() {
         ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(TRIGGERING_LOCATIONS);
         if (locations != null && locations.size() > 0) {
-            setFragment(MapsFragment.newInstance(locations), true);
+            setFragment(MapsFragment.newInstance(locations));
         }
     }
 
+    private void launchMapsFragmentfromNotification() {
+        double[] latlng = getIntent().getDoubleArrayExtra(TIME_NOTIFIER);
 
-    private void setFragment(Fragment fragment, boolean addToBackStack) {
-        assert getFragmentManager() != null;
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container,fragment,"map");
-        fragmentTransaction.addToBackStack("map");//fragment container
-        fragmentTransaction.commit();
+        if (latlng != null ) {
+            setFragment(MapsFragment.newInstance(latlng));
+        }
     }
+
 
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
-        if (fragment instanceof MapsFragment) {
-            getSupportFragmentManager().popBackStack();
-        } else {
+
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.fragment_container, fragment);
-            fragmentTransaction.addToBackStack("other fragment");
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+
             fragmentTransaction.commit();
         }
 
-    }
+
 
 
     public void setTabs() {

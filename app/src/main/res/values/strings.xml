@@ -58,6 +58,7 @@
     <string name="timed_notifications">Timed notifications</string>
     <string name="timted_group_title">Jobs to do</string>
     <string name="timed_messages">New timed messages</string>
+    <string name="directions">Directions</string>
 </resources>
 
 

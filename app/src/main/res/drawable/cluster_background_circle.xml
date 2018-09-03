@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval"
-    android:innerRadius="500dp"
-    android:innerRadiusRatio="50">
+    android:useLevel="true"
+    android:innerRadius="500dp">
+
     <solid android:color="#006064" />
 
 </shape>

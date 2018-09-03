@@ -164,7 +164,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Clears the previously touched position
                 mMap.clear();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.addMarker(markerOptions);
+              //  mMap.addMarker(markerOptions);
                 drawCircle(latLng);
             }
         });

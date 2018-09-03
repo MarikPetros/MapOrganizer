@@ -8,15 +8,11 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ClusterRenderer extends DefaultClusterRenderer<TaskItem> {
     private final IconGenerator mClusterIconGenerator;
@@ -40,8 +36,10 @@ public class ClusterRenderer extends DefaultClusterRenderer<TaskItem> {
     protected void onBeforeClusterRendered(Cluster<TaskItem> cluster,MarkerOptions markerOptions) {
         // Customize the cluster here
         mClusterIconGenerator.setBackground(
-                ContextCompat.getDrawable(mContext,R.drawable.background_circle));
-       // mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance);
+                ContextCompat.getDrawable(mContext,R.drawable.cluster_background_circle));
+
+     //mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance); // causes some problems on lower versions
+
         final Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
 

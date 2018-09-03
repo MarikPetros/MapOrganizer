@@ -35,13 +35,13 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
 
         String mDismissNotificationId = mTaskItem.getChoosedAddress();
 
-        // Greate wearableExtender
+        // Create wearableExtender
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setDismissalId(mDismissNotificationId);
 
         Intent contentIntent = new Intent(context, MainActivity.class);
-        Double[] ltlng = new Double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()};
-        contentIntent.putExtra(TIME_NOTIFIER, ltlng);
+        double[] latlng = new double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()};
+        contentIntent.putExtra(TIME_NOTIFIER, latlng);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId, contentIntent, 0);
 

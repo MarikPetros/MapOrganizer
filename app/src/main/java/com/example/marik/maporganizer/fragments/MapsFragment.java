@@ -86,22 +86,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMapLongClickListener,
         GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
     private final static String GEOFENCING_LOCATIONS = "Geofence triggering locations";
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(44,137));
-
+    private static final String LAT_LNG_FROM_NOTIFICATIONS = "latlng from notifications ";
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -117,9 +119,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private OnFragmentInteractionListener mListener;
     private TaskViewModel mViewModel;
     ArrayList<LatLng> mMarkerPoints;
-
+    LatLng latLngFromNotification;
     double mLatitude = 0;
     double mLongitude = 0;
+    private boolean notificationFlag;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -128,7 +131,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public static MapsFragment newInstance(ArrayList<Location> locations) {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(GEOFENCING_LOCATIONS, locations); //get from this for a destination point
+        args.putParcelableArrayList(GEOFENCING_LOCATIONS,locations); //get from this for a destination point
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MapsFragment newInstance(double[] latlng) {
+        MapsFragment fragment = new MapsFragment();
+        Bundle args = new Bundle();
+        args.putDoubleArray(LAT_LNG_FROM_NOTIFICATIONS,latlng);
         fragment.setArguments(args);
         return fragment;
     }
@@ -143,7 +154,18 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(Objects.requireNonNull(getActivity()),this)
                 .build();
+        Bundle args = getArguments();
+        if (args != null) {
+            if (args.containsKey(LAT_LNG_FROM_NOTIFICATIONS)) {
+                double[] latlngNot = args.getDoubleArray(LAT_LNG_FROM_NOTIFICATIONS);
+                assert latlngNot != null;
+                latLngFromNotification = new LatLng(latlngNot[0],latlngNot[1]);
+                notificationFlag = true;
+            }
+
+
         }
+    }
 
 
     @Override
@@ -165,6 +187,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (supportMapFragment == null) {
             FragmentManager manager = getFragmentManager();
+            assert manager != null;
             FragmentTransaction transaction = manager.beginTransaction();
             supportMapFragment = SupportMapFragment.newInstance();
             transaction.replace(R.id.map,supportMapFragment).commit();
@@ -229,6 +252,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(getContext(),"Map is Ready",Toast.LENGTH_SHORT).show();
 
+
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         //  googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -259,6 +283,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
 
+        if(notificationFlag){
+            drawMarker(latLngFromNotification);
+        }
         onMapClick();
         initSearch();
         loadTaskItems();
@@ -268,7 +295,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onResume() {
         super.onResume();
-          //added, needs to be tested
+        //added, needs to be tested
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
@@ -276,7 +303,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mViewModel.getItems().observe(this,new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
-              //  setMarkerState(taskItems);
+                //  setMarkerState(taskItems);
             }
         });
     }
@@ -346,7 +373,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
         mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
 
     }
 
@@ -359,32 +385,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (mMarkerPoints.size() == 1) {
             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.kid_icon));
-        } else if (mMarkerPoints.size() == 2) {
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//        } else if (mMarkerPoints.size() == 2) {
+//            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//        }
+
+            mMap.addMarker(options);
         }
 
-        mMap.addMarker(options);
     }
-
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-
-
-        return false;
-    }
-
-    Marker testing;
-
     @Override
     public void onMapLongClick(LatLng latLng) {
-        // TODO add cluster instead of marker
 
         //Initializing a bottom sheet
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(latLng);
 
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(),bottomSheetDialogFragment.getTag());
+
 
     }
 
@@ -688,6 +705,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             public boolean onClusterClick(Cluster<TaskItem> cluster) {
                 Log.v("MapFragment","Clusters click");
                 // TODO show dialog with list of task items
+
                 return true;
             }
         });
@@ -707,17 +725,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             }
         });
 
-        mClusterManager.setOnClusterInfoWindowClickListener(new ClusterManager.OnClusterInfoWindowClickListener<TaskItem>() {
-            @Override
-            public void onClusterInfoWindowClick(Cluster<TaskItem> cluster) {
-                double positionLat = cluster.getPosition().latitude;
-                double positionLng = cluster.getPosition().longitude;
-                TaskItem item = mViewModel.getItemByLocation(positionLat,positionLng);
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
-                //show it
-                bottomSheetDialogFragment.show(getChildFragmentManager(),bottomSheetDialogFragment.getTag());
-            }
-        });
+
         // point the map's listeners at the listeners implemented by the cluster
         // manager.
         mMap.setOnCameraIdleListener(mClusterManager);
@@ -725,31 +733,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
         mClusterManager.cluster();
-      //  addItems(items);
+
     }
 
-
-
-    //TODO fix
-    private void addItems(List<TaskItem> taskItems) {
-        Clusters clusters = null;
-        HashMap<Clusters, TaskItem> hashMap = new HashMap<>();
-
-        mViewModel.getItems().observe(this,new Observer<List<TaskItem>>() {
-            @Override
-            public void onChanged(@Nullable List<TaskItem> taskItems) {
-//                setMarkerState(taskItems);
-            }
-        });
-
-
-        for (TaskItem item : taskItems) {
-            LatLng latLng = new LatLng(item.getLatitude(),item.getLongitude());
-            mMap.addMarker(new MarkerOptions()
-                    .position(latLng));
-                  //  .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        }
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
