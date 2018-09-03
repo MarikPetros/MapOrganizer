@@ -24,6 +24,7 @@ import java.util.Objects;
 public class TaskAppWidgetProvider extends AppWidgetProvider {
     public static final String TOAST_ACTION = "com.example.marik.maporganizer.appwidget.TOAST_ACTION";
     public static final String EXTRA_ITEM = "com.example.marik.maporganizer.appwidget.EXTRA_ITEM";
+    public static final String ITEM_INDEX = "com.example.marik.maporganizer.appwidget.ITEM_INDEX";
 
 
     @Override
@@ -33,6 +34,10 @@ public class TaskAppWidgetProvider extends AppWidgetProvider {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
             int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+            Intent contentLauncher = new Intent(context,MainActivity.class);
+            contentLauncher.putExtra(ITEM_INDEX,viewIndex);
+            contentLauncher.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(contentLauncher);
             Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
         }
         super.onReceive(context, intent);

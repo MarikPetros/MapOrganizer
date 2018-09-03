@@ -11,6 +11,8 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskDataBase;
 import com.example.marik.maporganizer.db.TaskItem;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,9 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public RemoteViews getViewAt(int position) {
         // setting item's text
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
-        rv.setTextViewText(R.id.widget_item_text, mTaskWidgetItems.get(position).getChoosedAddress());
+        DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
+        rv.setTextViewText(R.id.widget_item_text, mTaskWidgetItems.get(position).getChoosedAddress()+ " at "
+                + dateFormat.format(mTaskWidgetItems.get(position).getDate()));
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in TaskAppWidgetProvider.

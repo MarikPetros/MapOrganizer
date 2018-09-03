@@ -8,8 +8,5 @@
     <color name="color_white_trans">#afff</color>
     <color name="color_grey">#c3c3c3</color>
     <color name="color_item">#AAAACCFF</color>
-    <color name="color_compass_forground">#00fff0</color>
-    <color name="color_compass_background">#00ffffff</color>
-
-
+    <color name="color_main_background">#e0e0e0</color>
 </resources>

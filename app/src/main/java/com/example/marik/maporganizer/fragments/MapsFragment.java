@@ -128,7 +128,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public static MapsFragment newInstance(ArrayList<Location> locations) {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(GEOFENCING_LOCATIONS,locations); //get from this for a destination point
+        args.putParcelableArrayList(GEOFENCING_LOCATIONS, locations); //get from this for a destination point
         fragment.setArguments(args);
         return fragment;
     }
@@ -143,8 +143,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(Objects.requireNonNull(getActivity()),this)
                 .build();
-
-    }
+        }
 
 
     @Override
@@ -229,7 +228,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(getContext(),"Map is Ready",Toast.LENGTH_SHORT).show();
-
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -323,7 +321,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                     LatLng startPoint = new LatLng(mLatitude,mLongitude);
                     drawMarker(startPoint);
-
                 }
 
                 drawMarker(latLng);
@@ -388,7 +385,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(),bottomSheetDialogFragment.getTag());
-
 
     }
 
@@ -753,7 +749,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     .position(latLng));
                   //  .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         }
-
     }
 
     @Override

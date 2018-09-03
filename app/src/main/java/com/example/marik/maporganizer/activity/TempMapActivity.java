@@ -99,7 +99,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         ImageView saveBtn = findViewById(R.id.radius_save_img);
         ImageView fixedMarker = findViewById(R.id.fixedPin);
 
-        // Make circle radius from content of EditText
+        // Make circle1 radius from content of EditText
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,25 +203,25 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
 
     private void drawCircle(LatLng point) {
 
-        // Instantiating CircleOptions to draw a circle around the marker
+        // Instantiating CircleOptions to draw a circle1 around the marker
         CircleOptions circleOptions = new CircleOptions();
 
-        // Specifying the center of the circle
+        // Specifying the center of the circle1
         circleOptions.center(point);
 
-        // Radius of the circle
+        // Radius of the circle1
         circleOptions.radius(radius);
 
-        // Border color of the circle
+        // Border color of the circle1
         circleOptions.strokeColor(Color.RED);
 
-        // Fill color of the circle
+        // Fill color of the circle1
         circleOptions.fillColor(0x30ff0000);
 
-        // Border width of the circle
+        // Border width of the circle1
         circleOptions.strokeWidth(2);
 
-        // Adding the circle to the GoogleMap
+        // Adding the circle1 to the GoogleMap
         circle = mMap.addCircle(circleOptions);
 
     }
