@@ -202,9 +202,9 @@ public class TaskItem implements Parcelable, ClusterItem {
     String idToString = Converters.toString(mId);
 
     protected TaskItem(Parcel in) {
-        idToString = in.readString();
         mLatitude = in.readDouble();
         mLongitude = in.readDouble();
+        idToString = in.readString();
         mChoosedAddress = in.readString();
         mTitle = in.readString();
         mDescription = in.readString();

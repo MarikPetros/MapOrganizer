@@ -43,10 +43,10 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
         @Override
         public void onClickItem(TaskItem item) {
-//            item = mViewModel.getItem(item.getId());
             BottomSheetDialogFragment bottomSheetDialogFragment =FragmentTaskCreation.newInstance(item);
             bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
         }
+
 
         @Override
         public void onRemove(UUID id) {

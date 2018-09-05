@@ -9,7 +9,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
 import com.example.marik.maporganizer.R;
+
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,8 +26,11 @@ import android.widget.EditText;
 import android.widget.ImageView;;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.models.PlaceInfo;
+import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -51,12 +56,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_TASK_ITEM;
 
-public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener ,
+
+public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40,-169),new LatLng(70,137));
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(70, 137));
 
     private GoogleMap mMap;
     private Circle circle;
@@ -67,6 +74,9 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleApiClient mGoogleApiClient;
     private Marker mMarker;
     private PlaceInfo mPlace;
+    private double latitude;
+    private double longitude;
+    private TaskItem taskitem;
 
 
     @Override
@@ -74,7 +84,13 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp_map);
 
-        overridePendingTransition(R.anim.slide_in,R.anim.slide_out);
+        taskitem = getIntent().getParcelableExtra(ARG_TASK_ITEM);
+        latitude = taskitem.getLatitude();
+        longitude = taskitem.getLongitude();
+        Log.v("lat/long", ""+latitude+" ,"+ longitude+" ");
+        radius = taskitem.getAlertRadius();
+
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.tMap);
 
@@ -84,9 +100,8 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 .Builder(Objects.requireNonNull(this))
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this,this)
+                .enableAutoManage(this, this)
                 .build();
-
         init();
     }
 
@@ -97,7 +112,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         ImageView mSearch = findViewById(R.id.radius_search_icon);
         desiredRadius = findViewById(R.id.editTextRadius);
         ImageView saveBtn = findViewById(R.id.radius_save_img);
-        ImageView fixedMarker = findViewById(R.id.fixedPin);
 
         // Make circle1 radius from content of EditText
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +133,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // Showing current location
-        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             googleMap.setMyLocationEnabled(true);
             return;
         }
@@ -128,7 +142,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         mMap.setOnMyLocationClickListener(this);
 
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-      //  googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        //  googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         googleMap.getUiSettings().setRotateGesturesEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
@@ -143,11 +157,12 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-
-
         onMapClick();
-
+        addMarkerToChoosedAddress(new LatLng(latitude, longitude));
+        moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "aaa");
         initSearch();
+
+
 
     }
 
@@ -168,6 +183,20 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 drawCircle(latLng);
             }
         });
+    }
+
+
+    private void addMarkerToChoosedAddress(LatLng latLng){
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+        //  markerOptions.
+        // Clears the previously touched position
+        mMap.clear();
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.addMarker(markerOptions);
+        drawCircle(latLng);
+
     }
 
     public String getAddress(double latitude, double longitude) {
@@ -191,7 +220,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 System.out.println("ad==" + address);
                 System.out.println("result---" + result.toString());
 
-            //    mAutoCompleteTextView.setText(result.toString()); //  AutoCompleteTextView for setting  string address
+                //    mAutoCompleteTextView.setText(result.toString()); //  AutoCompleteTextView for setting  string address
             }
         } catch (IOException e) {
             Log.e("tag", e.getMessage());
@@ -277,7 +306,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
 
-
     private void moveCamera(LatLng latLng, float zoom, String title) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
@@ -285,16 +313,16 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
-          //  mMarker = mMap.addMarker(options);
+            //  mMarker = mMap.addMarker(options);
         }
 
         hideKeyboard();
     }
 
-    private void hideKeyboard(){
+    private void hideKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
@@ -348,6 +376,8 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
     }
+
+
 
     @Override
     public boolean onMyLocationButtonClick() {

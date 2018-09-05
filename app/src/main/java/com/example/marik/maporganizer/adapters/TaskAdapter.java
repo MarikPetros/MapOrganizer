@@ -28,6 +28,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     OnItemsListClicked mListClickedListener;
     android.support.v7.view.ActionMode mActionMode;
     TreeSet<Integer> mCheckedItems= new TreeSet<>();
+    public  boolean isSelected=false;
 
 
     public TaskAdapter(Context context) {
@@ -53,9 +54,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         holder.bindHolder(mItems.get(position));
 
         if (mActionMode != null) {
+            if(isSelected){
             holder.getDeleteCheckBox().setVisibility(View.VISIBLE);
             holder.getDeleteCheckBox().setChecked(mCheckedItems.contains(holder.getAdapterPosition()));
-        } else {
+        } }else {
             holder.getDeleteCheckBox().setChecked(false);
             holder.getDeleteCheckBox().setVisibility(View.INVISIBLE);
         }
@@ -65,6 +67,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     selectItem(holder.getAdapterPosition(), true);
+
+
                 } else
                     selectItem(holder.getAdapterPosition(), false);
             }
@@ -142,12 +146,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     void selectItem(int position, boolean isSelect) {
         if (isSelect) {
             mCheckedItems.add(position);
+            isSelected=true;
         } else {
             mCheckedItems.remove(position);
+            isSelected=false;
+
         }
 
     }
-
 
     @Override
     public int getItemCount() {

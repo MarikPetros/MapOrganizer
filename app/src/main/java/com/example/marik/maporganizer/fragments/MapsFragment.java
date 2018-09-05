@@ -44,8 +44,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.cluster.ClusterRenderer;
+import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.cluster.DataParser;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.models.PlaceInfo;
@@ -324,23 +324,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void onMapClick() {
-        LocationManager locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
-
-        //  to retrieve provider
-        Criteria criteria = new Criteria();
-
-        // the best provider
-        assert locationManager != null;
-        String provider = locationManager.getBestProvider(criteria, true);
-
-        @SuppressLint("MissingPermission")
-        Location location = locationManager.getLastKnownLocation(provider);
-
-
-        //  Location location = getCurrentLocation();
-        if (location != null) {
-            onLocationChanged(location);
-        }
+//        LocationManager locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
+//
+//        //  to retrieve provider
+//        Criteria criteria = new Criteria();
+//
+//        // the best provider
+//        assert locationManager != null;
+//        String provider = locationManager.getBestProvider(criteria, true);
+//
+////        @SuppressLint("MissingPermission")
+//        try{
+//            Location location = locationManager.getLastKnownLocation(provider);
+//
+//        //  Location location = getCurrentLocation();
+//        if (location != null) {
+//            onLocationChanged(location);
+//        } }
+//        catch (SecurityException e){
+//            e.printStackTrace();
+//        }
 
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -466,7 +469,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?

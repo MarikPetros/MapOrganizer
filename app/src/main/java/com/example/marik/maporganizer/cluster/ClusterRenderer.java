@@ -38,7 +38,8 @@ public class ClusterRenderer extends DefaultClusterRenderer<TaskItem> {
         mClusterIconGenerator.setBackground(
                 ContextCompat.getDrawable(mContext,R.drawable.cluster_background_circle));
 
-     //mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance); // causes some problems on lower versions
+
+        mClusterIconGenerator.setTextAppearance(R.style.AppTheme_WhiteTextAppearance); // causes some problems on lower versions
 
         final Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
