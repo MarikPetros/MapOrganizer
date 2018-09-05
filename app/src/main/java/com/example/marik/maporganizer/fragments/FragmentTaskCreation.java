@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,6 +55,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -238,6 +240,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         updateDateLabel();
 
         filldata();
+
         getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude(), new GetAddressAsyncTask.OnResultListener() {
             @Override
             public void onResult(String pAddress) {
@@ -247,6 +250,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         });
 
         mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+        mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
+            @Override
+            public void onChanged(@Nullable List<TaskItem> taskItems) {
+                if (taskItems != null) {
+                }
+            }
+        });
     }
 
 
@@ -325,6 +335,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                     reminderIsChecked = true;
                 } else {
                     mRemindSpinner.setVisibility(View.GONE);
+                    reminderIsChecked = false;
                 }
             }
         });
@@ -360,7 +371,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
                         mRemindTime = 1440 * 60 * 1000;
                         break;
                     default:
-                        mRemindTime = 15 *  60 * 1000;
+                        mRemindTime = 15 * 60 * 1000;
                         break;
                 }
             }
@@ -441,6 +452,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
         mDate.setText(dateFormat.format(mSelectedDate.getTime()));
     }
+
     boolean isExist = true;
 
 
@@ -481,10 +493,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_IMAGE_ID:
-              //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                //  bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
 
-             //   mPhoto.setImageBitmap(bitmap);
-             //   mImageUri = getImageUri(getActivity(), bitmap).toString();
+                //   mPhoto.setImageBitmap(bitmap);
+                //   mImageUri = getImageUri(getActivity(), bitmap).toString();
 
                 break;
             default:
@@ -515,7 +527,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
     }
 
-    public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.OnResultListener pOnResultListener) {
+    public void getAddressFromLatitLong(double latitude, double longitude, GetAddressAsyncTask.
+            OnResultListener pOnResultListener) {
         new GetAddressAsyncTask(getActivity(), pOnResultListener).execute(latitude, longitude);
     }
 
@@ -565,6 +578,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
         protected void onPostExecute(String s) {
             mOnResultListener.onResult(s);
         }
+
         interface OnResultListener {
             void onResult(String pAddress);
 
@@ -600,9 +614,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment {
 
         Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
         notifyIntent.putExtra(ITEM_EXTRA, mTaskItem);
-        notifyIntent.putExtra(TASK_DATE,taskDate);
+        notifyIntent.putExtra(TASK_DATE, taskDate);
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
-        (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
+                (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);

@@ -24,6 +24,7 @@ import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TASK
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 
 public class NotificationAlarmReceiver extends BroadcastReceiver {
+    public     String GROUP_KEY_TIMED_NOTIF = "com.example.marik.maporganizer.TIMED_NOTIFICATIONS";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -31,9 +32,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         TaskItem mTaskItem = intent.getParcelableExtra(FragmentTaskCreation.ITEM_EXTRA);
         long taskDate = intent.getLongExtra(TASK_DATE,0);
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
-        String GROUP_KEY_TIMED_NOTIF = "com.example.marik.maporganizer.TIMED_NOTIFICATIONS";
 
-        String mDismissNotificationId = mTaskItem.getChoosedAddress();
+        String mDismissNotificationId = String.valueOf(notificationId); //mTaskItem.getChoosedAddress();
 
         // Create wearableExtender
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();

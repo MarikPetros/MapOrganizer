@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
-    public List<TaskItem> mItems;
+    public List<TaskItem> mItems = new ArrayList<>();;
     Context mContext;
     OnItemsListClicked mListClickedListener;
     android.support.v7.view.ActionMode mActionMode;
@@ -32,11 +32,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     public TaskAdapter(Context context) {
         mContext = context;
-        mItems = new ArrayList<>();
     }
 
     public void setList(List<TaskItem> list) {
-
         mItems.clear();
         mItems.addAll(list);
     }

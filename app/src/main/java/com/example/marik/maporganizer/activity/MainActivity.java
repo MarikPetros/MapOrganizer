@@ -40,6 +40,7 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.ar.core.ArCoreApk;
 
 //import com.google.ar.core.ArCoreApk;
 
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     private FragmentTasksList mTaskListFragment;
     private BottomNavigationView mBottomNavigationView;
     private TaskViewModel model;
-    private Handler handler = new Handler();
     private ImageView mArButton;
 
 
@@ -101,15 +101,15 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         }
 
         // Enable AR related functionality on ARCore supported devices only.
-     //   maybeEnableArButton();
+        maybeEnableArButton();
     }
 
-   /* private void maybeEnableArButton() {
+    private void maybeEnableArButton() {
         ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
         if (availability.isTransient()) {
             // Re-query at 5Hz while compatibility is checked in the background.
             new Handler().postDelayed(new Runnable() {
-                @Override
+                @Override/**/
                 public void run() {
                     maybeEnableArButton();
                 }
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
             mArButton.setVisibility(View.INVISIBLE);
             mArButton.setEnabled(false);
         }
-    }*/
+    }
 
     private void createGeofencesList() {
         model = ViewModelProviders.of(this).get(TaskViewModel.class);
@@ -173,10 +173,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
-
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, fragment);
-
             fragmentTransaction.commit();
         }
 

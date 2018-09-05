@@ -67,7 +67,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // setting item's text
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
         DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
-        rv.setTextViewText(R.id.widget_item_text, mTaskWidgetItems.get(position).getChoosedAddress()+ " at "
+        rv.setTextViewText(R.id.widget_item_text, mTaskWidgetItems.get(position).getChoosedAddress()+ ", "
                 + dateFormat.format(mTaskWidgetItems.get(position).getDate()));
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
