@@ -93,11 +93,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         }
 
         if (getIntent().hasExtra(TIME_NOTIFIER)) {
-            launchMapsFragmentfromNotification();
+            launchCreationFragmentfromNotification();
         }
 
         if (getIntent().hasExtra(TRIGGERING_LOCATIONS)) {
-            launchMapsFragmentByGeofence();
+            launchCreationFragmentByGeofence();
         }
 
         // Enable AR related functionality on ARCore supported devices only.
@@ -154,18 +154,27 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     }
 
 
-    private void launchMapsFragmentByGeofence() {
+    private void launchCreationFragmentByGeofence() {
         ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(TRIGGERING_LOCATIONS);
+            TaskItem item = new TaskItem();
         if (locations != null && locations.size() > 0) {
-            setFragment(MapsFragment.newInstance(locations));
+            for (Location location: locations) {
+                item = model.getItemByLocation(location.getLatitude(),location.getLongitude());
+                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+                //show it
+                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+            }
         }
     }
 
-    private void launchMapsFragmentfromNotification() {
+    private void launchCreationFragmentfromNotification() {
         double[] latlng = getIntent().getDoubleArrayExtra(TIME_NOTIFIER);
 
         if (latlng != null ) {
-            setFragment(MapsFragment.newInstance(latlng));
+            TaskItem item = model.getItemByLocation(latlng[0],latlng[1]);
+            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+            //show it
+            bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
         }
     }
 

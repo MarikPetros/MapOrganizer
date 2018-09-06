@@ -254,8 +254,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             }
         });
 
-
-        mViewModel = ViewModelProviders.of(getActivity()).get(TaskViewModel.class);
+        mViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(TaskViewModel.class);
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
@@ -282,6 +281,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             ((MainActivity) Objects.requireNonNull(getActivity())).addGeofences();
         }
 
+        //for timed notifications
         if (reminderIsChecked) {
             setAlarmManager();
         }

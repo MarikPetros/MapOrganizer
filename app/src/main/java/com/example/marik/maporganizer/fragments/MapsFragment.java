@@ -2,6 +2,7 @@ package com.example.marik.maporganizer.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -104,7 +105,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private static final float DEFAULT_ZOOM = 15f;
     private final static String GEOFENCING_LOCATIONS = "Geofence triggering locations";
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(44, 137));
-    private static final String LAT_LNG_FROM_NOTIFICATIONS = "latlng from notifications ";
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -121,30 +121,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private TaskViewModel mViewModel;
     List<TaskItem> mTasksList = new ArrayList<>();
     ArrayList<LatLng> mMarkerPoints;
-    LatLng latLngFromNotification;
     double mLatitude = 0;
     double mLongitude = 0;
-    private boolean notificationFlag;
 
     public MapsFragment() {
         // Required empty public constructor
     }
 
-    public static MapsFragment newInstance(ArrayList<Location> locations) {
+    public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(GEOFENCING_LOCATIONS, locations); //get from this for a destination point
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static MapsFragment newInstance(double[] latlng) {
-        MapsFragment fragment = new MapsFragment();
-        Bundle args = new Bundle();
-        args.putDoubleArray(LAT_LNG_FROM_NOTIFICATIONS, latlng);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
 
     @Override
@@ -156,18 +146,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(Objects.requireNonNull(getActivity()), this)
                 .build();
-
-        Bundle args = getArguments();
-        if (args != null) {
-            if (args.containsKey(LAT_LNG_FROM_NOTIFICATIONS)) {
-                double[] latlngNot = args.getDoubleArray(LAT_LNG_FROM_NOTIFICATIONS);
-                assert latlngNot != null;
-                latLngFromNotification = new LatLng(latlngNot[0], latlngNot[1]);
-                notificationFlag = true;
-            }
-
-
-        }
     }
 
 
@@ -177,7 +155,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems();
-
     }
 
 
@@ -287,9 +264,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         setMarkerState(mTasksList);
 
-        if (notificationFlag) {
-            drawMarker(latLngFromNotification);
-        }
         onMapClick();
         initSearch();
         loadTaskItems();
@@ -394,12 +368,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (mMarkerPoints.size() == 1) {
             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.kid_icon));
+        }
 //        } else if (mMarkerPoints.size() == 2) {
 //            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 //        }
 
             mMap.addMarker(options);
-        }
+
 
     }
 
@@ -467,9 +442,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return mCurrentLocation;
     }
 
-
+ //   @TargetApi(23)
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -479,7 +454,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(getActivity())
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
