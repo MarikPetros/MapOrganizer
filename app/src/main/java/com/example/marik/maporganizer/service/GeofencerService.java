@@ -97,8 +97,8 @@ public class GeofencerService extends IntentService {
     private void sendNotification(String geofenceTransitionDetails) {
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+       // notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
-        notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
     }
 
     private String getGeofenceTransitionDetails(GeofencerService geofencerService, int geofenceTransition, List<Geofence> triggeringGeofences) {

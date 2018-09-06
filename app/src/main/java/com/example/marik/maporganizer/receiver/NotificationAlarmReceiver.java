@@ -30,7 +30,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // an Intent broadcast.
         TaskItem mTaskItem = intent.getParcelableExtra(FragmentTaskCreation.ITEM_EXTRA);
-        long taskDate = intent.getLongExtra(TASK_DATE,0);
+        long taskDate = intent.getLongExtra(TASK_DATE, 0);
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
 
         String mDismissNotificationId = String.valueOf(notificationId);
@@ -49,28 +49,32 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             CharSequence name = context.getString(R.string.timed_notification_channel);
             String description = context.getString(R.string.timed_notification_channel_description);
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            channel.setLightColor(Color.GREEN);
-            channel.shouldShowLights();
-            channel.enableLights(true);
-            channel.enableVibration(true);
-            channel.setShowBadge(true);
-            channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
 
-
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
+                NotificationChannel channel = notificationManager.getNotificationChannel(CHANNEL_ID);
+                if (channel == null) {
+                    channel = new NotificationChannel(CHANNEL_ID, name, importance);
+                    channel.setDescription(description);
+                    channel.setLightColor(Color.GREEN);
+                    channel.shouldShowLights();
+                    channel.enableLights(true);
+                    channel.enableVibration(true);
+                    channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    channel.setShowBadge(true);
+                    channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+
+                    // Register the channel with the system; you can't change the importance
+                    // or other notification behaviors after this
+                    notificationManager.createNotificationChannel(channel);
+                }
             }
         }
 
-        Date date =  new Date(taskDate);
+        Date date = new Date(taskDate);
        /* if(date == null){
             date = new Date(System.currentTimeMillis() + 60*60*1000);
         }*/
@@ -90,7 +94,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);
 
-      NotificationCompat.Builder  mSummaryBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
+        NotificationCompat.Builder mSummaryBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.timed_notifications))
                 //set content text to support devices running API level < 24
                 .setContentText("New timed messages")
@@ -106,6 +110,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 .setGroupSummary(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+       // notificationManager.notify(notificationId, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
     }
 }
