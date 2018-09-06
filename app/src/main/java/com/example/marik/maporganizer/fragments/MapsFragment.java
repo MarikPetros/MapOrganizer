@@ -302,7 +302,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         //added, needs to be tested
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
-        }
+        }else {mGoogleApiClient.reconnect();}
 
         mViewModel.getItems().observe(this,new Observer<List<TaskItem>>() {
             @Override

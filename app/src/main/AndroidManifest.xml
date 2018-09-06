@@ -11,11 +11,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name ="android.hardware.camera2" android:required="true" />
+    <uses-feature android:name ="android.hardware.camera" android:required="true" />
 
     <uses-feature android:glEsVersion="0x20000" android:required="true" />
-    <uses-feature android:name="android.hardware.camera2" android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
-<uses-permission android:name="android.permission.CAMERA"></uses-permission>
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gfs.permision.READ_GSERVICES" />
     <uses-permission android:name="com.truiton.mapfragment.permission.MAPS_RECEIVE" />
@@ -70,7 +73,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/task_appwidget_info" />
         </receiver>
-
         <receiver
             android:name=".receiver.NotificationAlarmReceiver"
             android:enabled="true"
@@ -79,10 +81,12 @@
                 <action android:name="com.example.marik.maporganizer.ACTION_NOTIFY_AT_TIME" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".activity.TempMapActivity"
             android:label="@string/title_activity_temp_map"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!--<activity android:name=".activity.CameraViewActivity"></activity>-->
     </application>
 
 </manifest>
