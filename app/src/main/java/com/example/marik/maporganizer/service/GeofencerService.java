@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
+import com.example.marik.maporganizer.db.Converters;
 import com.example.marik.maporganizer.db.TaskRepository;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -38,8 +39,9 @@ public class GeofencerService extends IntentService {
     private NotificationCompat.Builder mBuilder;
     private NotificationCompat.Builder mSummaryBuilder;
     private String explanation;
-    private int notificationId;
+    private int notificationId = 222;
     private String dismissalId;
+    private String notificationTag;
     private Location location;
     private TaskRepository taskRepository;
 
@@ -97,8 +99,8 @@ public class GeofencerService extends IntentService {
     private void sendNotification(String geofenceTransitionDetails) {
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-       // notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
-        notificationManager.notify(notificationId, mBuilder.build());
+        // notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
+        notificationManager.notify(notificationTag, notificationId, mBuilder.build());
     }
 
     private String getGeofenceTransitionDetails(GeofencerService geofencerService, int geofenceTransition, List<Geofence> triggeringGeofences) {
@@ -109,12 +111,12 @@ public class GeofencerService extends IntentService {
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             stringBuilder.append(getString(R.string.alert_text));
-            List<Integer> ids = new ArrayList<>();
+            List<String> tags = new ArrayList<>();
             List<String> addresses = new ArrayList<>();
             //           int i=0;
             for (Geofence g : triggeringGeofences) {
                 //           notifText = g.getRequestId(); /// This is for test
-                notificationId = Integer.parseInt(g.getRequestId());
+                notificationTag = g.getRequestId();
                 String itemAddress = null;
                 try {
                     itemAddress = taskRepository.getById(UUID.fromString(g.getRequestId())).getChoosedAddress();
@@ -123,17 +125,17 @@ public class GeofencerService extends IntentService {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ids.add(notificationId);
+                tags.add(notificationTag);
                 addresses.add(itemAddress + "/n");
             }
             // making content for bigText
             explanation = getString(R.string.explanation) + addresses.toString();
 
-            // setting notification's id with first tasks UUID
-            notificationId = ids.get(0);
+            // setting notification's tag with first tasks UUID
+            notificationTag = tags.get(0);
 
             // setting notification's dismissalId with first tasks UUID
-            dismissalId = ids.get(0).toString();
+            dismissalId = notificationTag; // ids.get(0).toString();
 
             //complete geofenceTransitionDetails text
             stringBuilder.append(addresses.get(0));
