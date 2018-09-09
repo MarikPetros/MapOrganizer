@@ -16,21 +16,22 @@
 
         <Button
             android:id="@+id/directions_button"
+            style="@style/AppTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin"
+            android:background="@color/colorPrimary"
             android:clickable="true"
             android:focusable="true"
-            android:layout_margin="@dimen/margin"
-            android:text="@string/direction"
             android:padding="@dimen/_padding"
+            android:text="@string/direction"
             android:textColor="@color/color_white"
-            android:background="@color/colorPrimary"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/AppTheme"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <AutoCompleteTextView
+
+        <TextView
             android:id="@+id/addressLine"
             android:layout_width="match_parent"
             android:layout_height="@dimen/address_line_height"
@@ -69,7 +70,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_text" />
 
-
         <CheckBox
             android:id="@+id/attach_photo_checkbox"
             android:layout_width="wrap_content"
@@ -83,8 +83,8 @@
 
         <ImageView
             android:id="@+id/photo"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_top"
             android:src="@mipmap/ic_launcher"
@@ -92,8 +92,30 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/attach_photo_checkbox" />
+            app:layout_constraintTop_toBottomOf="@+id/attach_photo_checkbox"
+            tools:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/delete_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/photo"
+            app:layout_constraintTop_toTopOf="@id/photo" />
+
+
+        <ImageView
+            android:id="@+id/add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:visibility="gone"
+            android:backgroundTint="@color/cardview_dark_background"
+            app:layout_constraintBottom_toBottomOf="@id/photo"
+            app:layout_constraintEnd_toEndOf="@id/photo"
+            android:src="@android:drawable/ic_menu_edit" />
 
         <TextView
             android:id="@+id/date"
@@ -156,11 +178,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
+            android:padding="@dimen/_padding"
+            android:text="@string/show_locattion"
             android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox"
-            android:text="@string/show_locattion"
-            android:padding="@dimen/_padding"/>
+            app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox" />
 
 
         <!--<android.support.v7.widget.ContentFrameLayout

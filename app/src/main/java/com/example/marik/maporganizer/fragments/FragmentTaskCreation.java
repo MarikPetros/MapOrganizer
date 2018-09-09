@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,6 +12,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -28,6 +30,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -49,7 +53,7 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.activity.TempMapActivity;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.imagePicker.ImagePicker;
+import com.example.marik.maporganizer.imagePicker.Utility;
 import com.example.marik.maporganizer.imagePicker.WriteBitmapToFileTask;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
@@ -57,6 +61,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +73,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.ALARM_SERVICE;
 import static com.example.marik.maporganizer.activity.TempMapActivity.LATLONG_KEY;
 import static com.example.marik.maporganizer.activity.TempMapActivity.RADIUS_KEY;
@@ -107,9 +114,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
     public static final String ARG_TASK_ITEM = "arg.taskitem";
     public static final int ALERT_RADIUS = 2;
-    private static final String ARG_LAT = "arg.lat";
-    private static final String ARG_LNG = "arg.lng";
+    public static final String ARG_LAT = "arg.lat";
+    public static final String ARG_LNG = "arg.lng";
     private static final int PICK_IMAGE_ID = 1;
+    public static final int REQUEST_CODE = 2;
     private static final String remind15 = "15 minutes";
     private static final String remind30 = "30 minutes";
     private static final String remind45 = "45 minutes";
@@ -126,14 +134,19 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     String addressLine;
     Bitmap bitmap;
     TaskViewModel mViewModel;
+    private static final int REQUEST_CAMERA = 11;
+    private static final int SELECT_FILE = 10;
+    private ImageView ivImage;
+    private String userChoosenTask;
 
     private ContentFrameLayout mFrameLayout;
-    private AutoCompleteTextView mChoosedAddress;
+    private Button mDirection;
+    private TextView mChoosedAddress;
     private TextView mTitle;
     private TextView mDescription;
     private TextView mDate;
     private TextView showLocation;
-    private ImageView mPhoto;
+    private ImageView mPhoto, mAddPhoto, mDeletePhoto;
     private CheckBox mReminderCheckBox, mNotifybyPlaceCheckBox, mAttachPhotoCheckBox;
     private Spinner mRemindSpinner;
     private String mImageUri;
@@ -153,7 +166,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public final static String ITEM_EXTRA = "com.example.marik.maporganizer.NOTIFYING_TASK_ITEM";
     public final static String TIME_NOTIFIER = "com.example.marik.maporganizer.TIME_NOTIFIER";
     public final static String TASK_DATE = "com.example.marik.maporganizer.TASK_DATE";
-
+    public final static String ITEM_ADDRESS = "com.example.marik.maporganizer.NOTIFYING_TASK_ADDRESS";
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -208,6 +221,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+//        StrictMode.setVmPolicy(builder.build());
+
         Bundle args = getArguments();
         if (args != null) {
             if (args.containsKey(ARG_TASK_ITEM)) {
@@ -217,6 +233,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 //                }
                 isNewCreated = false;
             } else {
+                isNewCreated = true;
                 mTaskItem = new TaskItem();
                 mTaskItem.setDate(new Date());
                 mTaskItem.setLatitude(args.getDouble(ARG_LAT));
@@ -274,10 +291,14 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         super.onStop();
         if (isNewCreated) {
             mViewModel.insertItem(updateTaskItemValues());
+            if (isEmptyTask()) {
+                mViewModel.deleteItem(updateTaskItemValues().getId());
+            }
         } else {
             if (!isEmptyTask()) {
                 mViewModel.update(updateTaskItemValues());
             }
+         //   bitmap.recycle();
         }
 
         //adding Geofences
@@ -291,19 +312,22 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         }
     }
 
-    public void onPickImage(View view) {
-        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getContext());
-        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
-    }
+//    public void onPickImage(View view) {
+//        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getContext());
+//        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+//    }
 
     private void init(final View root) {
 
+        mDirection=root.findViewById(R.id.directions_button);
         mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
         mDate = root.findViewById(R.id.date);
         mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
         mPhoto = root.findViewById(R.id.photo);
+        mDeletePhoto=root.findViewById(R.id.delete_image);
+        mAddPhoto=root.findViewById(R.id.add_image);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
         showLocation = root.findViewById(R.id.show_location);
@@ -317,16 +341,30 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     }
 
     private void setListeners() {
+
+
+        mDirection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapsFragment mapsFragment=MapsFragment.newInstance(mTaskItem.getLatitude(), mTaskItem.getLongitude());
+
+            }
+        });
+
         mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
                     if (mTaskItem.getImageUri() == null)
-                        onPickImage(getView());
+                       // onPickImage(getView());
+                   mAddPhoto.setVisibility(View.VISIBLE);
+                   mDeletePhoto.setVisibility(View.VISIBLE);
 
                 } else {
                     mPhoto.setVisibility(View.GONE);
+                    mAddPhoto.setVisibility(View.GONE);
+                    mDeletePhoto.setVisibility(View.GONE);
                 }
             }
         });
@@ -335,6 +373,26 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        mAddPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+selectImage();
+//                if (mTaskItem.getImageUri() == null)
+//                    onPickImage(getView());
+
+            }
+        });
+
+
+        mDeletePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            //    bitmap.recycle();
+                mTaskItem.setImageUri(null);
+                mTaskItem.setAttached(false);
             }
         });
 
@@ -433,7 +491,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mTitle.setText(mTaskItem.getTitle());
         mDescription.setText(mTaskItem.getDescription());
         mAttachPhotoCheckBox.setChecked(mTaskItem.isAttached());
-        mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));
+        if(mTaskItem.isAttached()){
+            mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));}
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
         if (mReminderCheckBox.isChecked()) {
             //   switch(mRemindSpinner.)
@@ -500,12 +559,20 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case PICK_IMAGE_ID:
-                bitmap = ImagePicker.getImageFromResult(getContext(), resultCode, data);
-                if (getContext() != null) {
-                    writeBitmapToFile(bitmap, getContext().getFilesDir() + File.separator + mTaskItem.getId(), this);
-                }
+            case SELECT_FILE:
+                    onSelectFromGalleryResult(data);
+
                 break;
+            case REQUEST_CAMERA:
+                onCaptureImageResult(data);
+                writeBitmapToFile(bitmap, getContext().getFilesDir() + File.separator + mTaskItem.getId(), this);
+break;
+
+//            case PICK_IMAGE_ID:
+//                bitmap = ImagePicker.getImageFromResult(getContext(), resultCode, data);
+//                if (getContext() != null) {
+//                }
+//                break;
             case ALERT_RADIUS:
                 if (getContext() != null && data != null) {
                     mAlertRadius = data.getIntExtra(RADIUS_KEY, 0);
@@ -557,15 +624,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         }
     }
 
-
-    private Bitmap createBitmapfromPath(String filePath, String imageName) {
-
-        File sd = Environment.getExternalStorageDirectory();
-        File image = new File(sd + filePath, imageName);
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
-        return bitmap;
-    }
 
     public static class GetAddressAsyncTask extends AsyncTask<Double, Void, String> {
 
@@ -646,10 +704,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         }
         long taskDate = mTaskItem.getDate().getTime();
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
+        double[] latLng = new double[] {mTaskItem.getLatitude(), mTaskItem.getLongitude()};
+
 
         Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
-        notifyIntent.putExtra(ITEM_EXTRA, mTaskItem);
+        notifyIntent.putExtra(ITEM_EXTRA, latLng);
         notifyIntent.putExtra(TASK_DATE, taskDate);
+        notifyIntent.putExtra(ITEM_ADDRESS,mTaskItem.getChoosedAddress());
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
                 (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -659,5 +720,116 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(userChoosenTask.equals("Take Photo"))
+                        cameraIntent();
+                    else if(userChoosenTask.equals("Choose from Library"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result=Utility.checkPermission(getContext());
+
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask ="Take Photo";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask ="Choose from Library";
+                    if(result)
+                        galleryIntent();
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode == Activity.RESULT_OK) {
+//            if (requestCode == SELECT_FILE)
+//                onSelectFromGalleryResult(data);
+//            else if (requestCode == REQUEST_CAMERA)
+//                onCaptureImageResult(data);
+//        }
+//    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mPhoto.setImageBitmap(thumbnail);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        mPhoto.setImageBitmap(bm);
+    }
+
+
 }
 

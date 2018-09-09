@@ -20,6 +20,8 @@ import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 import java.util.Date;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_ADDRESS;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_EXTRA;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TASK_DATE;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 
@@ -29,9 +31,12 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // an Intent broadcast.
-        TaskItem mTaskItem = intent.getParcelableExtra(FragmentTaskCreation.ITEM_EXTRA);
+
+        double[] latlng = intent.getDoubleArrayExtra(ITEM_EXTRA);
         long taskDate = intent.getLongExtra(TASK_DATE, 0);
-        int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
+        String address = intent.getStringExtra(ITEM_ADDRESS);
+
+        int notificationId = (int) Math.round(((latlng[0] + latlng[1]) * 100000) % 100);
 
         String mDismissNotificationId = String.valueOf(notificationId);
 
@@ -40,7 +45,6 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         wearableExtender.setDismissalId(mDismissNotificationId);
 
         Intent contentIntent = new Intent(context, MainActivity.class);
-        double[] latlng = new double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()};
         contentIntent.putExtra(TIME_NOTIFIER, latlng);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId, contentIntent, 0);
@@ -85,7 +89,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 .setContentText(context.getString(R.string.scheduled_job))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("You have a job at " + date.toString() + "at "
-                                + mTaskItem.getChoosedAddress()))
+                                + address))
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .extend(wearableExtender)
@@ -110,7 +114,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 .setGroupSummary(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-       // notificationManager.notify(notificationId, mSummaryBuilder.build());
+        // notificationManager.notify(notificationId, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
     }
 }

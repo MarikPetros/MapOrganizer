@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.marik.maporganizer">
 
     <!--
@@ -11,15 +12,22 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name ="android.hardware.camera2" android:required="true" />
-    <uses-feature android:name ="android.hardware.camera" android:required="true" />
-
-    <uses-feature android:glEsVersion="0x20000" android:required="true" />
+    <!--<uses-feature-->
+        <!--android:name="android.hardware.camera2"-->
+        <!--android:required="true" />-->
+    <!--<uses-feature-->
+        <!--android:name="android.hardware.camera"-->
+        <!--android:required="true" />-->
+    <uses-feature
+        android:glEsVersion="0x20000"
+        android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gfs.permision.READ_GSERVICES" />
     <uses-permission android:name="com.truiton.mapfragment.permission.MAPS_RECEIVE" />
     <uses-permission android:name="NETWORK_ACCESS_STATE " />
@@ -31,6 +39,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.easyphotopicker.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                tools:replace="android:resource"/>
+        </provider>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -57,7 +77,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+
 
         <service
             android:name=".service.GeofencerService"
@@ -70,6 +93,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/task_appwidget_info" />
@@ -88,7 +112,13 @@
             android:name=".activity.TempMapActivity"
             android:label="@string/title_activity_temp_map"
             android:theme="@style/AppTheme.NoActionBar" />
-        <!--<activity android:name=".activity.CameraViewActivity"></activity>-->
+        <!-- <activity android:name=".activity.CameraViewActivity"></activity> -->
+        <!--<activity-->
+            <!--android:name=".activity.SplashScreenActivity"-->
+            <!--android:label="@string/title_activity_splash_screen"-->
+            <!--android:theme="@style/SplashScreenTheme">-->
+
+        <!--</activity>-->
     </application>
 
 </manifest>

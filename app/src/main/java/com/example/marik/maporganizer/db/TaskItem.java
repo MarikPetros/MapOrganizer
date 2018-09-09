@@ -244,9 +244,9 @@ public class TaskItem implements Parcelable, ClusterItem {
         dest.writeString(mChoosedAddress);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
-        dest.writeLong(mDate == null ? -1 : mDate.getTime());
         dest.writeByte((byte) (isAttached ? 1 : 2));
         dest.writeString(mImageUri);
+        dest.writeLong(mDate == null ? -1 : mDate.getTime());
         dest.writeByte((byte) (mReminder ? 1 : 0));
         dest.writeLong(mRemindtime);
         dest.writeByte((byte) (mNotifyByPlace ? 1 : 0));

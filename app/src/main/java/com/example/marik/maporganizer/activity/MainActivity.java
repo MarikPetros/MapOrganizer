@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
     }
 
@@ -83,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
 
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
+
 
         setTabs();
 
