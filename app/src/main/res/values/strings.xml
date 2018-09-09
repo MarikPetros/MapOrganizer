@@ -40,7 +40,7 @@
     <string name="nearTasks">Nearby tasks</string>
     <string name="some_messages">Some new messages</string>
     <string name="maporganizer">MapOrganizer</string>
-    <string name="radius_in_meters">Radius (100m to 10000m)</string>
+    <string name="radius_in_meters">Radius (100m to 5000m)</string>
     <string name="empty_view_text">There are no tasks!</string>
     <string name="service_not_available">service is not available</string>
     <string name="invalid_lat_long_used">invalid lat long used</string>
@@ -58,7 +58,8 @@
     <string name="timed_notifications">Timed notifications</string>
     <string name="timted_group_title">Jobs to do</string>
     <string name="timed_messages">New timed messages</string>
-    <string name="directions">Directions</string>
+    <string name="direction">Direction</string>
+    <string name="show_locattion">Show locattion</string>
 </resources>
 
 

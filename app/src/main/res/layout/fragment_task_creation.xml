@@ -16,13 +16,17 @@
 
         <Button
             android:id="@+id/directions_button"
-            android:layout_width="110dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true"
-            android:text="@string/directions"
-            android:textColorLink="@color/colorPrimaryDark"
+            android:layout_margin="@dimen/margin"
+            android:text="@string/direction"
+            android:padding="@dimen/_padding"
+            android:textColor="@color/color_white"
+            android:background="@color/colorPrimary"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             style="@style/AppTheme"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
@@ -147,16 +151,25 @@
             app:layout_constraintTop_toBottomOf="@+id/reminder_spinner" />
 
 
-        <android.support.v7.widget.ContentFrameLayout
+        <TextView
+            android:id="@+id/show_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:textSize="@dimen/text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox"
+            android:text="@string/show_locattion"
+            android:padding="@dimen/_padding"/>
+
+
+        <!--<android.support.v7.widget.ContentFrameLayout
             android:id="@+id/frame_in_creator"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_margin="@dimen/margin"
-            android:padding="@dimen/_padding"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/notify_by_place_checkbox">
-            <!-- <include layout="@layout/fragment_temp_map"/>-->
-        </android.support.v7.widget.ContentFrameLayout>
+            &lt;!&ndash; <include layout="@layout/fragment_temp_map"/>&ndash;&gt;
+        </android.support.v7.widget.ContentFrameLayout>-->
 
     </android.support.constraint.ConstraintLayout>
 

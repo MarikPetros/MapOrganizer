@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:background="@drawable/white_border"
-            android:ems="12"
+            android:ems="10"
             android:gravity="center"
             android:hint="@string/radius_in_meters"
             android:inputType="number"
@@ -59,35 +59,46 @@
             android:id="@+id/radius_save_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/checkbox_on_background"
-            android:layout_marginTop="@dimen/margin_top"
             android:layout_marginStart="@dimen/margin_start"
+            android:layout_marginTop="@dimen/margin_top"
+            android:background="@android:drawable/checkbox_on_background"
+            android:elevation="@dimen/button_elevation"
+            android:padding="@dimen/_padding" />
+
+        <ImageView
+            android:id="@+id/radius_settings_save_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="@dimen/margin_top"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:background="@color/colorPrimary"
             android:elevation="@dimen/button_elevation"
             android:padding="@dimen/_padding" />
     </LinearLayout>
 
     <RelativeLayout
-         android:layout_width="match_parent"
-         android:layout_height="match_parent">
-
-    <fragment
-        android:id="@+id/tMap"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin"
-        android:layout_gravity="bottom" />
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/tMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin"
+            android:layout_gravity="bottom" />
 
         <!--<ImageView-->
-            <!--android:id="@+id/fixedPin"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_marginEnd="156dp"-->
-            <!--android:layout_marginTop="102dp"-->
-            <!--android:src="@drawable/red_pin" />-->
+        <!--android:id="@+id/fixedPin"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginEnd="156dp"-->
+        <!--android:layout_marginTop="102dp"-->
+        <!--android:src="@drawable/red_pin" />-->
 
 
-</RelativeLayout>
+    </RelativeLayout>
 </LinearLayout>

@@ -50,6 +50,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,6 +74,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/task_appwidget_info" />
         </receiver>
+
         <receiver
             android:name=".receiver.NotificationAlarmReceiver"
             android:enabled="true"

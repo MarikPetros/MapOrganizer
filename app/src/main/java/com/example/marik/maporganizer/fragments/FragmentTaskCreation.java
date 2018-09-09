@@ -68,6 +68,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static android.content.Context.ALARM_SERVICE;
+import static com.example.marik.maporganizer.activity.TempMapActivity.LATLONG_KEY;
+import static com.example.marik.maporganizer.activity.TempMapActivity.RADIUS_KEY;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment implements WriteBitmapToFileTask.OnResultListener {
@@ -104,6 +106,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
 
     public static final String ARG_TASK_ITEM = "arg.taskitem";
+    public static final int ALERT_RADIUS = 2;
     private static final String ARG_LAT = "arg.lat";
     private static final String ARG_LNG = "arg.lng";
     private static final int PICK_IMAGE_ID = 1;
@@ -129,6 +132,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private TextView mTitle;
     private TextView mDescription;
     private TextView mDate;
+    private TextView showLocation;
     private ImageView mPhoto;
     private CheckBox mReminderCheckBox, mNotifybyPlaceCheckBox, mAttachPhotoCheckBox;
     private Spinner mRemindSpinner;
@@ -302,12 +306,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mPhoto = root.findViewById(R.id.photo);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
+        showLocation = root.findViewById(R.id.show_location);
+        showLocation.setVisibility(View.GONE);
 
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
-        mFrameLayout = root.findViewById(R.id.frame_in_creator);
         setListeners();
     }
 
@@ -318,7 +323,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
                     if (mTaskItem.getImageUri() == null)
-                    onPickImage(getView());
+                        onPickImage(getView());
 
                 } else {
                     mPhoto.setVisibility(View.GONE);
@@ -392,13 +397,20 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Intent intent = new Intent(getActivity(), TempMapActivity.class);
-                    intent.putExtra(ARG_TASK_ITEM, mTaskItem);
-                    startActivity(intent);
+                    mTaskItem.setAlertRadius(mAlertRadius);
+                    showLocation.setVisibility(View.VISIBLE);
                 }
             }
         });
 
+        showLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TempMapActivity.class);
+                intent.putExtra(ARG_TASK_ITEM, mTaskItem);
+                startActivityForResult(intent, ALERT_RADIUS);
+            }
+        });
 
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -467,18 +479,20 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         }
 
         if (mReminderCheckBox.isChecked()) {
-            if (mReminderCheckBox.isChecked()) {
-                mTaskItem.setReminder(mReminderCheckBox.isChecked());
+            mTaskItem.setReminder(mReminderCheckBox.isChecked());
 
-                //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
-                // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
-            }
-            mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-            if (mNotifybyPlaceCheckBox.isChecked()) {
-                mTaskItem.setAlertRadius(mAlertRadius);
-            } else
-                mTaskItem.setAlertRadius(0);
+            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
+            // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         }
+
+        mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
+
+        if (mNotifybyPlaceCheckBox.isChecked()) {
+            //   mTaskItem.setAlertRadius(mAlertRadius);
+        } /*else {
+            mTaskItem.setAlertRadius(0);
+        }*/
+
         return mTaskItem;
     }
 
@@ -487,12 +501,22 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICK_IMAGE_ID:
-                bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                bitmap = ImagePicker.getImageFromResult(getContext(), resultCode, data);
                 if (getContext() != null) {
-
                     writeBitmapToFile(bitmap, getContext().getFilesDir() + File.separator + mTaskItem.getId(), this);
                 }
-
+                break;
+            case ALERT_RADIUS:
+                if (getContext() != null && data != null) {
+                    mAlertRadius = data.getIntExtra(RADIUS_KEY, 0);
+                    double[] latAndLng = data.getDoubleArrayExtra(LATLONG_KEY);
+                    mTaskItem.setAlertRadius(mAlertRadius);
+                    mTaskItem.setLatitude(latAndLng[0]);
+                    mTaskItem.setLongitude(latAndLng[1]);
+                    mViewModel.update(mTaskItem);
+                } else {
+                    Log.e("radius", "Radiusy chekav");
+                }
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
@@ -598,7 +622,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     }
 
     //TODO delegation for directions
-    interface OnDirectionsClickListener {
+    public interface OnDirectionsClickListener {
         void onDirectionClick(LatLng pLatLng);
     }
 
@@ -629,9 +653,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
                 (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
-        } else {
+        } else if (Build.VERSION.SDK_INT >= 19) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         }
     }

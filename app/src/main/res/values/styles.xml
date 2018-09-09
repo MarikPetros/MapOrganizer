@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -15,10 +15,15 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="AppTheme"/>               <!--ThemeOverlay.AppCompat.Light"-->
 
     <style name="AppTheme.WhiteTextAppearance">
         <item name="android:textColor">#fff</item>
     </style>
+
+    <style name="Theme.AppCompat">Theme.AppCompat</style>
+
+    <style name="Theme">Theme</style>
+
 
 </resources>
