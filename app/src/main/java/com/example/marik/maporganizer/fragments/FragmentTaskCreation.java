@@ -1,7 +1,6 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,19 +16,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
@@ -38,7 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -47,7 +42,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
@@ -66,14 +60,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.ALARM_SERVICE;
 import static com.example.marik.maporganizer.activity.TempMapActivity.LATLONG_KEY;
 import static com.example.marik.maporganizer.activity.TempMapActivity.RADIUS_KEY;
@@ -154,7 +146,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private long mRemindTime = 15 * 60 * 1000;
     private int mAlertRadius = 100;
     private TaskItem mTaskItem;
-    private OnDirectionsClickListener mOndirectionsClickListener;
+    private OnDirectionListener mOndirectionListener;
     private boolean reminderIsChecked;
 //    OnTaskFragmentInteraction mListener;
 
@@ -167,6 +159,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public final static String TIME_NOTIFIER = "com.example.marik.maporganizer.TIME_NOTIFIER";
     public final static String TASK_DATE = "com.example.marik.maporganizer.TASK_DATE";
     public final static String ITEM_ADDRESS = "com.example.marik.maporganizer.NOTIFYING_TASK_ADDRESS";
+
+    public void setmOndirectionListener(OnDirectionListener mOndirectionListener) {
+        this.mOndirectionListener = mOndirectionListener;
+    }
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -346,8 +342,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapsFragment mapsFragment = MapsFragment.newInstance(mTaskItem.getLatitude(), mTaskItem.getLongitude());
-
+                LatLng latLng = new LatLng(mTaskItem.getLatitude(),mTaskItem.getLongitude());
+                mOndirectionListener.showDirection(latLng);
             }
         });
 
@@ -681,8 +677,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     }
 
     //TODO delegation for directions
-    public interface OnDirectionsClickListener {
-        void onDirectionClick(LatLng pLatLng);
+    public interface OnDirectionListener {
+        void showDirection(LatLng pLatLng);
     }
 
 //    public void setFragmentInteraction(OnTaskFragmentInteraction fragmentInteraction) {

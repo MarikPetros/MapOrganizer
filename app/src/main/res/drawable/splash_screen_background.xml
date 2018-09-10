@@ -7,6 +7,6 @@
     <item android:gravity="center" android:width="500dp" android:height="700dp">
         <bitmap
             android:gravity="fill"
-            android:src="@drawable/kisspng_earth_globe_world"/>
+            android:src="@drawable/logo"/>
     </item>
 </layer-list>

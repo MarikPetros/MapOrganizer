@@ -99,7 +99,7 @@ import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleApiClient.ConnectionCallbacks, LocationListener {
+        GoogleApiClient.ConnectionCallbacks, LocationListener, FragmentTaskCreation.OnDirectionListener {
 
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
@@ -143,19 +143,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return fragment;
     }
 
-    public static MapsFragment newInstance(double[] latlng) {
+    public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        args.putDoubleArray(LAT_LNG_FROM_NOTIFICATIONS, latlng);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static MapsFragment newInstance(double latitude, double longitude){
-        MapsFragment fragment = new MapsFragment();
-        Bundle args = new Bundle();
-        args.putDouble(FragmentTaskCreation.ARG_LAT, latitude);
-        args.putDouble(FragmentTaskCreation.ARG_LNG, longitude);
         fragment.setArguments(args);
         return fragment;
     }
@@ -179,15 +169,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             }
         }
 
-        Bundle args = getArguments();
-        if (args != null) {
-            if (args.containsKey(LAT_LNG_FROM_NOTIFICATIONS)) {
-                double[] latlngNot = args.getDoubleArray(LAT_LNG_FROM_NOTIFICATIONS);
-                assert latlngNot != null;
-                latLngFromNotification = new LatLng(latlngNot[0], latlngNot[1]);
-                notificationFlag = true;
-            }
-        }
     }
 
 
@@ -438,12 +419,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onStart() {
         super.onStart();
 
-if(getArguments()!=null){
-    Bundle args=getArguments();
-    dirLat=args.getDouble(FragmentTaskCreation.ARG_LAT);
-    dirLng=args.getDouble(FragmentTaskCreation.ARG_LNG);
-    mMarkerPoints.add(new LatLng(dirLat, dirLng));
-}
+        if (getArguments() != null) {
+            Bundle args = getArguments();
+            dirLat = args.getDouble(FragmentTaskCreation.ARG_LAT);
+            dirLng = args.getDouble(FragmentTaskCreation.ARG_LNG);
+            mMarkerPoints.add(new LatLng(dirLat, dirLng));
+        }
     }
 
     @Override
@@ -849,6 +830,11 @@ if(getArguments()!=null){
 
 
         return url;
+    }
+
+    @Override
+    public void showDirection(LatLng pLatLng) {
+
     }
 
 
