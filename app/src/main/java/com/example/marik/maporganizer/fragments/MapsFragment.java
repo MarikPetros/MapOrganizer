@@ -838,13 +838,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mMarkerPoints.add(currentLatLng);
         mMarkerPoints.add(pLatLng);
 
-        /*if (mMarkerPoints.size() < 2) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(pLatLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
-
-            drawMarker(pLatLng);
-        }*/
-        //===============================================================
         if (mMarkerPoints.size() > 1) {
             mMarkerPoints.clear();
             mMap.clear();
