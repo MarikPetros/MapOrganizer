@@ -322,7 +322,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             LatLng latLng = new LatLng(item.getLatitude(), item.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.newerpin)));
         }
     }
 
@@ -623,10 +623,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private void moveCamera(LatLng latLng, float zoom, String title) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        if (title.equals("my location")) {
+        if (!title.equals("my location")) {
             MarkerOptions options = new MarkerOptions()
                     .position(latLng);
-            //  mMarker = mMap.addMarker(options);
+             mMarker = mMap.addMarker(options);
         }
         hideKeyboard(getActivity());
     }

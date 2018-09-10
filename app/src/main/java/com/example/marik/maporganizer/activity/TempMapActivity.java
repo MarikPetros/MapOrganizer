@@ -174,7 +174,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             public void onCameraIdle() {
                 LatLng midLatLng = mMap.getCameraPosition().target;
                 getAddress(midLatLng.latitude, midLatLng.longitude);
-
+                Log.v("---------", midLatLng.latitude + " " + midLatLng.longitude);
             }
         });
 

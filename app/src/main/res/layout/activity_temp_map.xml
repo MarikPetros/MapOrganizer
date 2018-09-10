@@ -89,7 +89,7 @@
             android:layout_margin="@dimen/margin"
             android:layout_gravity="bottom" />
 
-        <ImageView
+       <!-- <ImageView
             android:id="@+id/fixedPin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="156dp"
             android:layout_marginTop="102dp"
-            android:src="@drawable/red_pin" />
+            android:src="@drawable/red_pin" />-->
 
 
     </RelativeLayout>

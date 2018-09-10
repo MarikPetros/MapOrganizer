@@ -29,7 +29,7 @@ public class ClusterRenderer extends DefaultClusterRenderer<TaskItem> {
         // Customize the marker here
         markerOptions
                 .position(clusters.getPosition())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.newerpin));
     }
 
     @Override
