@@ -46,8 +46,7 @@ public class GeofenceMaker {
                             taskItem.getAlertRadius()
                     )
                     .setExpirationDuration(NEVER_EXPIRE)
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL )
-                    .setLoiteringDelay(1000 * 60 * 60 * 2)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )
                     .build();
         }
         return geofence;

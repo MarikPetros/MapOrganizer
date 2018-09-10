@@ -298,7 +298,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             if (!isEmptyTask()) {
                 mViewModel.update(updateTaskItemValues());
             }
-         //   bitmap.recycle();
+            //   bitmap.recycle();
         }
 
         //adding Geofences
@@ -319,15 +319,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
     private void init(final View root) {
 
-        mDirection=root.findViewById(R.id.directions_button);
+        mDirection = root.findViewById(R.id.directions_button);
         mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
         mDate = root.findViewById(R.id.date);
         mAttachPhotoCheckBox = root.findViewById(R.id.attach_photo_checkbox);
         mPhoto = root.findViewById(R.id.photo);
-        mDeletePhoto=root.findViewById(R.id.delete_image);
-        mAddPhoto=root.findViewById(R.id.add_image);
+        mDeletePhoto = root.findViewById(R.id.delete_image);
+        mAddPhoto = root.findViewById(R.id.add_image);
         mReminderCheckBox = root.findViewById(R.id.reminder_checkbox);
         mNotifybyPlaceCheckBox = root.findViewById(R.id.notify_by_place_checkbox);
         showLocation = root.findViewById(R.id.show_location);
@@ -346,7 +346,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapsFragment mapsFragment=MapsFragment.newInstance(mTaskItem.getLatitude(), mTaskItem.getLongitude());
+                MapsFragment mapsFragment = MapsFragment.newInstance(mTaskItem.getLatitude(), mTaskItem.getLongitude());
 
             }
         });
@@ -357,9 +357,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 if (isChecked) {
                     mPhoto.setVisibility(View.VISIBLE);
                     if (mTaskItem.getImageUri() == null)
-                       // onPickImage(getView());
-                   mAddPhoto.setVisibility(View.VISIBLE);
-                   mDeletePhoto.setVisibility(View.VISIBLE);
+                        // onPickImage(getView());
+                        mAddPhoto.setVisibility(View.VISIBLE);
+                    mDeletePhoto.setVisibility(View.VISIBLE);
 
                 } else {
                     mPhoto.setVisibility(View.GONE);
@@ -379,7 +379,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-selectImage();
+                selectImage();
 //                if (mTaskItem.getImageUri() == null)
 //                    onPickImage(getView());
 
@@ -390,7 +390,7 @@ selectImage();
         mDeletePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //    bitmap.recycle();
+                //    bitmap.recycle();
                 mTaskItem.setImageUri(null);
                 mTaskItem.setAttached(false);
             }
@@ -491,8 +491,9 @@ selectImage();
         mTitle.setText(mTaskItem.getTitle());
         mDescription.setText(mTaskItem.getDescription());
         mAttachPhotoCheckBox.setChecked(mTaskItem.isAttached());
-        if(mTaskItem.isAttached()){
-            mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));}
+        if (mTaskItem.isAttached()) {
+            mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));
+        }
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
         if (mReminderCheckBox.isChecked()) {
             //   switch(mRemindSpinner.)
@@ -560,13 +561,13 @@ selectImage();
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case SELECT_FILE:
-                    onSelectFromGalleryResult(data);
+                onSelectFromGalleryResult(data);
 
                 break;
             case REQUEST_CAMERA:
                 onCaptureImageResult(data);
                 writeBitmapToFile(bitmap, getContext().getFilesDir() + File.separator + mTaskItem.getId(), this);
-break;
+                break;
 
 //            case PICK_IMAGE_ID:
 //                bitmap = ImagePicker.getImageFromResult(getContext(), resultCode, data);
@@ -704,13 +705,13 @@ break;
         }
         long taskDate = mTaskItem.getDate().getTime();
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
-        double[] latLng = new double[] {mTaskItem.getLatitude(), mTaskItem.getLongitude()};
+        double[] latLng = new double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()};
 
 
         Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
         notifyIntent.putExtra(ITEM_EXTRA, latLng);
         notifyIntent.putExtra(TASK_DATE, taskDate);
-        notifyIntent.putExtra(ITEM_ADDRESS,mTaskItem.getChoosedAddress());
+        notifyIntent.putExtra(ITEM_ADDRESS, mTaskItem.getChoosedAddress());
         PendingIntent notifyPendingIntent = PendingIntent.getBroadcast
                 (mContext, notificationId, notifyIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -726,9 +727,9 @@ break;
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if (userChoosenTask.equals("Take Photo"))
                         cameraIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
+                    else if (userChoosenTask.equals("Choose from Library"))
                         galleryIntent();
                 } else {
                     //code for deny
@@ -738,24 +739,24 @@ break;
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result=Utility.checkPermission(getContext());
+                boolean result = Utility.checkPermission(getContext());
 
                 if (items[item].equals("Take Photo")) {
-                    userChoosenTask ="Take Photo";
-                    if(result)
+                    userChoosenTask = "Take Photo";
+                    if (result)
                         cameraIntent();
 
                 } else if (items[item].equals("Choose from Library")) {
-                    userChoosenTask ="Choose from Library";
-                    if(result)
+                    userChoosenTask = "Choose from Library";
+                    if (result)
                         galleryIntent();
 
                 } else if (items[item].equals("Cancel")) {
@@ -766,16 +767,14 @@ break;
         builder.show();
     }
 
-    private void galleryIntent()
-    {
+    private void galleryIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
 
-    private void cameraIntent()
-    {
+    private void cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
@@ -818,7 +817,7 @@ break;
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) {
 
-        Bitmap bm=null;
+        Bitmap bm = null;
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
