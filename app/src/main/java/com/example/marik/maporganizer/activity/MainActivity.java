@@ -2,7 +2,6 @@ package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -22,7 +21,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ActionMode;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,7 +50,7 @@ import static com.example.marik.maporganizer.appwidget.TaskAppWidgetProvider.ITE
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity  {
     public final static int PERMISSION_CODE = 26;
 
     private GeofencingClient mGeofencingClient;
@@ -307,11 +305,5 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.OnFr
         }
 
         fragmentTransaction.commit();
-    }
-
-    // es der piti kargavorvi
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

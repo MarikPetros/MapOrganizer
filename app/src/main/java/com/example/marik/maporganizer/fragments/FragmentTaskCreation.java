@@ -343,7 +343,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onClick(View v) {
                 LatLng latLng = new LatLng(mTaskItem.getLatitude(),mTaskItem.getLongitude());
-                mOndirectionListener.showDirection(latLng);
+                new MapsFragment().showDirection(latLng);
             }
         });
 

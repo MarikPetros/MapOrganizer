@@ -1,7 +1,6 @@
 package com.example.marik.maporganizer.fragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -30,7 +29,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,7 +44,6 @@ import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.cluster.ClusterRenderer;
-import com.example.marik.maporganizer.cluster.Clusters;
 import com.example.marik.maporganizer.cluster.DataParser;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.models.PlaceInfo;
@@ -56,7 +53,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -88,13 +84,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
@@ -118,7 +112,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private PlaceInfo mPlace;
     private ClusterManager<TaskItem> mClusterManager;
     private Marker mMarker;
-    private OnFragmentInteractionListener mListener;
+    private OnMapsFragmentInteractionListener mListener;
     private TaskViewModel mViewModel;
     List<TaskItem> mTasksList = new ArrayList<>();
     ArrayList<LatLng> mMarkerPoints;
@@ -133,6 +127,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     public MapsFragment() {
         // Required empty public constructor
+    }
+
+    public void setmListener(OnMapsFragmentInteractionListener mListener) {
+        this.mListener = mListener;
     }
 
     public static MapsFragment newInstance(ArrayList<Location> locations) {
@@ -228,23 +226,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mMarkerPoints = new ArrayList<>();
     }
 
-    public void onButtonPressed(Uri uri) {
+    /*public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnMapsFragmentInteractionListener) {
+            mListener = (OnMapsFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnMapsFragmentInteractionListener");
         }
 
-    }
+    }*/
 
 
     @Override
@@ -358,6 +356,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             Log.v("permisssion chka", mCurrentLocation + "");
 
 
+/*
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
@@ -391,6 +390,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
             }
         });
+*/
 
 
         mMap.setOnMapLongClickListener(this);
@@ -832,9 +832,45 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         return url;
     }
 
+
+    private void drawRout(LatLng pLatLng) {
+        LatLng currentLatLng = new LatLng(getCurrentLocation().getLatitude(),getCurrentLocation().getLongitude());
+        mMarkerPoints.add(currentLatLng);
+        mMarkerPoints.add(pLatLng);
+
+        /*if (mMarkerPoints.size() < 2) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(pLatLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+
+            drawMarker(pLatLng);
+        }*/
+        //===============================================================
+        if (mMarkerPoints.size() > 1) {
+            mMarkerPoints.clear();
+            mMap.clear();
+
+            drawMarker(currentLatLng);
+        }
+
+        if (mMarkerPoints.size() == 2) {
+            LatLng origin = mMarkerPoints.get(0);
+            LatLng dest = mMarkerPoints.get(1);
+
+            // Getting URL to the Google Directions API
+            String url = getUrl(origin, dest);
+            FetchUrl FetchUrl = new FetchUrl();
+
+            // Start downloading json data from Google Directions API
+            FetchUrl.execute(url);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
+        }
+    }
+
     @Override
     public void showDirection(LatLng pLatLng) {
-
+        drawRout(pLatLng);
     }
 
 
@@ -890,8 +926,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
             String line = "";
             while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+                sb.append(line); }
 
             data = sb.toString();
             Log.d("downloadUrl", data.toString());
@@ -962,8 +997,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.BLUE);
+                lineOptions.width(8);
+                lineOptions.color(Color.GREEN);
 
 
             }
@@ -983,8 +1018,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onSaveInstanceState(outState);
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnMapsFragmentInteractionListener {
+        void drawRout(LatLng latLng);
     }
 }
