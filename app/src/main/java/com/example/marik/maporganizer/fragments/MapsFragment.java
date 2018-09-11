@@ -737,7 +737,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             @Override
             public boolean onClusterClick(Cluster<TaskItem> cluster) {
                 Log.v("MapFragment", "Clusters click");
-                // TODO show dialog with list of task items
                 return true;
             }
         });
