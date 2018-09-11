@@ -12,14 +12,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18"/>
+    <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!--<uses-feature-->
-        <!--android:name="android.hardware.camera2"-->
-        <!--android:required="true" />-->
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -39,7 +40,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.easyphotopicker.fileprovider"
@@ -49,7 +49,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"
-                tools:replace="android:resource"/>
+                tools:replace="android:resource" />
         </provider>
 
         <!--
@@ -68,14 +68,7 @@
             android:value="optional" />
 
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/title_activity_maps"
-            android:windowSoftInputMode="stateHidden"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".activity.SplashScreenActivity"
+            android:name=".activity.SplashScreenActivity"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -83,7 +76,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
 
         <service
             android:name=".service.GeofencerService"
@@ -101,7 +98,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/task_appwidget_info" />
         </receiver>
-
         <receiver
             android:name=".receiver.NotificationAlarmReceiver"
             android:enabled="true"
@@ -116,12 +112,14 @@
             android:label="@string/title_activity_temp_map"
             android:theme="@style/AppTheme.NoActionBar" />
         <!-- <activity android:name=".activity.CameraViewActivity"></activity> -->
-        <!--<activity-->
-            <!--android:name=".activity.SplashScreenActivity"-->
-            <!--android:label="@string/title_activity_splash_screen"-->
-            <!--android:theme="@style/SplashScreenTheme">-->
+        <!-- <activity -->
+        <!-- android:name=".activity.SplashScreenActivity" -->
+        <!-- android:label="@string/title_activity_splash_screen" -->
+        <!-- android:theme="@style/SplashScreenTheme"> -->
 
-        <!--</activity>-->
+
+        <!-- </activity> -->
+        <activity android:name=".activity.ar_activities.SensorActivity"></activity>
     </application>
 
 </manifest>

@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity  {
     private BottomNavigationView mBottomNavigationView;
     private TaskViewModel model;
     private ImageView mArButton;
+    private FusedLocationProviderClient mFusedLocationClient;
 
 
     @Override
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity  {
 
 
     public void init(){
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
         mArButton = findViewById(R.id.augmented_reality);
 
@@ -158,6 +163,7 @@ public class MainActivity extends AppCompatActivity  {
         if (locations != null && locations.size() > 0) {
             for (Location location: locations) {
                 item = model.getItemByLocation(location.getLatitude(),location.getLongitude());
+                Log.e("GeofenceItem",item.getTitle() + " " + item.getChoosedAddress());
                 BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
                 //show it
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
@@ -210,7 +216,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     // ---------------------------------------------------------------------------------------------
-    private void checkLocationPermission() {
+    public void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this),Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 

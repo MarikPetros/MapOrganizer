@@ -1,6 +1,6 @@
-package com.example.marik.maporganizer.activity;
+package com.example.marik.maporganizer.activity.ar_activities;
 
-import android.app.Activity;
+/*import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.location.Location;
@@ -18,17 +18,16 @@ import com.google.ar.core.Camera;
 import java.io.IOException;
 import java.util.List;
 
-/*
 public class CameraViewActivity extends Activity implements
         SurfaceHolder.Callback,LocationSource.OnLocationChangedListener,OnAzimuthChangedListener{
 
     private android.hardware.camera2.CameraDevice mCamera;
     private SurfaceHolder mSurfaceHolder;
-    private boolean isCameraviewOn = false;
+    private boolean isCameraViewOn = false;
     private AugmentedPOI mPoi;
 
     private double mAzimuthReal = 0;
-    private double mAzimuthTeoretical = 0;
+    private double mAzimuthTheoretical = 0;
     private static double AZIMUTH_ACCURACY = 5;
     private double mMyLatitude = 0;
     private double mMyLongitude = 0;
@@ -51,8 +50,7 @@ public class CameraViewActivity extends Activity implements
         setAugmentedRealityPoint();
     }
 
-    */
-/**Here is the place where you can setup your points of interest. In our example we will stick to just one but you can extend algorithm to work with DB etc. **//*
+*//**Here is the place where you can setup your points of interest. In our example we will stick to just one but you can extend algorithm to work with DB etc. **//*
 
     private void setAugmentedRealityPoint() {
         poi = new AugmentedPOI(
@@ -76,8 +74,8 @@ public class CameraViewActivity extends Activity implements
     }
 
     private void updateDescription() {
-        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
-                + mAzimuthTeoretical + " azimuthReal " + mAzimuthReal + " latitude "
+        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTheoretical "
+                + mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
                 + mMyLatitude + " longitude " + mMyLongitude);
     }
 
@@ -114,16 +112,16 @@ public class CameraViewActivity extends Activity implements
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-        if (isCameraviewOn) {
+        if (isCameraViewOn) {
             mCamera.stopPreview();
-            isCameraviewOn = false;
+            isCameraViewOn = false;
         }
 
         if (mCamera != null) {
             try {
                 mCamera.setPreviewDisplay(surfaceHolder);
                 mCamera.startPreview();
-                isCameraviewOn = true;
+                isCameraViewOn = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -141,7 +139,7 @@ public class CameraViewActivity extends Activity implements
         mCamera.stopPreview();
         mCamera.release();
         mCamera = null;
-        isCameraviewOn = false;
+        isCameraViewOn = false;
     }
 
     @Override

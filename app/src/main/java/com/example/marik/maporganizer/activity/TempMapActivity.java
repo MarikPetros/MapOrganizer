@@ -73,7 +73,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private Circle circle;
     private EditText desiredRadius;
-    private int radius = 100;
+    private int radius;// = 100;
     private AutoCompleteTextView mAutoCompleteTextView;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
@@ -97,6 +97,8 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         Log.v("lat/long", "" + latitude + " ," + longitude + " ");
         if (taskitem.getAlertRadius() != 0) {
             radius = taskitem.getAlertRadius();
+        }else{
+            radius = 100;
         }
 
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
