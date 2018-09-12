@@ -646,6 +646,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                     mTaskItem.setAlertRadius(mAlertRadius);
                     mTaskItem.setLatitude(latAndLng[0]);
                     mTaskItem.setLongitude(latAndLng[1]);
+                    getAddressFromLatitLong(latAndLng[0], latAndLng[1], new GetAddressAsyncTask.OnResultListener() {
+                        @Override
+                        public void onResult(String pAddress) {
+                            mTaskItem.setChoosedAddress(pAddress);
+                            mChoosedAddress.setText(mTaskItem.getChoosedAddress());
+                        }
+                    });
 
                     Log.v("tempic ekac", "latit " + latAndLng[0] + ", longit " + latAndLng[1] + ", radius " + mAlertRadius);
                     //  mViewModel.update(mTaskItem);
