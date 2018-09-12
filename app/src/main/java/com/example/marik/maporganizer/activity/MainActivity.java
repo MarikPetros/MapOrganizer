@@ -53,7 +53,10 @@ import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
 public class MainActivity extends AppCompatActivity  {
+
     public final static int PERMISSION_CODE = 26;
+    public final static int REMIND_NOTIF_CODE = 1;
+    public final static int GEOFENCE_NOTIF_CODE = 2;
 
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+   //  checkLocationPermission();
     }
 
 
@@ -85,8 +89,6 @@ public class MainActivity extends AppCompatActivity  {
 
         mTaskListFragment = new FragmentTasksList();
         mMapsFragment = new MapsFragment();
-
-
         setTabs();
 
         setFragment(mMapsFragment);
@@ -104,7 +106,9 @@ public class MainActivity extends AppCompatActivity  {
         }
 
         // Enable AR related functionality on ARCore supported devices only.
-        maybeEnableArButton();
+//        maybeEnableArButton();
+
+
     }
 
     private void maybeEnableArButton() {
@@ -151,7 +155,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private void launchCreationFragment(int index) {
         TaskItem item = model.getAllTaskItems().get(index);
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,0);
         //show it
         bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
     }
@@ -164,7 +168,7 @@ public class MainActivity extends AppCompatActivity  {
             for (Location location: locations) {
                 item = model.getItemByLocation(location.getLatitude(),location.getLongitude());
                 Log.e("GeofenceItem",item.getTitle() + " " + item.getChoosedAddress());
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,0);
                 //show it
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
             }
@@ -176,12 +180,11 @@ public class MainActivity extends AppCompatActivity  {
 
         if (latlng != null ) {
             TaskItem item = model.getItemByLocation(latlng[0],latlng[1]);
-            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item);
+            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
             //show it
             bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
         }
     }
-
 
 
     private void setFragment(Fragment fragment) {

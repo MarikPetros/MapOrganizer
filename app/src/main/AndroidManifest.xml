@@ -28,7 +28,7 @@
         android:glEsVersion="0x20000"
         android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
-
+<uses-permission android:name="android.permission.CAMERA"></uses-permission>
     <uses-permission android:name="com.google.android.providers.gfs.permision.READ_GSERVICES" />
     <uses-permission android:name="com.truiton.mapfragment.permission.MAPS_RECEIVE" />
     <uses-permission android:name="NETWORK_ACCESS_STATE" />
@@ -42,16 +42,13 @@
         android:theme="@style/AppTheme">
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.easyphotopicker.fileprovider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"
-                tools:replace="android:resource" />
+                android:resource="@xml/provider_paths"/>
         </provider>
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

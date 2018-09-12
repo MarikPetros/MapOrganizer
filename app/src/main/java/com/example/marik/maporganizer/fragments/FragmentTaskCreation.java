@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
@@ -20,12 +21,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
@@ -47,10 +51,12 @@ import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.activity.TempMapActivity;
 import com.example.marik.maporganizer.db.TaskItem;
+import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.imagePicker.Utility;
 import com.example.marik.maporganizer.imagePicker.WriteBitmapToFileTask;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
@@ -67,6 +73,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static android.content.Context.ALARM_SERVICE;
+import static com.example.marik.maporganizer.activity.MainActivity.GEOFENCE_NOTIF_CODE;
 import static com.example.marik.maporganizer.activity.TempMapActivity.LATLONG_KEY;
 import static com.example.marik.maporganizer.activity.TempMapActivity.RADIUS_KEY;
 
@@ -106,6 +113,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
     public static final String ARG_TASK_ITEM = "arg.taskitem";
     public static final int ALERT_RADIUS = 2;
+    public static final String OPEN_FLAG = "FLAG_FROM_NOTIFICATIONS";
     public static final String ARG_LAT = "arg.lat";
     public static final String ARG_LNG = "arg.lng";
     private static final int PICK_IMAGE_ID = 1;
@@ -128,6 +136,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     TaskViewModel mViewModel;
     private static final int REQUEST_CAMERA = 11;
     private static final int SELECT_FILE = 10;
+    public String mRemindType = remind15;
     private ImageView ivImage;
     private String userChoosenTask;
 
@@ -143,11 +152,13 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private Spinner mRemindSpinner;
     private String mImageUri;
     private Calendar mSelectedDate = Calendar.getInstance();
-    private long mRemindTime = 15 * 60 * 1000;
+    private long mRemindTime = 15;
     private int mAlertRadius = 100;
     private TaskItem mTaskItem;
     private OnDirectionListener mOndirectionListener;
     private boolean reminderIsChecked;
+    ArrayAdapter<String> mSpinnerAdapter;
+    private int mFlag;
 //    OnTaskFragmentInteraction mListener;
 
     private boolean isNewCreated = true;
@@ -200,10 +211,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         return fragment;
     }
 
-    public static FragmentTaskCreation newInstance(TaskItem taskItem) {
+    public static FragmentTaskCreation newInstance(TaskItem taskItem, int flag) {
         FragmentTaskCreation fragment = new FragmentTaskCreation();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TASK_ITEM, taskItem);
+        args.putInt(OPEN_FLAG, flag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -234,6 +246,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 mTaskItem.setDate(new Date());
                 mTaskItem.setLatitude(args.getDouble(ARG_LAT));
                 mTaskItem.setLongitude(args.getDouble(ARG_LNG));
+            }
+
+            if (args.containsKey(OPEN_FLAG)) {
+                mFlag = args.getInt(OPEN_FLAG);
             }
         }
 
@@ -285,11 +301,14 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     @Override
     public void onStop() {
         super.onStop();
+        if (isEmptyTask()) {
+            mViewModel.deleteItem(updateTaskItemValues().getId());
+        }
         if (isNewCreated) {
-            mViewModel.insertItem(updateTaskItemValues());
-            if (isEmptyTask()) {
-                mViewModel.deleteItem(updateTaskItemValues().getId());
+            if (!isEmptyTask()) {
+                mViewModel.insertItem(updateTaskItemValues());
             }
+
         } else {
             if (!isEmptyTask()) {
                 mViewModel.update(updateTaskItemValues());
@@ -330,9 +349,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         showLocation.setVisibility(View.GONE);
 
         mRemindSpinner = root.findViewById(R.id.reminder_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mRemindSpinner.setAdapter(adapter);
+        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinner);
+        mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRemindSpinner.setAdapter(mSpinnerAdapter);
         setListeners();
     }
 
@@ -342,10 +361,14 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LatLng latLng = new LatLng(mTaskItem.getLatitude(),mTaskItem.getLongitude());
-                new MapsFragment().showDirection(latLng);
+                LatLng latLng = new LatLng(mTaskItem.getLatitude(), mTaskItem.getLongitude());
+                MapsFragment mapsFragment = new MapsFragment();
+                mapsFragment.showDirection(latLng);
+                setFragment(mapsFragment);
+                dismiss();
             }
         });
+
 
         mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -365,6 +388,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             }
         });
 
+
         mPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -372,13 +396,12 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             }
         });
 
+
         mAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage();
-//                if (mTaskItem.getImageUri() == null)
-//                    onPickImage(getView());
-
+                Utility.checkPermission(getContext());
+                onPickImage(v);
             }
         });
 
@@ -387,8 +410,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onClick(View v) {
                 //    bitmap.recycle();
-                mTaskItem.setImageUri(null);
-                mTaskItem.setAttached(false);
+                mPhoto.setImageBitmap(null);
+                mImageUri = null;
+//                bitmap.recycle();
             }
         });
 
@@ -412,38 +436,48 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 String item = (String) parent.getItemAtPosition(position);
                 switch (item) {
                     case remind15:
-                        mRemindTime = 15 * 60 * 1000;
+                        mRemindTime = 15;
+                        mRemindType = remind15;
                         break;
                     case remind30:
-                        mRemindTime = 30 * 60 * 1000;
+                        mRemindTime = 30;
+                        mRemindType = remind30;
                         break;
                     case remind45:
-                        mRemindTime = 45 * 60 * 1000;
+                        mRemindTime = 45;
+                        mRemindType = remind45;
                         break;
                     case remind1:
-                        mRemindTime = 60 * 60 * 1000;
+                        mRemindTime = 60;
+                        mRemindType = remind1;
                         break;
                     case remind2:
-                        mRemindTime = 120 * 60 * 1000;
+                        mRemindTime = 120;
+                        mRemindType = remind2;
                         break;
                     case remind3:
-                        mRemindTime = 180 * 60 * 1000;
+                        mRemindTime = 180;
+                        mRemindType = remind3;
                         break;
                     case remind10:
-                        mRemindTime = 600 * 60 * 1000;
+                        mRemindTime = 600;
+                        mRemindType = remind10;
                         break;
                     case remindDay:
-                        mRemindTime = 1440 * 60 * 1000;
+                        mRemindTime = 1440;
+                        mRemindType = remindDay;
                         break;
                     default:
-                        mRemindTime = 15 * 60 * 1000;
+                        mRemindTime = 15;
+                        mRemindType = remind15;
                         break;
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mRemindTime = 15 * 60 * 1000;
+                mRemindTime = 15;
+                mRemindType = remind15;
             }
         });
 
@@ -490,14 +524,48 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         if (mTaskItem.isAttached()) {
             mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));
         }
+        if(mFlag==1){
+            mReminderCheckBox.setChecked(false);
+        }
+        else
         mReminderCheckBox.setChecked(mTaskItem.isReminder());
         if (mReminderCheckBox.isChecked()) {
-            //   switch(mRemindSpinner.)
-            //   mRemindSpinner.setSelection();
-            //TODO  //     switch (mRemindSpinner.getItemIdAtPosition()){
-        } //    case :
-        mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+            mRemindTime = mTaskItem.getRemindtime();
+            selectSpinnerValue(mRemindSpinner, Long.toString(mRemindTime));
+
+        }
+//            switch (mRemindType) {
+//                case remind15:
+//                    mRemindSpinner.setSelection(0);
+//                    break;
+//                case remind30:
+//                    mRemindSpinner.setSelection(1);
+//                    break;
+//                case remind45:
+//                    mRemindSpinner.setSelection(2);
+//                    break;
+//                case remind1:
+//                    mRemindSpinner.setSelection(3);
+//                    break;
+//                case remind2:
+//                    mRemindSpinner.setSelection(4);
+//                    break;
+//                case remind3:
+//                    mRemindSpinner.setSelection(5);
+//                    break;
+//                case remind10:
+//                    mRemindSpinner.setSelection(6);
+//                    break;
+//                case remindDay:
+//                    mRemindSpinner.setSelection(7);
+//                    break;
+//            }
+
+        if (mFlag == 2) {
+            mNotifybyPlaceCheckBox.setChecked(false);
+        } else mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
     }
+
 
     private void openDatePicker() {
         new DatePickerDialog(Objects.requireNonNull(getActivity()), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),
@@ -517,28 +585,23 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
     boolean isExist = true;
 
-
     public TaskItem updateTaskItemValues() {
         if (isEmptyTask()) {
             isExist = false;
             mTaskItem = new TaskItem();
         }
         Log.v("fragmenti lat/lng", "" + mTaskItem.getLatitude() + ", " + mTaskItem.getLongitude() + "");
-//        mTaskItem.setChoosedAddress(getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude()));
         Log.d("address", "" + mTaskItem.getChoosedAddress() + "");
         mTaskItem.setTitle(mTitle.getText().toString());
         mTaskItem.setDescription(mDescription.getText().toString());
         mTaskItem.setDate(mSelectedDate.getTime());
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
-            // TODO mTaskItem.setImageUri(mImageUri);
         }
-
         if (mReminderCheckBox.isChecked()) {
             mTaskItem.setReminder(mReminderCheckBox.isChecked());
+            mTaskItem.setRemindtime(mRemindTime);
 
-            //  mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
-            // TODO mTaskItem.setRemindtime((Long) mRemindSpinner.getSelectedItem());
         }
 
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
@@ -552,24 +615,30 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         return mTaskItem;
     }
 
+    private void selectSpinnerValue(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    public void onPickImage(View view) {
+        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getContext());
+        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case SELECT_FILE:
-                onSelectFromGalleryResult(data);
-
+            case PICK_IMAGE_ID:
+                bitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                if (getContext() != null) {
+                    writeBitmapToFile(bitmap, getActivity().getFilesDir() +
+                            File.separator + mTaskItem.getId(), this);
+                }
                 break;
-            case REQUEST_CAMERA:
-                onCaptureImageResult(data);
-                writeBitmapToFile(bitmap, getContext().getFilesDir() + File.separator + mTaskItem.getId(), this);
-                break;
-
-//            case PICK_IMAGE_ID:
-//                bitmap = ImagePicker.getImageFromResult(getContext(), resultCode, data);
-//                if (getContext() != null) {
-//                }
-//                break;
             case ALERT_RADIUS:
                 if (getContext() != null && data != null) {
                     mAlertRadius = data.getIntExtra(RADIUS_KEY, 0);
@@ -577,7 +646,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                     mTaskItem.setAlertRadius(mAlertRadius);
                     mTaskItem.setLatitude(latAndLng[0]);
                     mTaskItem.setLongitude(latAndLng[1]);
-                    mViewModel.update(mTaskItem);
+
+                    Log.v("tempic ekac", "latit " + latAndLng[0] + ", longit " + latAndLng[1] + ", radius " + mAlertRadius);
+                    //  mViewModel.update(mTaskItem);
                 } else {
                     Log.e("radius", "Radiusy chekav");
                 }
@@ -585,7 +656,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
+
         }
+    }
+
+    private void setFragment(Fragment fragment) {
+        assert getFragmentManager() != null;
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 
 
@@ -676,18 +755,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
     }
 
-    //TODO delegation for directions
     public interface OnDirectionListener {
         void showDirection(LatLng pLatLng);
     }
-
-//    public void setFragmentInteraction(OnTaskFragmentInteraction fragmentInteraction) {
-//        mListener = fragmentInteraction;
-//    }
-//
-//    public interface OnTaskFragmentInteraction {
-//    void onAddTask(TaskItem item);
-//    void onEditTask(TaskItem item);
 
 
     /*
@@ -697,13 +767,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private void setAlarmManager() {
         long alertTime = 0;
         if (mTaskItem != null) {
-            alertTime = mTaskItem.getDate().getTime() - mRemindTime;
+            alertTime = mTaskItem.getDate().getTime() - (mRemindTime * 60 * 1000);
         }
         long taskDate = mTaskItem.getDate().getTime();
         int notificationId = (int) Math.round(((mTaskItem.getLatitude() + mTaskItem.getLongitude()) * 100000) % 100);
         double[] latLng = new double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()};
-
-
         Intent notifyIntent = new Intent(ACTION_NOTIFY_NOTIFY_AT_TIME);
         notifyIntent.putExtra(ITEM_EXTRA, latLng);
         notifyIntent.putExtra(TASK_DATE, taskDate);
@@ -716,113 +784,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         } else if (Build.VERSION.SDK_INT >= 19) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (userChoosenTask.equals("Take Photo"))
-                        cameraIntent();
-                    else if (userChoosenTask.equals("Choose from Library"))
-                        galleryIntent();
-                } else {
-                    //code for deny
-                }
-                break;
-        }
-    }
-
-    private void selectImage() {
-        final CharSequence[] items = {"Take Photo", "Choose from Library",
-                "Cancel"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Add Photo!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                boolean result = Utility.checkPermission(getContext());
-
-                if (items[item].equals("Take Photo")) {
-                    userChoosenTask = "Take Photo";
-                    if (result)
-                        cameraIntent();
-
-                } else if (items[item].equals("Choose from Library")) {
-                    userChoosenTask = "Choose from Library";
-                    if (result)
-                        galleryIntent();
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
-    }
-
-    private void galleryIntent() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
-    }
-
-    private void cameraIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
-    }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode == Activity.RESULT_OK) {
-//            if (requestCode == SELECT_FILE)
-//                onSelectFromGalleryResult(data);
-//            else if (requestCode == REQUEST_CAMERA)
-//                onCaptureImageResult(data);
-//        }
-//    }
-
-    private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        mPhoto.setImageBitmap(thumbnail);
-    }
-
-    @SuppressWarnings("deprecation")
-    private void onSelectFromGalleryResult(Intent data) {
-
-        Bitmap bm = null;
-        if (data != null) {
-            try {
-                bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        mPhoto.setImageBitmap(bm);
     }
 
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     private TaskAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private TaskViewModel mViewModel;
+    private FloatingActionButton mAddTask;
 
     public FragmentTasksList() {
     }
@@ -43,7 +45,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     TaskAdapter.OnItemsListClicked mListClickedListener = new TaskAdapter.OnItemsListClicked() {
         @Override
         public void onClickItem(TaskItem item) {
-            BottomSheetDialogFragment bottomSheetDialogFragment =FragmentTaskCreation.newInstance(item);
+            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
             bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
         }
 
@@ -97,6 +99,7 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init(view);
     }
+
     private void init(View view) {
 
         mRecyclerView = view.findViewById(R.id.recyclerview);
@@ -105,6 +108,16 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
         getTaskItemsFromViewModel();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setListClickedListener(mListClickedListener);
+        mAddTask = view.findViewById(R.id.floatingActionButton);
+
+        mAddTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialogFragment bottomSheetDialogFragment = new FragmentTaskCreation();
+                bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
+
+            }
+        });
     }
 
     @Override
@@ -122,23 +135,8 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
                 mAdapter.notifyDataSetChanged();
             }
         });
-    }
 
-    public void editTask(TaskItem taskItem) {
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(taskItem);
-        bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
 
-//        FragmentTaskCreation.OnTaskFragmentInteraction taskFragmentInteractionListener = new FragmentTaskCreation.OnTaskFragmentInteraction() {
-//            @Override
-//            public void onAddTask(TaskItem item) {
-//                mViewModel.insertItem(item);
-//            }
-//
-//            @Override
-//            public void onEditTask(TaskItem item) {
-//                mViewModel.update(item);
-//            }
-//        };
     }
 
 }

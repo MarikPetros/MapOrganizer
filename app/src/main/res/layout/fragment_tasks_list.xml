@@ -12,7 +12,7 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"/>
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -24,7 +24,7 @@
         android:visibility="visible"
         app:fabSize="normal"
         app:rippleColor="@color/color_white"
-        tools:src="@android:drawable/ic_input_add"
+        android:src="@android:drawable/ic_input_add"
         tools:ignore="RtlHardcoded" />
         <!--android:backgroundTint="@color/colorPrimary"-->
 

@@ -21,6 +21,7 @@
         android:contentDescription="@string/ar"
         android:elevation="@dimen/button_elevation"
         android:text="@string/ar"
+        android:visibility="gone"
         app:layout_anchorGravity="top|center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

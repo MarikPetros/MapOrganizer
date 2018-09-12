@@ -23,12 +23,13 @@ import java.util.UUID;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
-    public List<TaskItem> mItems = new ArrayList<>();;
+    public List<TaskItem> mItems = new ArrayList<>();
+    ;
     Context mContext;
     OnItemsListClicked mListClickedListener;
     android.support.v7.view.ActionMode mActionMode;
-    TreeSet<Integer> mCheckedItems= new TreeSet<>();
-    public  boolean isSelected=false;
+    TreeSet<Integer> mCheckedItems = new TreeSet<>();
+    public boolean isSelected = false;
 
 
     public TaskAdapter(Context context) {
@@ -54,10 +55,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         holder.bindHolder(mItems.get(position));
 
         if (mActionMode != null) {
-            if(isSelected){
-            holder.getDeleteCheckBox().setVisibility(View.VISIBLE);
-            holder.getDeleteCheckBox().setChecked(mCheckedItems.contains(holder.getAdapterPosition()));
-        } }else {
+            if (isSelected) {
+                holder.getDeleteCheckBox().setVisibility(View.VISIBLE);
+                holder.getDeleteCheckBox().setChecked(mCheckedItems.contains(holder.getAdapterPosition()));
+
+            }
+        } else {
             holder.getDeleteCheckBox().setChecked(false);
             holder.getDeleteCheckBox().setVisibility(View.INVISIBLE);
         }
@@ -93,6 +96,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
                         @Override
                         public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
                             mode.getMenuInflater().inflate(R.menu.menu_task_list, menu);
+                            holder.getDeleteCheckBox().setVisibility(View.VISIBLE);
+
                             return true;
                         }
 
@@ -111,7 +116,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 if (mListClickedListener != null) {
                                                     for (Integer i : mCheckedItems) {
-                                                        mListClickedListener.onRemove(( mItems.get(i)).getId());
+                                                        mListClickedListener.onRemove((mItems.get(i)).getId());
                                                     }
                                                 }
                                                 mode.finish();
@@ -133,6 +138,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
                     });
 
                     selectItem(holder.getAdapterPosition(), true);
+                    notifyDataSetChanged();
                 }
                 return true;
             }
@@ -146,10 +152,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     void selectItem(int position, boolean isSelect) {
         if (isSelect) {
             mCheckedItems.add(position);
-            isSelected=true;
+            isSelected = true;
         } else {
             mCheckedItems.remove(position);
-            isSelected=false;
+            isSelected = false;
 
         }
 
@@ -172,6 +178,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     public interface OnItemsListClicked {
         void onClickItem(TaskItem item);
+
         void onRemove(UUID id);
 
     }
