@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,8 +47,8 @@ public class LocationGetter {
     }
 
     public Location getCurrentLocation() {
-        checkLocationPermission();
-        mFusedLocationClient.getLastLocation()
+       // checkLocationPermission();
+        Task<Location> task = mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener((Activity) Objects.requireNonNull(mContext), new OnSuccessListener<Location>() {
                     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
                     @Override
@@ -62,6 +63,7 @@ public class LocationGetter {
                     }
                 });
 
+        mCurrentLocation = task.getResult();
         return mCurrentLocation;
     }
 
@@ -177,6 +179,6 @@ public class LocationGetter {
                     .position(latLng);
             //  mMarker = mMap.addMarker(options);
         }
-     //   hideKeyboard(getActivity());
+        //   hideKeyboard(getActivity());
     }
 }

@@ -61,7 +61,7 @@ public class CameraViewActivity extends Activity implements
         );
     }
 
-    public double calculateTeoreticalAzimuth() {
+    public double calculateTheoreticalAzimuth() {
      ....
     }
 

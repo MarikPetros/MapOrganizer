@@ -355,7 +355,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             Log.v("permisssion chka", mCurrentLocation + "");
 
 
-/*
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
@@ -389,7 +388,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
             }
         });
-*/
 
 
         mMap.setOnMapLongClickListener(this);

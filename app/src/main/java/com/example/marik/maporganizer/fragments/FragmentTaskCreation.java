@@ -524,15 +524,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         if (mTaskItem.isAttached()) {
             mPhoto.setImageBitmap(BitmapFactory.decodeFile(mTaskItem.getImageUri()));
         }
-        if(mFlag==1){
+        if (mFlag == 1) {
             mReminderCheckBox.setChecked(false);
-        }
-        else
-        mReminderCheckBox.setChecked(mTaskItem.isReminder());
-        if (mReminderCheckBox.isChecked()) {
-            mRemindTime = mTaskItem.getRemindtime();
-            selectSpinnerValue(mRemindSpinner, Long.toString(mRemindTime));
+        } else {
+            mReminderCheckBox.setChecked(mTaskItem.isReminder());
+            if (mReminderCheckBox.isChecked()) {
+                mRemindTime = mTaskItem.getRemindtime();
+                selectSpinnerValue(mRemindSpinner, Long.toString(mRemindTime));
 
+            }
         }
 //            switch (mRemindType) {
 //                case remind15:
@@ -792,7 +792,5 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTime, notifyPendingIntent);
         }
     }
-
-
 }
 

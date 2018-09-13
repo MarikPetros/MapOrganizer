@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,10 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
@@ -38,8 +41,10 @@ import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.ar.core.ArCoreApk;
 
 //import com.google.ar.core.ArCoreApk;
@@ -66,7 +71,8 @@ public class MainActivity extends AppCompatActivity  {
     private BottomNavigationView mBottomNavigationView;
     private TaskViewModel model;
     private ImageView mArButton;
-    private FusedLocationProviderClient mFusedLocationClient;
+    public FusedLocationProviderClient mFusedLocationClient;
+    public Location mCurrentLocation;
 
 
     @Override
@@ -79,7 +85,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
     public void init(){
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
         mArButton = findViewById(R.id.augmented_reality);
@@ -168,7 +174,7 @@ public class MainActivity extends AppCompatActivity  {
             for (Location location: locations) {
                 item = model.getItemByLocation(location.getLatitude(),location.getLongitude());
                 Log.e("GeofenceItem",item.getTitle() + " " + item.getChoosedAddress());
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,0);
+                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,2);
                 //show it
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
             }
@@ -180,7 +186,7 @@ public class MainActivity extends AppCompatActivity  {
 
         if (latlng != null ) {
             TaskItem item = model.getItemByLocation(latlng[0],latlng[1]);
-            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
+            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 1);
             //show it
             bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
         }
@@ -252,6 +258,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         }
     }
+
 
 
     /**
