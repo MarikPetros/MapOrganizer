@@ -316,12 +316,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
+
     private void setMarkerState(List<TaskItem> taskItems) {
         for (TaskItem item : taskItems) {
             LatLng latLng = new LatLng(item.getLatitude(), item.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_map)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker3)));
         }
     }
 
