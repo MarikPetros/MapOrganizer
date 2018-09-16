@@ -43,6 +43,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.QuickContactBadge;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -50,6 +51,7 @@ import android.widget.TimePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.activity.TempMapActivity;
+//import com.example.marik.maporganizer.activity.ar_activities.CameraViewActivity;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
 import com.example.marik.maporganizer.imagePicker.Utility;
@@ -114,6 +116,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public static final String ARG_TASK_ITEM = "arg.taskitem";
     public static final int ALERT_RADIUS = 2;
     public static final String OPEN_FLAG = "FLAG_FROM_NOTIFICATIONS";
+    public static final String LAT_LANG_FOR_AR = "LAT_LANG_FOR_AR";
     public static final String ARG_LAT = "arg.lat";
     public static final String ARG_LNG = "arg.lng";
     private static final int PICK_IMAGE_ID = 1;
@@ -147,7 +150,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private TextView mDescription;
     private TextView mDate;
     private TextView showLocation;
-    private ImageView mPhoto, mAddPhoto, mDeletePhoto;
+    private ImageView mPhoto, mAddPhoto, mDeletePhoto, arButton;
     private CheckBox mReminderCheckBox, mNotifybyPlaceCheckBox, mAttachPhotoCheckBox;
     private Spinner mRemindSpinner;
     private String mImageUri;
@@ -277,7 +280,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
         updateDateLabel();
 
-        filldata();
 
         getAddressFromLatitLong(mTaskItem.getLatitude(), mTaskItem.getLongitude(), new GetAddressAsyncTask.OnResultListener() {
             @Override
@@ -286,6 +288,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 mChoosedAddress.setText(mTaskItem.getChoosedAddress());
             }
         });
+
+        filldata();
 
         mViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(TaskViewModel.class);
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
@@ -335,6 +339,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private void init(final View root) {
 
         mDirection = root.findViewById(R.id.directions_button);
+        arButton = root.findViewById(R.id.augmented_reality);
         mChoosedAddress = root.findViewById(R.id.addressLine);
         mTitle = root.findViewById(R.id.title_text);
         mDescription = root.findViewById(R.id.description_text);
@@ -369,6 +374,14 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             }
         });
 
+       /* arButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(),CameraViewActivity.class);
+                intent.putExtra(LAT_LANG_FOR_AR,new double[] {mTaskItem.getLatitude(),mTaskItem.getLongitude()});
+                startActivity(intent);
+            }
+        });*/
 
         mAttachPhotoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -485,8 +498,12 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    mTaskItem.setNotifyByPlace(true);
                     mTaskItem.setAlertRadius(mAlertRadius);
                     showLocation.setVisibility(View.VISIBLE);
+                } else {
+                    mTaskItem.setNotifyByPlace(false);
+                    showLocation.setVisibility(View.GONE);
                 }
             }
         });
@@ -563,7 +580,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
         if (mFlag == 2) {
             mNotifybyPlaceCheckBox.setChecked(false);
-        } else mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+            mTaskItem.setNotifyByPlace(false);
+        } else {
+            mNotifybyPlaceCheckBox.setChecked(mTaskItem.isNotifyByPlace());
+        }
     }
 
 
@@ -598,19 +618,18 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         if (mAttachPhotoCheckBox.isChecked()) {
             mTaskItem.setAttached(mAttachPhotoCheckBox.isChecked());
         }
-        if (mReminderCheckBox.isChecked()) {
-            mTaskItem.setReminder(mReminderCheckBox.isChecked());
-            mTaskItem.setRemindtime(mRemindTime);
 
+        mTaskItem.setReminder(mReminderCheckBox.isChecked());
+        if (mReminderCheckBox.isChecked()) {
+            mTaskItem.setRemindtime(mRemindTime);
         }
 
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
-
         if (mNotifybyPlaceCheckBox.isChecked()) {
-            //   mTaskItem.setAlertRadius(mAlertRadius);
-        } /*else {
-            mTaskItem.setAlertRadius(0);
-        }*/
+            mTaskItem.setNotifyByPlace(true);
+        }else {
+            mTaskItem.setNotifyByPlace(false);
+        }
 
         return mTaskItem;
     }
@@ -655,7 +674,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                     });
 
                     Log.v("tempic ekac", "latit " + latAndLng[0] + ", longit " + latAndLng[1] + ", radius " + mAlertRadius);
-                    //  mViewModel.update(mTaskItem);
+                  //  mViewModel.update(mTaskItem);
                 } else {
                     Log.e("radius", "Radiusy chekav");
                 }

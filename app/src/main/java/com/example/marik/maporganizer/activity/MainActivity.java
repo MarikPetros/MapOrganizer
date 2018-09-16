@@ -7,6 +7,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -57,7 +58,7 @@ import static com.example.marik.maporganizer.appwidget.TaskAppWidgetProvider.ITE
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     public final static int PERMISSION_CODE = 26;
     public final static int REMIND_NOTIF_CODE = 1;
@@ -79,12 +80,15 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+
         init();
-   //  checkLocationPermission();
+        //  checkLocationPermission();
     }
 
 
-    public void init(){
+    public void init() {
 //        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
@@ -140,12 +144,12 @@ public class MainActivity extends AppCompatActivity  {
 
     private void createGeofencesList() {
         model = ViewModelProviders.of(this).get(TaskViewModel.class);
-        model.getItems().observe(this, new Observer<List<TaskItem>>() {
+        model.getItems().observe(this, new Observer<List<TaskItem>>() {  /// hnaravor a sa tarvi creati mej aveli verev
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
                 if (taskItems != null) {
                     mGeofenceMaker.crateGeofenceList(selectGeofencingTasks(taskItems));
-                }else mGeofenceMaker.crateGeofenceList(new ArrayList<TaskItem>());
+                } else mGeofenceMaker.crateGeofenceList(new ArrayList<>());
             }
         });
     }
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private void launchCreationFragment(int index) {
         TaskItem item = model.getAllTaskItems().get(index);
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,0);
+        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
         //show it
         bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
     }
@@ -169,12 +173,11 @@ public class MainActivity extends AppCompatActivity  {
 
     private void launchCreationFragmentByGeofence() {
         ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(TRIGGERING_LOCATIONS);
-            TaskItem item = new TaskItem();
         if (locations != null && locations.size() > 0) {
-            for (Location location: locations) {
-                item = model.getItemByLocation(location.getLatitude(),location.getLongitude());
-                Log.e("GeofenceItem",item.getTitle() + " " + item.getChoosedAddress());
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item,2);
+            for (Location location : locations) {
+                TaskItem item = model.getItemByLocation(location.getLatitude(), location.getLongitude());
+
+                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 2);
                 //show it
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
             }
@@ -184,8 +187,8 @@ public class MainActivity extends AppCompatActivity  {
     private void launchCreationFragmentfromNotification() {
         double[] latlng = getIntent().getDoubleArrayExtra(TIME_NOTIFIER);
 
-        if (latlng != null ) {
-            TaskItem item = model.getItemByLocation(latlng[0],latlng[1]);
+        if (latlng != null) {
+            TaskItem item = model.getItemByLocation(latlng[0], latlng[1]);
             BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 1);
             //show it
             bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
@@ -195,12 +198,10 @@ public class MainActivity extends AppCompatActivity  {
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
-        }
-
-
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
+    }
 
 
     public void setTabs() {
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity  {
 
     // ---------------------------------------------------------------------------------------------
     public void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this),Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
@@ -239,7 +240,7 @@ public class MainActivity extends AppCompatActivity  {
                 new AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
@@ -260,7 +261,6 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-
     /**
      * -----------------------  Geofencing ----------------------------------------------------------------------------------------------------------------------------------------------
      */
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity  {
         Intent intent = new Intent(this, GeofencerService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(this,0,intent,PendingIntent.
+        mGeofencePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
@@ -280,8 +280,8 @@ public class MainActivity extends AppCompatActivity  {
 
     public void addGeofences() {
         checkLocationPermission();
-        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(),getGeofencePendingIntent())
-                .addOnSuccessListener(Objects.requireNonNull(this),new OnSuccessListener<Void>() {
+        mGeofencingClient.addGeofences(mGeofenceMaker.getGeofencingRequestOfList(), getGeofencePendingIntent())
+                .addOnSuccessListener(Objects.requireNonNull(this), new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Geofences added

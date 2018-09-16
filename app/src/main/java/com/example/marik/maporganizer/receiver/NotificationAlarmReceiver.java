@@ -53,6 +53,25 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getString(R.string.timed_notification_channel);//getString(R.string.channel_name);
+            String description = context.getString(R.string.timed_notification_channel_description);//getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);channel.setLightColor(Color.GREEN);
+            channel.shouldShowLights();
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            channel.setShowBadge(true);
+            channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             CharSequence name = context.getString(R.string.timed_notification_channel);
             String description = context.getString(R.string.timed_notification_channel_description);
@@ -77,7 +96,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 }
             }
         }
-
+*/
         Date date = new Date(taskDate);
        /* if(date == null){
             date = new Date(System.currentTimeMillis() + 60*60*1000);
@@ -116,5 +135,9 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         // notificationManager.notify(notificationId, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
+        //-----------------------------------------------------------------------------------------
+
+
     }
+
 }

@@ -126,10 +126,10 @@ public class GeofencerService extends IntentService {
                     e.printStackTrace();
                 }
                 tags.add(notificationTag);
-                addresses.add(itemAddress + "/n");
+                addresses.add(itemAddress);
             }
             // making content for bigText
-            explanation = getString(R.string.explanation) + " " + addresses.toString();
+            explanation = getString(R.string.explanation) + " " + addresses.get(0);
 
             // setting notification's tag with first tasks UUID
             notificationTag = tags.get(0);

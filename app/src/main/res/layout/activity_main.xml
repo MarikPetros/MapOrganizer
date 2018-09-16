@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
 
-    <ImageView
+   <!-- <ImageView
         android:id="@+id/augmented_reality"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:layout_anchorGravity="top|center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+-->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/relativeLayout"

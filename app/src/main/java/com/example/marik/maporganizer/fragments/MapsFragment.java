@@ -115,7 +115,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private TaskViewModel mViewModel;
     List<TaskItem> mTasksList = new ArrayList<>();
     ArrayList<LatLng> mMarkerPoints;
-    LatLng latLngFromNotification;
+ //   LatLng latLngFromNotification;
     double mLatitude = 0;
     double mLongitude = 0;
 
@@ -132,18 +132,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         this.mListener = mListener;
     }
 
-    public static MapsFragment newInstance(ArrayList<Location> locations) {
-        MapsFragment fragment = new MapsFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(GEOFENCING_LOCATIONS, locations); //get from this for a destination point
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    public static MapsFragment newInstance() {
-        MapsFragment fragment = new MapsFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        public static MapsFragment newInstance() {
+            MapsFragment fragment = new MapsFragment();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
         return fragment;
     }
 
@@ -160,7 +153,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                         .addApi(Places.PLACE_DETECTION_API)
                         .enableAutoManage(Objects.requireNonNull(getActivity()), this)
                         .build();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -174,7 +166,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
-        mViewModel.getItems();
+     //   mViewModel.getItems();
 
     }
 
@@ -209,7 +201,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onPause() {
         super.onPause();
-        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.stopAutoManage(Objects.requireNonNull(getActivity()));
         mGoogleApiClient.disconnect();
 
 
@@ -224,24 +216,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         mMarkerPoints = new ArrayList<>();
     }
-
-    /*public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }*/
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnMapsFragmentInteractionListener) {
-            mListener = (OnMapsFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnMapsFragmentInteractionListener");
-        }
-
-    }*/
 
 
     @Override
@@ -277,6 +251,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 mMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_CODE);
                 checkLocationPermission();
             }
         } else {
@@ -287,9 +264,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         setMarkerState(mTasksList);
 
-        if (notificationFlag) {
-            drawMarker(latLngFromNotification);
-        }
         onMapClick();
         initSearch();
         loadTaskItems();
@@ -299,7 +273,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onResume() {
         super.onResume();
-        //added, needs to be tested
+       //TODO bug providing APIClient must be fixed
         if (!mGoogleApiClient.isConnected() && mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         } else {
@@ -316,13 +290,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         });
     }
 
-
     private void setMarkerState(List<TaskItem> taskItems) {
         for (TaskItem item : taskItems) {
             LatLng latLng = new LatLng(item.getLatitude(), item.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker3)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2)));
         }
     }
 
@@ -342,12 +315,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Location location = locationManager.getLastKnownLocation(provider);
 
-            //  Location location = getCurrentLocation();
+           // Location location = getCurrentLocation();
             if (location != null) {
                 onLocationChanged(location);
             }
@@ -356,7 +329,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             Log.v("permisssion chka", mCurrentLocation + "");
 
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+       /* mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onMapClick(LatLng latLng) {
@@ -388,7 +361,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 }
 
             }
-        });
+        });*/
 
 
         mMap.setOnMapLongClickListener(this);
@@ -427,7 +400,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-
         //Initializing a bottom sheet
         BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(latLng);
 
@@ -456,7 +428,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.position(latLng)
                             .title("Current Position")
                             .icon(BitmapDescriptorFactory
-                                    .fromResource(R.drawable.kid_icon));
+                                    .fromResource(R.drawable.marker2));
 
                     // mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
@@ -471,20 +443,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     public Location getCurrentLocation() {
         checkLocationPermission();
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(Objects.requireNonNull(getActivity()), new OnSuccessListener<Location>() {
-                    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            mCurrentLocation = location;
-                            moveCamera(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
-                                    DEFAULT_ZOOM, "my location");
+        if (getActivity() != null) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(Objects.requireNonNull(getActivity()), new OnSuccessListener<Location>() {
+                        @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                mCurrentLocation = location;
+                                moveCamera(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
+                                        DEFAULT_ZOOM, "my location");
+                            }
                         }
-                    }
-                });
+                    });
+        }else{
+            Log.e("getLocation","getActivity = null");
+        }
 
         return mCurrentLocation;
     }
@@ -693,6 +669,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 mPlace.setLatLng(place.getLatLng());
                 mPlace.setWebsiteUri(place.getWebsiteUri());
             } catch (NullPointerException e) {
+                e.printStackTrace();
             }
 
             moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude,
@@ -710,9 +687,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {
             @Override
             public void onChanged(@Nullable List<TaskItem> taskItems) {
-                Log.v("MapFragment", "Tasks loaded: " + taskItems.size());
+           //     Log.v("MapFragment", "Tasks loaded: " + taskItems.size());
 
-                setUpClusterer(taskItems);
+                if (taskItems != null) {
+                    setUpClusterer(taskItems);
+                }
             }
         });
     }
@@ -720,7 +699,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     //-----------------------Marker clustering-------------
     //
     private void setUpClusterer(List<TaskItem> items) {
-        mClusterManager = new ClusterManager<TaskItem>(Objects.requireNonNull(getContext()), mMap);
+        mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()), mMap);
         for (TaskItem taskItem : items) {
             if (taskItem.getLatitude() > 0 && taskItem.getLongitude() > 0) {
                 Log.v("MapFragment", "Draw items");
@@ -790,7 +769,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
-            drawMarker(point);
+           // drawMarker(point);
         }
     }
 
@@ -875,7 +854,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             try {
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
-                Log.d("Background Task data", data.toString());
+                Log.d("Background Task data", data);
             } catch (Exception e) {
                 Log.d("Background Task", e.toString());
             }
@@ -920,7 +899,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 sb.append(line); }
 
             data = sb.toString();
-            Log.d("downloadUrl", data.toString());
+            Log.d("downloadUrl", data);
             br.close();
 
         } catch (Exception e) {
@@ -945,7 +924,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
             try {
                 jObject = new JSONObject(jsonData[0]);
-                Log.d("ParserTask", jsonData[0].toString());
+                Log.d("ParserTask", jsonData[0]);
                 DataParser parser = new DataParser();
                 Log.d("ParserTask", parser.toString());
 

@@ -23,7 +23,6 @@ public class TaskViewModel extends AndroidViewModel {
     private TaskRepository taskRepository;
     private LiveData<List<TaskItem>> items;
     private MutableLiveData<TaskItem> item = new MutableLiveData<>();
-    private TaskItem mItem;
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
@@ -56,19 +55,9 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {
-        if (mItem == null) {
-            mItem = new TaskItem();
-        }
         return taskRepository.getItemByLocation(latitude, longitude);
     }
 
-    public TaskItem getItem(UUID id) {
-        if (mItem == null) {
-            mItem = new TaskItem();
-            loadItem(id);
-        }
-        return mItem;
-    }
 
     public void insertItem(TaskItem taskItem) {
         taskRepository.insert(taskItem);
@@ -88,7 +77,7 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void loadItem(UUID id) {
         try {
-            mItem = taskRepository.getById(id);
+            TaskItem mItem = taskRepository.getById(id);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

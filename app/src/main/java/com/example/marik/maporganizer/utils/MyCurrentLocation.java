@@ -34,7 +34,7 @@ import java.util.Objects;
 import static com.example.marik.maporganizer.activity.MainActivity.PERMISSION_CODE;
 import static java.security.AccessController.getContext;
 
-public class LocationGetter {
+public class MyCurrentLocation {
     private Context mContext;
 
     private FusedLocationProviderClient mFusedLocationClient;
@@ -42,28 +42,33 @@ public class LocationGetter {
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
 
-    public LocationGetter(Context mContext) {
+    public MyCurrentLocation(Context mContext) {
         this.mContext = mContext;
     }
 
     public Location getCurrentLocation() {
-       // checkLocationPermission();
-        Task<Location> task = mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener((Activity) Objects.requireNonNull(mContext), new OnSuccessListener<Location>() {
-                    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            mCurrentLocation = location;
-                            moveCamera(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
-                                    15f, "my location");
+        checkLocationPermission();
+        Task<Location> task = null;
+        if (mContext != null) {
+            task = mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener((Activity) Objects.requireNonNull(mContext), new OnSuccessListener<Location>() {
+                        @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                mCurrentLocation = location;
+                                moveCamera(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
+                                        15f, "my location");
+                            }
                         }
-                    }
-                });
+                    });
+        }
 
-        mCurrentLocation = task.getResult();
+        if (task != null/**/) {
+            mCurrentLocation = task.getResult();
+        }
         return mCurrentLocation;
     }
 

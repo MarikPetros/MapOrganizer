@@ -13,7 +13,6 @@
     <string name="notify_by_place_label">Notify By Place</string>
     <string name="pick_image_intent_text">Choose image</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="search_here">Search here</string>
     <string name="title_activity_maps2">Map</string>
     <string name="error_code_NotAvailable">Geofence is not available!</string>
@@ -29,7 +28,6 @@
     <string name="explanation">You have something to do at</string>
     <string name="alert_text">You are near-by</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_info">Fragment infoA</string>
     <string name="fragment_map">Fragment map</string>
     <string name="fragment_creation">Fragment creation</string>

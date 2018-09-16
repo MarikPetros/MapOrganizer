@@ -1,6 +1,7 @@
 package com.example.marik.maporganizer.activity.ar_activities;
 
-/*import android.app.Activity;
+/*
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.location.Location;
@@ -12,11 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
+import com.example.marik.maporganizer.utils.MyCurrentLocation;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.LocationSource;
 import com.google.ar.core.Camera;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.LAT_LANG_FOR_AR;
 
 public class CameraViewActivity extends Activity implements
         SurfaceHolder.Callback,LocationSource.OnLocationChangedListener,OnAzimuthChangedListener{
@@ -25,6 +31,7 @@ public class CameraViewActivity extends Activity implements
     private SurfaceHolder mSurfaceHolder;
     private boolean isCameraViewOn = false;
     private AugmentedPOI mPoi;
+    private double destinationLatitude, destinationLongitude;
 
     private double mAzimuthReal = 0;
     private double mAzimuthTheoretical = 0;
@@ -37,6 +44,7 @@ public class CameraViewActivity extends Activity implements
 
     TextView descriptionTextView;
     ImageView pointerIcon;
+    private FusedLocationProviderClient mFusedLocationClient;
 
 
     @Override
@@ -45,12 +53,20 @@ public class CameraViewActivity extends Activity implements
         setContentView(R.layout.activity_camera_view);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        double[] destinationLocation = getIntent().getDoubleArrayExtra(LAT_LANG_FOR_AR);
+        destinationLatitude = destinationLocation[0];
+        destinationLongitude = destinationLocation[1];
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setupListeners();
         setupLayout();
         setAugmentedRealityPoint();
     }
 
-*//**Here is the place where you can setup your points of interest. In our example we will stick to just one but you can extend algorithm to work with DB etc. **//*
+*/
+/**Here is the place where you can setup your points of interest. In our example we will stick to just one but you can extend algorithm to work with DB etc. **//*
+
+
 
     private void setAugmentedRealityPoint() {
         poi = new AugmentedPOI(
@@ -146,4 +162,5 @@ public class CameraViewActivity extends Activity implements
     public void onLocationChanged(Location location) {
 
     }
-}*/
+}
+*/

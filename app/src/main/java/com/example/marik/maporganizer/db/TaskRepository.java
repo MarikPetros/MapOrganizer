@@ -2,7 +2,6 @@ package com.example.marik.maporganizer.db;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 
@@ -15,6 +14,7 @@ public class TaskRepository {
 
     private TaskDao mDao;
     private LiveData<List<TaskItem>> mItemList;
+
 
     private TaskRepository(Application application) {
         TaskDataBase db = TaskDataBase.getDataBase(application);
@@ -44,7 +44,7 @@ public class TaskRepository {
     public TaskItem getItemByLocation(double latitude, double longitude) {
         TaskItem taskItem = null;
         try {
-            taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude).get());
+        taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude)).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -76,11 +76,12 @@ public class TaskRepository {
         }
 
         @Override
-        protected Void doInBackground(TaskItem... params) {
-            mAsyncTaskDao.insert(params[0]);
+        protected Void doInBackground(TaskItem... taskItems) {
+            mAsyncTaskDao.insert(taskItems[0]);
             return null;
         }
     }
+
 
     public static class UpdateAsyncTask extends AsyncTask<TaskItem, Void, Void> {
 
@@ -91,8 +92,8 @@ public class TaskRepository {
         }
 
         @Override
-        protected Void doInBackground(TaskItem... params) {
-            mAsyncTaskDao.update(params[0]);
+        protected Void doInBackground(TaskItem... taskItems) {
+            mAsyncTaskDao.update(taskItems[0]);
             return null;
         }
     }
@@ -113,6 +114,7 @@ public class TaskRepository {
         }
     }
 
+
     public static class GetByLocationAsyncTask extends AsyncTask<Double, Void, TaskItem> {
 
         private TaskDao mAsyncTaskDao;
@@ -122,10 +124,11 @@ public class TaskRepository {
         }
 
         @Override
-        protected TaskItem doInBackground(Double... params) {
-            return mAsyncTaskDao.getItemByLocation(params[0], params[1]);
+        protected TaskItem doInBackground(Double... doubles) {
+            return mAsyncTaskDao.getItemByLocation(doubles[0], doubles[1]);
         }
     }
+
 
     public static class LoadAsyncTask extends AsyncTask<UUID, Void, TaskItem> {
 
@@ -141,7 +144,7 @@ public class TaskRepository {
         }
     }
 
-    public static class GetAllTaskItemsAsyncTask extends AsyncTask<Void, Void,List<TaskItem>> {
+    public static class GetAllTaskItemsAsyncTask extends AsyncTask<Void, Void, List<TaskItem>> {
 
         private TaskDao mAsyncTaskDao;
 

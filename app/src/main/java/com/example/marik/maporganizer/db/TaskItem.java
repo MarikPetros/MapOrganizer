@@ -21,13 +21,14 @@ import java.util.UUID;
 @Entity(tableName = "task_item")
 public class TaskItem implements Parcelable, ClusterItem {
 
+    private String idToString;
 
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "_id")
     public UUID mId;
 //
-//    @ColumnInfo(name = "location")
+    //    @ColumnInfo(name = "location")
 //    private Location mLocation;
 
     @ColumnInfo(name = "latitude")
@@ -64,10 +65,11 @@ public class TaskItem implements Parcelable, ClusterItem {
     private boolean mNotifyByPlace;
 
     @ColumnInfo(name = "alert_radius")
-    private int mAlertRadius=100;
+    private int mAlertRadius = 100;
 
     public TaskItem() {
         setId(UUID.randomUUID());
+        idToString = Converters.toString(mId);
     }
 
 
@@ -199,7 +201,6 @@ public class TaskItem implements Parcelable, ClusterItem {
     }
 
 
-    String idToString = Converters.toString(mId);
 
     protected TaskItem(Parcel in) {
         mLatitude = in.readDouble();
@@ -235,6 +236,13 @@ public class TaskItem implements Parcelable, ClusterItem {
         return 0;
     }
 
+    public String getIdToString() {
+        return idToString;
+    }
+
+    public void setIdToString(String idToString) {
+        this.idToString = idToString;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
