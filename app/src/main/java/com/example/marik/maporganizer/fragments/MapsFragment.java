@@ -295,7 +295,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             LatLng latLng = new LatLng(item.getLatitude(), item.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker3)));
         }
     }
 
@@ -428,7 +428,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     markerOptions.position(latLng)
                             .title("Current Position")
                             .icon(BitmapDescriptorFactory
-                                    .fromResource(R.drawable.marker2));
+                                    .fromResource(R.drawable.marker3));
 
                     // mCurrentLocationMarker = mMap.addMarker(markerOptions);
 

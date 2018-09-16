@@ -266,9 +266,10 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         View v = inflater.inflate(R.layout.fragment_task_creation, container, false);
         if (mTaskItem == null) {
             // init task item
+
             mTaskItem = new TaskItem();
             mTaskItem.setDate(new Date());
-            // ev ayln
+
         }
         return v;
     }
@@ -278,6 +279,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         init(view);
 
+        mChoosedAddress.setVisibility(View.GONE);
+        mDirection.setVisibility(View.GONE);
+        arButton.setVisibility(View.GONE);
         updateDateLabel();
 
 
@@ -533,6 +537,15 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     }
 
     private void filldata() {
+        if (mTaskItem.getLatitude() == 0 || mTaskItem.getLongitude() == 0) {
+            mChoosedAddress.setVisibility(View.GONE);
+            mDirection.setVisibility(View.GONE);
+            arButton.setVisibility(View.GONE);
+        } else {
+            mChoosedAddress.setVisibility(View.VISIBLE);
+            mDirection.setVisibility(View.VISIBLE);
+            arButton.setVisibility(View.VISIBLE);
+        }
         mSelectedDate.setTime(mTaskItem.getDate());
         updateDateLabel();
         mTitle.setText(mTaskItem.getTitle());
@@ -627,7 +640,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mTaskItem.setNotifyByPlace(mNotifybyPlaceCheckBox.isChecked());
         if (mNotifybyPlaceCheckBox.isChecked()) {
             mTaskItem.setNotifyByPlace(true);
-        }else {
+        } else {
             mTaskItem.setNotifyByPlace(false);
         }
 
@@ -665,6 +678,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                     mTaskItem.setAlertRadius(mAlertRadius);
                     mTaskItem.setLatitude(latAndLng[0]);
                     mTaskItem.setLongitude(latAndLng[1]);
+                    mChoosedAddress.setVisibility(View.VISIBLE);
+                    mDirection.setVisibility(View.VISIBLE);
+                    arButton.setVisibility(View.VISIBLE);
                     getAddressFromLatitLong(latAndLng[0], latAndLng[1], new GetAddressAsyncTask.OnResultListener() {
                         @Override
                         public void onResult(String pAddress) {
@@ -674,7 +690,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                     });
 
                     Log.v("tempic ekac", "latit " + latAndLng[0] + ", longit " + latAndLng[1] + ", radius " + mAlertRadius);
-                  //  mViewModel.update(mTaskItem);
+                    //  mViewModel.update(mTaskItem);
                 } else {
                     Log.e("radius", "Radiusy chekav");
                 }
