@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.example.marik.maporganizer"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
