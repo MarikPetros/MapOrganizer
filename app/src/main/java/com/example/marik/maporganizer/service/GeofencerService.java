@@ -35,6 +35,7 @@ public class GeofencerService extends IntentService {
     int SUMMARY_ID = 0;
     String GROUP_KEY_GEOFENCE_ALERT = "com.example.marik.maporganizer.GEOFENCE_ALERT";
     public static final String TRIGGERING_LOCATIONS = "com.example.marik.maporganizer.TRIGGERING_LOCATION";
+    public static final String GEOFENCE_CHANNEL_ID = "geofence";
 
     private NotificationCompat.Builder mBuilder;
     private String explanation;
@@ -159,12 +160,12 @@ public class GeofencerService extends IntentService {
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        String CHANNEL_ID = "Geofence";
+                                                                                                       //String CHANNEL_ID = "Geofence";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(GEOFENCE_CHANNEL_ID, name, importance);
             channel.setDescription(description);
             channel.setLightColor(Color.GREEN);
             channel.shouldShowLights();
@@ -182,7 +183,7 @@ public class GeofencerService extends IntentService {
         }
 
         // using NotificationCompat
-        mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        mBuilder = new NotificationCompat.Builder(this,GEOFENCE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_nearby)
                 .setContentTitle(getString(R.string.nearby))
                 .setContentText(geofenceTransitionDetails)
@@ -197,7 +198,7 @@ public class GeofencerService extends IntentService {
                 .setAutoCancel(true);
 
 
-        NotificationCompat.Builder mSummaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder mSummaryBuilder = new NotificationCompat.Builder(this, GEOFENCE_CHANNEL_ID)
                 .setContentTitle(getString(R.string.nearTasks))
                 //set content text to support devices running API level < 24
                 .setContentText("New geofence messages")

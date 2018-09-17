@@ -172,6 +172,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public final static String ITEM_EXTRA = "com.example.marik.maporganizer.NOTIFYING_TASK_ITEM";
     public final static String TIME_NOTIFIER = "com.example.marik.maporganizer.TIME_NOTIFIER";
     public final static String TASK_DATE = "com.example.marik.maporganizer.TASK_DATE";
+    public final static String ALERT_TIME = "com.example.marik.maporganizer.ALERT_TIME";
     public final static String ITEM_ADDRESS = "com.example.marik.maporganizer.NOTIFYING_TASK_ADDRESS";
 
     public void setmOndirectionListener(OnDirectionListener mOndirectionListener) {

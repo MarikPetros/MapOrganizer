@@ -74,7 +74,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private Circle circle;
     private EditText desiredRadius;
-    private int radius;// = 100;
+    private int radius;
     private AutoCompleteTextView mAutoCompleteTextView;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
@@ -131,7 +131,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onClick(View v) {
                 radius = Integer.parseInt(com.example.marik.maporganizer.activity.TempMapActivity.this.desiredRadius.getText().toString());
-                if (radius >= 100 && radius <= 10000) {
+                if (radius >= 100 && radius <= 5000) {
                     circle.setRadius(radius);
                 } else {
                     circle.setRadius(100);
@@ -157,7 +157,8 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // Showing current location
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             googleMap.setMyLocationEnabled(true);
             return;
         }
@@ -198,7 +199,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker31));
 
                 // Clears the previously touched position
                 mMap.clear();
@@ -217,7 +218,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker3));
         // Clears the previously touched position
         mMap.clear();
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
