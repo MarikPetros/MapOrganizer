@@ -199,7 +199,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker31));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker3));
 
                 // Clears the previously touched position
                 mMap.clear();
