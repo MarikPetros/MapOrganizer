@@ -46,6 +46,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -180,9 +181,9 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        onMapClick();
         addMarkerToChoosedAddress(new LatLng(latitude, longitude));
-        moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "aaa");
+        moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "location");
+        onMapClick();
         initSearch();
 
 
@@ -197,7 +198,8 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                //  markerOptions.
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker));
+
                 // Clears the previously touched position
                 mMap.clear();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -215,7 +217,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-        //  markerOptions.
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_marker));
         // Clears the previously touched position
         mMap.clear();
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -325,9 +327,9 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
             latitude = address.getLatitude();
             longitude = address.getLongitude();
-            LatLng chosedLocation = new LatLng(latitude, longitude);
-            moveCamera(chosedLocation, DEFAULT_ZOOM, address.getAddressLine(0));
-            drawCircle(chosedLocation);
+            LatLng choosedLocation = new LatLng(latitude, longitude);
+            moveCamera(choosedLocation, DEFAULT_ZOOM, address.getAddressLine(0));
+            drawCircle(choosedLocation);
             intent.putExtra(RADIUS_KEY, radius).putExtra(LATLONG_KEY, new double[] {latitude, longitude});
 
         }
@@ -343,7 +345,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
-            //  mMarker = mMap.addMarker(options);
+     //       mMarker = mMap.addMarker(options);
         }
         hideKeyboard();
     }
@@ -394,7 +396,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             } catch (NullPointerException e) {
             }
 
-            latitude = place.getViewport().getCenter().latitude;
+            latitude = Objects.requireNonNull(place.getViewport()).getCenter().latitude;
             longitude = place.getViewport().getCenter().longitude;
 
             /*moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude,

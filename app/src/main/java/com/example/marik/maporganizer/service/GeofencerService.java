@@ -37,9 +37,7 @@ public class GeofencerService extends IntentService {
     public static final String TRIGGERING_LOCATIONS = "com.example.marik.maporganizer.TRIGGERING_LOCATION";
 
     private NotificationCompat.Builder mBuilder;
-    private NotificationCompat.Builder mSummaryBuilder;
     private String explanation;
-    private int notificationId = 222;
     private String dismissalId;
     private String notificationTag;
     private Location location;
@@ -100,6 +98,7 @@ public class GeofencerService extends IntentService {
         createNotification(geofenceTransitionDetails);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         // notificationManager.notify(SUMMARY_ID, mSummaryBuilder.build());
+        int notificationId = 222;
         notificationManager.notify(notificationTag, notificationId, mBuilder.build());
     }
 
@@ -198,7 +197,7 @@ public class GeofencerService extends IntentService {
                 .setAutoCancel(true);
 
 
-        mSummaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder mSummaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.nearTasks))
                 //set content text to support devices running API level < 24
                 .setContentText("New geofence messages")

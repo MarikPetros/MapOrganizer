@@ -27,6 +27,9 @@ import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME
 
 public class NotificationAlarmReceiver extends BroadcastReceiver {
     public static final String GROUP_KEY_TIMED_NOTIF = "com.example.marik.maporganizer.TIMED_NOTIFICATIONS";
+    private NotificationManager notificationManager;
+    private NotificationCompat.Builder mBuilder;
+    private NotificationCompat.Builder mSummaryBuilder;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,6 +39,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         long taskDate = intent.getLongExtra(TASK_DATE, 0);
         String address = intent.getStringExtra(ITEM_ADDRESS);
 
+
+        if (notificationManager == null) {
+            notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        }
         int notificationId = (int) Math.round(((latlng[0] + latlng[1]) * 100000) % 100);
 
         String mDismissNotificationId = String.valueOf(notificationId);
@@ -48,6 +55,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         contentIntent.putExtra(TIME_NOTIFIER, latlng);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId, contentIntent, 0);
+        Date date = new Date(taskDate);
 
         String CHANNEL_ID = context.getString(R.string.timed_notification);
         // Create the NotificationChannel, but only on API 26+ because
@@ -57,7 +65,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
             String description = context.getString(R.string.timed_notification_channel_description);//getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);channel.setLightColor(Color.GREEN);
+            channel.setDescription(description);
+            channel.setLightColor(Color.GREEN);
             channel.shouldShowLights();
             channel.enableLights(true);
             channel.enableVibration(true);
@@ -66,11 +75,11 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
             channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            // NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
             }
-        }
+
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             CharSequence name = context.getString(R.string.timed_notification_channel);
@@ -97,47 +106,83 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
             }
         }
 */
-        Date date = new Date(taskDate);
        /* if(date == null){
             date = new Date(System.currentTimeMillis() + 60*60*1000);
         }*/
-        // using NotificationCompat
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notif_nearby)
-                .setContentTitle(String.format("To do at %s", date.toString()))
-                .setContentText(context.getString(R.string.scheduled_job))
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("You have a job at " + date.toString() + "at "
-                                + address))
-                .setVisibility(VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .extend(wearableExtender)
-                .setContentIntent(pendingIntent)
-                .setGroup(GROUP_KEY_TIMED_NOTIF)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setAutoCancel(true);
+            // using NotificationCompat
+            mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notif_nearby)
+                    .setContentTitle(String.format("To do at %s", date.toString()))
+                    .setContentText(context.getString(R.string.scheduled_job))
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("You have a job at " + date.toString() + "at "
+                                    + address))
+                    .setVisibility(VISIBILITY_PUBLIC)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .extend(wearableExtender)
+                    .setContentIntent(pendingIntent)
+                    .setGroup(GROUP_KEY_TIMED_NOTIF)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .setAutoCancel(true);
 
-        NotificationCompat.Builder mSummaryBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle(context.getString(R.string.timed_notifications))
-                //set content text to support devices running API level < 24
-                .setContentText("New timed messages")
-                .setSmallIcon(R.drawable.ic_notif_nearby)
-                //build summary info into InboxStyle template
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .setBigContentTitle(context.getString(R.string.timted_group_title)))
-                //specify which group this notification belongs to
-                .setGroup(GROUP_KEY_TIMED_NOTIF)
-                .extend(wearableExtender)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                //set this notification as the summary for the group
-                .setGroupSummary(true);
+            mSummaryBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setContentTitle(context.getString(R.string.timed_notifications))
+                    //set content text to support devices running API level < 24
+                    .setContentText("New timed messages")
+                    .setSmallIcon(R.drawable.ic_notif_nearby)
+                    //build summary info into InboxStyle template
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(context.getString(R.string.timted_group_title)))
+                    //specify which group this notification belongs to
+                    .setGroup(GROUP_KEY_TIMED_NOTIF)
+                    .extend(wearableExtender)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    //set this notification as the summary for the group
+                    .setGroupSummary(true);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        } else {
+            mBuilder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_notif_nearby)
+                    .setContentTitle(String.format("To do at %s", date.toString()))
+                    .setContentText(context.getString(R.string.scheduled_job))
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("You have a job at " + date.toString() + "at "
+                                    + address))
+                    .setVisibility(VISIBILITY_PUBLIC)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .extend(wearableExtender)
+                    .setContentIntent(pendingIntent)
+                    .setGroup(GROUP_KEY_TIMED_NOTIF)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .setAutoCancel(true);
+
+            mSummaryBuilder = new NotificationCompat.Builder(context)
+                    .setContentTitle(context.getString(R.string.timed_notifications))
+                    //set content text to support devices running API level < 24
+                    .setContentText("New timed messages")
+                    .setSmallIcon(R.drawable.ic_notif_nearby)
+                    //build summary info into InboxStyle template
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(context.getString(R.string.timted_group_title)))
+                    //specify which group this notification belongs to
+                    .setGroup(GROUP_KEY_TIMED_NOTIF)
+                    .extend(wearableExtender)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    //set this notification as the summary for the group
+                    .setGroupSummary(true);
+        }
+
         // notificationManager.notify(notificationId, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
-        //-----------------------------------------------------------------------------------------
-
-
+        //  NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
     }
+
+    /**
+     * Get the notification manager.
+     *
+     * Utility method as this helper works with it a lot.
+     *
+     * @return The system service NotificationManager
+     */
 
 }
