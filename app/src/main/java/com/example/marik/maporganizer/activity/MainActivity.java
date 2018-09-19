@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.example.marik.maporganizer.appwidget.TaskAppWidgetProvider.ITEM_INDEX;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_LAT;
+import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_LNG;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mArButton;
     public FusedLocationProviderClient mFusedLocationClient;
     public Location mCurrentLocation;
+    double dirLat;
+    double dirLng;
 
 
     @Override
@@ -81,8 +85,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (getIntent().getExtras() != null) {
+            Bundle args = getIntent().getExtras();
+            dirLat = args.getDouble(ARG_LAT);
+            dirLng = args.getDouble(ARG_LNG);
+            Log.v("main", dirLat + ", " + dirLng);
 
-
+        }
         init();
         //  checkLocationPermission();
     }
@@ -198,6 +207,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setFragment(Fragment fragment) {
         assert getFragmentManager() != null;
+        if (dirLat != 0 && dirLng != 0) {
+            Bundle args = new Bundle();
+            args.putString(FragmentTaskCreation.TAG_DIRECTION, "lat/lng");
+            args.putDouble(ARG_LAT, dirLat);
+            args.putDouble(ARG_LNG, dirLng);
+            fragment.setArguments(args);
+        }
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
@@ -309,7 +325,8 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
-//-------------------------------------------------------------------
+
+    //-------------------------------------------------------------------
 
     private void doFragmentTransaction(Fragment fragment, boolean addToBackStack) {
 

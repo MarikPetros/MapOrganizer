@@ -176,7 +176,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (supportMapFragment == null) {
             FragmentManager manager = getFragmentManager();
@@ -274,6 +273,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     public void onResume() {
         super.onResume();
        //TODO bug providing APIClient must be fixed
+
+
         if (!mGoogleApiClient.isConnected() && mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         } else {
@@ -288,6 +289,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 }
             }
         });
+
+
     }
 
     private void setMarkerState(List<TaskItem> taskItems) {
@@ -389,13 +392,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onStart() {
         super.onStart();
+        Bundle args = getArguments();
+        if(args!=null){
+            if(args.containsKey(FragmentTaskCreation.TAG_DIRECTION)) {
+                dirLat = args.getDouble(FragmentTaskCreation.ARG_LAT);
+                dirLng = args.getDouble(FragmentTaskCreation.ARG_LNG);
+                Log.v("directionic ekac latlng", dirLat + ", " + dirLng);
+                mMarkerPoints.add(new LatLng(dirLat, dirLng));
+                drawRout(new LatLng(dirLat,dirLng));
 
-        if (getArguments() != null) {
-            Bundle args = getArguments();
-            dirLat = args.getDouble(FragmentTaskCreation.ARG_LAT);
-            dirLng = args.getDouble(FragmentTaskCreation.ARG_LNG);
-            mMarkerPoints.add(new LatLng(dirLat, dirLng));
-        }
+
+            }};
+
+
     }
 
     @Override
