@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 public class TaskHolder extends RecyclerView.ViewHolder {
-private ImageView mPhoto;
+    private ImageView mPhoto;
     private TextView mDescription;
     private TextView mDate;
     private TextView mTitle;
@@ -26,36 +26,44 @@ private ImageView mPhoto;
     public TaskHolder(View itemView) {
 
         super(itemView);
-        mPhoto=itemView.findViewById(R.id.list_photo);
+        mPhoto = itemView.findViewById(R.id.list_photo);
         mTitle = itemView.findViewById(R.id.title_view);
         mDescription = itemView.findViewById(R.id.description_view);
         mDate = itemView.findViewById(R.id.date_view);
         mChoosedAddress = itemView.findViewById(R.id.location_view);
-        mDeleteCheckBox=itemView.findViewById(R.id.delete_checkbox);
+        mDeleteCheckBox = itemView.findViewById(R.id.delete_checkbox);
     }
 
     public void bindHolder(TaskItem pTaskItem) {
 
-        if(pTaskItem.getImageUri()==null){
-        mPhoto.setVisibility(View.GONE);}
-        else{
+        if (pTaskItem.getImageUri() == null) {
+            mPhoto.setVisibility(View.GONE);
+        } else {
             mPhoto.setVisibility(View.VISIBLE);
-          mPhoto.setImageBitmap(BitmapFactory.decodeFile(pTaskItem.getImageUri()));
+            mPhoto.setImageBitmap(BitmapFactory.decodeFile(pTaskItem.getImageUri()));
         }
-        mTitle.setText(pTaskItem.getTitle());
+        if (pTaskItem.getTitle().isEmpty()) {
+            mTitle.setVisibility(View.GONE);
+        } else {
+            mTitle.setVisibility(View.VISIBLE);
+            mTitle.setText(pTaskItem.getTitle());
+        }
         if (pTaskItem.getDescription().isEmpty()) {
             mDescription.setVisibility(View.GONE);
         } else {
             mDescription.setVisibility(View.VISIBLE);
-        mDescription.setText(pTaskItem.getDescription());}
+            mDescription.setText(pTaskItem.getDescription());
+        }
+
+        if (pTaskItem.getChoosedAddress().isEmpty()) {
+            mChoosedAddress.setVisibility(View.GONE);
+        } else {
+            mChoosedAddress.setVisibility(View.VISIBLE);
+            mChoosedAddress.setText(pTaskItem.getChoosedAddress());
+        }
 
         mDate.setText(DateUtil.formatDateToLongStyle(pTaskItem.getDate()));
-        if(pTaskItem.getChoosedAddress()==null){
-            mChoosedAddress.setVisibility(View.GONE);
-        }
-        else
-            mChoosedAddress.setVisibility(View.VISIBLE);
-        mChoosedAddress.setText(pTaskItem.getChoosedAddress());
+
     }
 
 

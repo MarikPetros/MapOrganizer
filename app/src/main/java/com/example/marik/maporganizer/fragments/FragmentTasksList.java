@@ -126,6 +126,8 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
 
     }
 
+
+
     public void getTaskItemsFromViewModel() {
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
         mViewModel.getItems().observe(this, new Observer<List<TaskItem>>() {

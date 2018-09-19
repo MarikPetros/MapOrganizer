@@ -116,7 +116,7 @@
 
 
         <!-- </activity> -->
-        <activity android:name=".activity.ar_activities.SensorActivity"></activity>
+        <activity android:name=".activity.ar_activities.CameraViewActivity"></activity>
     </application>
 
 </manifest>
