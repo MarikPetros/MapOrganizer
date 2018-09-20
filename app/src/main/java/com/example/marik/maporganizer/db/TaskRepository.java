@@ -46,7 +46,7 @@ public class TaskRepository {
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {
-        /*TaskItem taskItem = null;
+        TaskItem taskItem = null;
         try {
             taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude)).get();
         } catch (InterruptedException e) {
@@ -54,9 +54,9 @@ public class TaskRepository {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return taskItem;*/
-        new GetByLocationAsyncTask(mDao).execute(latitude, longitude);
-        return mItem;
+        return taskItem;
+        /*new GetByLocationAsyncTask(mDao).execute(latitude, longitude);
+        return mItem;*/
     }
 
 
