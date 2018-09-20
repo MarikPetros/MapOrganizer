@@ -184,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Location> locations = getIntent().getParcelableArrayListExtra(TRIGGERING_LOCATIONS);
         if (locations != null && locations.size() > 0) {
             for (Location location : locations) {
+                Log.e("triggering_location","triggered from " +location.getLatitude() + " " + location.getLongitude());
                 TaskItem item = model.getItemByLocation(location.getLatitude(), location.getLongitude());
+                Log.e("triggering_location","triggered from " +item.getLatitude() + " " + item.getLongitude());
 
                 BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 2);
                 //show it

@@ -2,7 +2,9 @@ package com.example.marik.maporganizer.db;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 
 import java.util.List;
@@ -14,10 +16,12 @@ public class TaskRepository {
 
     private TaskDao mDao;
     private LiveData<List<TaskItem>> mItemList;
-
+    public static TaskItem mItem;
 
     private TaskRepository(Application application) {
         TaskDataBase db = TaskDataBase.getDataBase(application);
+        /*TaskDataBase db = Room.databaseBuilder(application.getBaseContext(),
+                TaskDataBase.class, "task_db").build();*/
         mDao = db.mDao();
         mItemList = mDao.getAll();
     }
@@ -42,15 +46,17 @@ public class TaskRepository {
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {
-        TaskItem taskItem = null;
+        /*TaskItem taskItem = null;
         try {
-        taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude)).get();
+            taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude)).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return taskItem;
+        return taskItem;*/
+        new GetByLocationAsyncTask(mDao).execute(latitude, longitude);
+        return mItem;
     }
 
 
@@ -126,6 +132,12 @@ public class TaskRepository {
         @Override
         protected TaskItem doInBackground(Double... doubles) {
             return mAsyncTaskDao.getItemByLocation(doubles[0], doubles[1]);
+        }
+
+        @Override
+        protected void onPostExecute(TaskItem item) {
+            TaskRepository.mItem = item;
+            super.onPostExecute(item);
         }
     }
 

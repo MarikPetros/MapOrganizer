@@ -214,7 +214,4 @@ public class GeofencerService extends IntentService {
                 .setGroupSummary(true);
     }
 
-    public Location getLocation() {
-        return location;
-    }
 }

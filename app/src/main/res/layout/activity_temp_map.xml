@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
             android:background="@drawable/white_border"
-            android:ems="10"
+            android:ems="15"
             android:gravity="center"
             android:hint="@string/radius_in_meters"
             android:inputType="number"
@@ -65,16 +65,6 @@
             android:elevation="@dimen/button_elevation"
             android:padding="@dimen/_padding" />
 
-        <ImageView
-            android:id="@+id/radius_settings_save_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="@dimen/margin_top"
-            android:src="@android:drawable/ic_menu_myplaces"
-            android:background="@color/colorPrimary"
-            android:elevation="@dimen/button_elevation"
-            android:padding="@dimen/_padding" />
     </LinearLayout>
 
     <RelativeLayout

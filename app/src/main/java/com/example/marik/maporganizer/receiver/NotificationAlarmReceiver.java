@@ -59,8 +59,8 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = context.getString(R.string.timed_notification_channel);//getString(R.string.channel_name);
-            String description = context.getString(R.string.timed_notification_channel_description);//getString(R.string.channel_description);
+            CharSequence name = context.getString(R.string.timed_notification_channel);
+            String description = context.getString(R.string.timed_notification_channel_description);
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(TIMED_NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);

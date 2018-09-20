@@ -124,7 +124,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         ImageView mSearch = findViewById(R.id.radius_search_icon);
         desiredRadius = findViewById(R.id.editTextRadius);
         ImageView saveBtn = findViewById(R.id.radius_save_img);
-        ImageView saveSettingsBtn = findViewById(R.id.radius_settings_save_img);
 
         // Make circle1 radius from content of EditText
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -141,13 +140,13 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         intent.putExtra(RADIUS_KEY, radius).putExtra(LATLONG_KEY, new double[] {latitude,longitude});
 
-        saveSettingsBtn.setOnClickListener(new View.OnClickListener() {
+        /*saveSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setResult(RESULT_OK, intent);
                 finish();
             }
-        });
+        });*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
@@ -426,6 +425,13 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMyLocationClick(@NonNull Location location) {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK, intent);
+       // finish();
+        super.onBackPressed();
     }
 }
 
