@@ -170,7 +170,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     private boolean reminderIsChecked;
     ArrayAdapter<String> mSpinnerAdapter;
     private int mFlag;
-     Animation zoomAnimation;
+    Animation zoomAnimation;
 //    OnTaskFragmentInteraction mListener;
 
     private boolean isNewCreated = true;
@@ -183,8 +183,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public final static String TASK_DATE = "com.example.marik.maporganizer.TASK_DATE";
     public final static String ALERT_TIME = "com.example.marik.maporganizer.ALERT_TIME";
     public final static String ITEM_ADDRESS = "com.example.marik.maporganizer.NOTIFYING_TASK_ADDRESS";
-    public final static String ADDRESS ="address";
-    public final static String TAG_DIRECTION ="send latlng to map for roure";
+    public final static String ADDRESS = "address";
+    public final static String TAG_DIRECTION = "send latlng to map for roure";
 //    public final static String ADDRESS ="address";
 
     public void setmOndirectionListener(OnDirectionListener mOndirectionListener) {
@@ -383,7 +383,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         mDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(),MainActivity.class);
+                Intent intent = new Intent(getContext(), MainActivity.class);
                 intent.putExtra(TAG_DIRECTION, ITEM_EXTRA);
                 intent.putExtra(ARG_LAT, mTaskItem.getLatitude());
                 intent.putExtra(ARG_LNG, mTaskItem.getLongitude());
@@ -409,8 +409,8 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         arButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(),CameraViewActivity.class);
-                intent.putExtra(LAT_LANG_FOR_AR,new double[] {mTaskItem.getLatitude(),mTaskItem.getLongitude()});
+                Intent intent = new Intent(getContext(), CameraViewActivity.class);
+                intent.putExtra(LAT_LANG_FOR_AR, new double[]{mTaskItem.getLatitude(), mTaskItem.getLongitude()});
                 intent.putExtra(ADDRESS, mTaskItem.getChoosedAddress());
                 startActivity(intent);
             }
@@ -446,6 +446,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             @Override
             public void onClick(View v) {
                 checkPermissions(getContext());
+                onPickImage(v);
             }
         });
 
@@ -675,18 +676,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
 
     public void onPickImage(View view) {
-        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        if (ContextCompat.checkSelfPermission(getContext(), permissions[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getContext(), permissions[1]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getContext(), permissions[2]) == PackageManager.PERMISSION_GRANTED) {
         Intent chooseImageIntent = ImagePicker.getPickImageIntent(getContext());
-        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);}
-        else
-        {
-            ActivityCompat.requestPermissions(getActivity(), permissions, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);}
+        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -732,7 +724,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-     //   Utility.checkPermissions(getContext());
+        //   Utility.checkPermissions(getContext());
         checkPermissions(getContext());
     }
 
@@ -750,7 +742,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         else return false;
     }
 
-    public  void checkPermissions(Context context) {
+    public void checkPermissions(Context context) {
         String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
         if (ContextCompat.checkSelfPermission(context, permissions[0]) == PackageManager.PERMISSION_GRANTED
@@ -758,8 +750,9 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 && ContextCompat.checkSelfPermission(context, permissions[2]) == PackageManager.PERMISSION_GRANTED) {
             onPickImage(getView());
 
-        } else{
-            ActivityCompat.requestPermissions((Activity) context, permissions, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);}
+        } else {
+            ActivityCompat.requestPermissions((Activity) context, permissions, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        }
 
     }
 

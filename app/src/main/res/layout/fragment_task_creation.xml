@@ -111,8 +111,8 @@
 
         <ImageView
             android:id="@+id/photo"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/margin_top"
             android:background="#ffffff"

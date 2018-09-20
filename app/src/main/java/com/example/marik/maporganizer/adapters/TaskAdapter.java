@@ -5,11 +5,13 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 
 import com.example.marik.maporganizer.R;
@@ -46,6 +48,25 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_view, parent, false);
+        view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                final int type = viewType;
+                final ViewGroup.LayoutParams lp = view.getLayoutParams();
+                if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+                    StaggeredGridLayoutManager.LayoutParams sglp =
+                            (StaggeredGridLayoutManager.LayoutParams) lp;
+                    sglp.setFullSpan(false);
+                    sglp.width = view.getWidth();
+                    view.setLayoutParams(sglp);
+                    final StaggeredGridLayoutManager lm =
+                            (StaggeredGridLayoutManager) ((RecyclerView) parent).getLayoutManager();
+                    lm.invalidateSpanAssignments();
+                }
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
 
         return new TaskHolder(view);
     }

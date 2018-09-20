@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -103,12 +104,27 @@ public class FragmentTasksList extends android.support.v4.app.Fragment {
     private void init(View view) {
 
         mRecyclerView = view.findViewById(R.id.recyclerview);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL);
+//        manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+        manager.setGapStrategy(
+                StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setLayoutManager(manager);
+
         mAdapter = new TaskAdapter(getActivity());
         getTaskItemsFromViewModel();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setListClickedListener(mListClickedListener);
         mAddTask = view.findViewById(R.id.floatingActionButton);
+
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                ((StaggeredGridLayoutManager)recyclerView.getLayoutManager()).invalidateSpanAssignments();
+            }
+        });
 
         mAddTask.setOnClickListener(new View.OnClickListener() {
             @Override

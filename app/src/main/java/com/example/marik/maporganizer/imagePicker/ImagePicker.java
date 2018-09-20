@@ -78,6 +78,7 @@ public class ImagePicker {
         Log.d(TAG, "getImageFromResult, resultCode: " + resultCode);
         Bitmap bm = null;
         File imageFile = getTempFile(context);
+
         if (resultCode == Activity.RESULT_OK) {
 
             boolean isCamera = (imageReturnedIntent == null ||
@@ -115,6 +116,7 @@ public class ImagePicker {
             fileDescriptor = context.getContentResolver().openAssetFileDescriptor(theUri, "r");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+
         }
 
         Bitmap actuallyUsableBitmap = null;
@@ -122,6 +124,7 @@ public class ImagePicker {
             actuallyUsableBitmap = BitmapFactory.decodeFileDescriptor(
                     fileDescriptor.getFileDescriptor(), null, options);
         }
+
 
         Log.d(TAG, options.inSampleSize + " sample method bitmap ... " +
                 actuallyUsableBitmap.getWidth() + " " + actuallyUsableBitmap.getHeight());
@@ -134,10 +137,14 @@ public class ImagePicker {
      **/
     private static Bitmap getImageResized(Context context, Uri selectedImage) {
         Bitmap bm = null;
-        int[] sampleSizes = new int[]{5, 3, 2, 1};
+        int[] sampleSizes = new int[]{7, 5, 3, 2, 1};
         int i = 0;
         do {
             bm = decodeBitmap(context, selectedImage, sampleSizes[i]);
+            if(bm==null){
+                Log.e("error", "bitmap is null");
+                return null;
+            }
             Log.d(TAG, "resizer: new bitmap width = " + bm.getWidth());
             i++;
         } while (bm.getWidth() < minWidthQuality && i < sampleSizes.length);
