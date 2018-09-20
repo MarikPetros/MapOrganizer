@@ -28,11 +28,11 @@
         android:glEsVersion="0x20000"
         android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
-<uses-permission android:name="android.permission.CAMERA"></uses-permission>
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.google.android.providers.gfs.permision.READ_GSERVICES" />
     <uses-permission android:name="com.truiton.mapfragment.permission.MAPS_RECEIVE" />
     <uses-permission android:name="NETWORK_ACCESS_STATE" />
-
 
 
     <application
@@ -42,7 +42,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -50,7 +52,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -80,7 +82,9 @@
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_maps"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden">
+
+        </activity>
 
         <service
             android:name=".service.GeofencerService"
@@ -119,7 +123,9 @@
 
 
         <!-- </activity> -->
-        <activity android:name=".activity.ar_activities.CameraViewActivity"></activity>
+        <activity android:name=".activity.ar_activities.CameraViewActivity">
+
+        </activity>
 
     </application>
 
