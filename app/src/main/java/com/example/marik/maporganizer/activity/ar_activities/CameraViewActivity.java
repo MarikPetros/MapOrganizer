@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
+import com.example.marik.maporganizer.fragments.TaskFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,8 +53,8 @@ public class CameraViewActivity extends Activity implements
         setContentView(R.layout.activity_camera_view);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        address = getIntent().getStringExtra(FragmentTaskCreation.ADDRESS);
-        mLatLng = getIntent().getDoubleArrayExtra(FragmentTaskCreation.LAT_LANG_FOR_AR);
+        address = getIntent().getStringExtra(TaskFragment.ADDRESS);
+        mLatLng = getIntent().getDoubleArrayExtra(TaskFragment.LAT_LANG_FOR_AR);
         setupListeners();
         setupLayout();
         setAugmentedRealityPoint(address, mLatLng[0], mLatLng[1]);
@@ -142,7 +142,7 @@ public class CameraViewActivity extends Activity implements
         double maxAngle = calculateAzimuthAccuracy(mAzimuthTeoretical).get(1);
         double minDelta = minAngle - 90;
         double maxDelta = maxAngle + 90;
-        if (isBetween(minAngle-5, maxAngle+5, mAzimuthReal)) {
+        if (isBetween(minAngle-10, maxAngle+10, mAzimuthReal)) {
             pointerIcon.setVisibility(View.VISIBLE);
             leftIcon.setVisibility(View.INVISIBLE);
             rightIcon.setVisibility(View.INVISIBLE);

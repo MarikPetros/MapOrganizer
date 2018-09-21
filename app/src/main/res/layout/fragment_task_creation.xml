@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/bottom_sheet_behavior"
-    tools:context=".fragments.FragmentTaskCreation">
+    tools:context=".fragments.TaskFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayout"

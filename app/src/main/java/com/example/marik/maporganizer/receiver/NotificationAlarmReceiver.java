@@ -16,10 +16,10 @@ import com.example.marik.maporganizer.activity.MainActivity;
 import java.util.Date;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_ADDRESS;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_EXTRA;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TASK_DATE;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
+import static com.example.marik.maporganizer.fragments.TaskFragment.ITEM_ADDRESS;
+import static com.example.marik.maporganizer.fragments.TaskFragment.ITEM_EXTRA;
+import static com.example.marik.maporganizer.fragments.TaskFragment.TASK_DATE;
+import static com.example.marik.maporganizer.fragments.TaskFragment.TIME_NOTIFIER;
 
 public class NotificationAlarmReceiver extends BroadcastReceiver {
     public static final String GROUP_KEY_TIMED_NOTIF = "com.example.marik.maporganizer.TIMED_NOTIFICATIONS";

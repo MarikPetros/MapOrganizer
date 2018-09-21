@@ -92,7 +92,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, FragmentTaskCreation.OnDirectionListener {
+        GoogleApiClient.ConnectionCallbacks, LocationListener, TaskFragment.OnDirectionListener {
 
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
@@ -354,9 +354,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onStart();
         Bundle args = getArguments();
         if(args!=null){
-            if(args.containsKey(FragmentTaskCreation.TAG_DIRECTION)) {
-                dirLat = args.getDouble(FragmentTaskCreation.ARG_LAT);
-                dirLng = args.getDouble(FragmentTaskCreation.ARG_LNG);
+            if(args.containsKey(TaskFragment.TAG_DIRECTION)) {
+                dirLat = args.getDouble(TaskFragment.ARG_LAT);
+                dirLng = args.getDouble(TaskFragment.ARG_LNG);
                 Log.v("directionic ekac latlng", dirLat + ", " + dirLng);
                 mMarkerPoints.add(new LatLng(dirLat, dirLng));
                 drawRout(new LatLng(dirLat,dirLng));
@@ -366,7 +366,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapLongClick(LatLng latLng) {
         //Initializing a bottom sheet
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(latLng);
+        BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(latLng);
 
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
@@ -683,7 +683,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 double positionLat = clusters.getPosition().latitude;
                 double positionLng = clusters.getPosition().longitude;
                 TaskItem item = mViewModel.getItemByLocation(positionLat, positionLng);
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
+                BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(item, 0);
                 //show it
                 bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
                 return false;

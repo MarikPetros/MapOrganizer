@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_list_container"
     android:background="@color/color_white"
-    tools:context=".fragments.FragmentTasksList">
+    tools:context=".fragments.TasksListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"

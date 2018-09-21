@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_TASK_ITEM;
+import static com.example.marik.maporganizer.fragments.TaskFragment.ARG_TASK_ITEM;
 
 
 public class TempMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,

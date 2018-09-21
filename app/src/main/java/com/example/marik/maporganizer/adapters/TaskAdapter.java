@@ -176,9 +176,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         } else {
             mCheckedItems.remove(position);
             isSelected = false;
-
         }
-
     }
 
     @Override
@@ -195,12 +193,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         notifyItemInserted(mItems.size() - 1);
     }
 
-
     public interface OnItemsListClicked {
         void onClickItem(TaskItem item);
-
         void onRemove(UUID id);
-
     }
 }
 

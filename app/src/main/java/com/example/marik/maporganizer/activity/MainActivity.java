@@ -29,8 +29,8 @@ import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
-import com.example.marik.maporganizer.fragments.FragmentTasksList;
+import com.example.marik.maporganizer.fragments.TaskFragment;
+import com.example.marik.maporganizer.fragments.TasksListFragment;
 import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
@@ -46,9 +46,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.example.marik.maporganizer.appwidget.TaskAppWidgetProvider.ITEM_INDEX;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_LAT;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_LNG;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
+import static com.example.marik.maporganizer.fragments.TaskFragment.ARG_LAT;
+import static com.example.marik.maporganizer.fragments.TaskFragment.ARG_LNG;
+import static com.example.marik.maporganizer.fragments.TaskFragment.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
 
 //import com.google.ar.core.ArCoreApk;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent mGeofencePendingIntent;
     private GeofenceMaker mGeofenceMaker = GeofenceMaker.getGeofenceMakerInstance();
     private MapsFragment mMapsFragment;
-    private FragmentTasksList mTaskListFragment;
+    private TasksListFragment mTaskListFragment;
     private BottomNavigationView mBottomNavigationView;
     private TaskViewModel model;
     private ImageView mArButton;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         mGeofencingClient = LocationServices.getGeofencingClient(this);
         createGeofencesList();
 
-        mTaskListFragment = new FragmentTasksList();
+        mTaskListFragment = new TasksListFragment();
         mMapsFragment = new MapsFragment();
         setTabs();
 
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchCreationFragment(int index) {
         TaskItem item = model.getAllTaskItems().get(index);
-        BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 0);
+        BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(item, 0);
         //show it
         bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
     }
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 TaskItem item = model.getItemByLocation(location.getLatitude(), location.getLongitude());
                 Log.e("triggering_location","triggered from " +item.getLatitude() + " " + item.getLongitude());
 
-                BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 2);
+                BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(item, 2);
                 //show it
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
             }
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (latlng != null) {
             TaskItem item = model.getItemByLocation(latlng[0], latlng[1]);
-            BottomSheetDialogFragment bottomSheetDialogFragment = FragmentTaskCreation.newInstance(item, 1);
+            BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(item, 1);
             //show it
             bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
         }
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         assert getFragmentManager() != null;
         if (dirLat != 0 && dirLng != 0) {
             Bundle args = new Bundle();
-            args.putString(FragmentTaskCreation.TAG_DIRECTION, "lat/lng");
+            args.putString(TaskFragment.TAG_DIRECTION, "lat/lng");
             args.putDouble(ARG_LAT, dirLat);
             args.putDouble(ARG_LNG, dirLng);
             fragment.setArguments(args);
