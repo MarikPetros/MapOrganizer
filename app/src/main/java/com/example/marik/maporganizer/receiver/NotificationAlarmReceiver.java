@@ -9,18 +9,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.TaskStackBuilder;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
-import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 
 import java.util.Date;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
-import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ALERT_TIME;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_ADDRESS;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ITEM_EXTRA;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TASK_DATE;
@@ -73,16 +68,10 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
             channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-           // NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-           // if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            //}
+            notificationManager.createNotificationChannel(channel);
         }
 
         Date date = new Date(taskDate);
-       /* if(date == null){
-            date = new Date(System.currentTimeMillis() + 60*60*1000);
-        }*/
         // using NotificationCompat
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, TIMED_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_nearby)
@@ -114,17 +103,7 @@ public class NotificationAlarmReceiver extends BroadcastReceiver {
                 //set this notification as the summary for the group
                 .setGroupSummary(true);
 
-      //  NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         // notificationManager.notify(notificationId, mSummaryBuilder.build());
         notificationManager.notify(notificationId, mBuilder.build());
     }
-
-    /**
-     * Get the notification manager.
-     *
-     * Utility method as this helper works with it a lot.
-     *
-     * @return The system service NotificationManager
-     */
-
 }

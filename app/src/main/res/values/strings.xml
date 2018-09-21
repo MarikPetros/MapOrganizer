@@ -3,59 +3,38 @@
     <string name="title_activity_maps">Map</string>
 
 
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-
     <string name="description_hint">Description</string>
     <string name="reminder_text">Reminder</string>
-    <string name="never_remind">Never</string>
     <string name="notify_by_place_label">Notify By Place</string>
     <string name="pick_image_intent_text">Choose image</string>
 
     <string name="search_here">Search here</string>
-    <string name="title_activity_maps2">Map</string>
     <string name="error_code_NotAvailable">Geofence is not available!</string>
     <string name="error_code_TooManyGeafences">Too many geafences!</string>
     <string name="error_code_TooManyPendingintents">Too many pending intents!</string>
     <string name="error_NotSpecified">Not specified error!</string>
     <string name="geofence_transition_invalid_type">d% is invalid GeofenceTransition type!</string>
-    <string name="search">Search</string>
     <string name="title_hint">Title</string>
-    <string name="location">location</string>
     <string name="channel_name">Nearby locations</string>
     <string name="channel_description">Notifying about nearby location</string>
     <string name="explanation">You have something to do at</string>
     <string name="alert_text">You are near-by</string>
 
-    <string name="fragment_info">Fragment infoA</string>
-    <string name="fragment_map">Fragment map</string>
-    <string name="fragment_creation">Fragment creation</string>
-    <string name="fragment_list">Fragment list</string>
-    <string name="map">map</string>
-    <string name="list">list</string>
     <string name="nearby">NearBy</string>
     <string name="nearTasks">Nearby tasks</string>
     <string name="some_messages">Some new messages</string>
     <string name="maporganizer">MapOrganizer</string>
     <string name="radius_in_meters">Radius (100m to 5000m)</string>
     <string name="empty_view_text">There are no tasks!</string>
-    <string name="service_not_available">service is not available</string>
-    <string name="invalid_lat_long_used">invalid lat long used</string>
-    <string name="no_address_found">no address found</string>
-    <string name="address_found">address is found</string>
-    <string name="no_location_data_provided">no location data provided</string>
 
     <string name="ar">AR</string>
 
-    <string name="timed_notification">TimedNotification</string>
     <string name="timed_notification_channel">TimedNotificationChannel</string>
     <string name="timed_notification_channel_description">Notifying at real time</string>
     <string name="scheduled_job">Scheduled job!</string>
     <string name="title_activity_temp_map">TempMapActivity</string>
     <string name="timed_notifications">Timed notifications</string>
     <string name="timted_group_title">Jobs to do</string>
-    <string name="timed_messages">New timed messages</string>
     <string name="direction">Direction</string>
     <string name="show_location">Show location</string>
 </resources>

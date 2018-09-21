@@ -15,7 +15,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
@@ -110,13 +109,10 @@ public class CameraViewActivity extends Activity implements
 
     private boolean isBetween(double minAngle, double maxAngle, double azimuth) {
         if (minAngle > maxAngle) {
-            if (isBetween(0, maxAngle, azimuth) && isBetween(minAngle, 360, azimuth))
-                return true;
+            return isBetween(0, maxAngle, azimuth) && isBetween(minAngle, 360, azimuth);
         } else {
-            if (azimuth > minAngle && azimuth < maxAngle)
-                return true;
+            return azimuth > minAngle && azimuth < maxAngle;
         }
-        return false;
     }
 
 
@@ -182,7 +178,7 @@ public class CameraViewActivity extends Activity implements
     }
 
     private void setupListeners() {
-        myCurrentLocation = new MyCurrentLocation(this);
+        myCurrentLocation = new MyCurrentLocation(this,this);
         myCurrentLocation.buildGoogleApiClient(this);
         myCurrentLocation.start();
 
@@ -191,10 +187,10 @@ public class CameraViewActivity extends Activity implements
     }
 
     private void setupLayout() {
-        descriptionTextView = (TextView) findViewById(R.id.cameraTextView);
+        descriptionTextView = findViewById(R.id.cameraTextView);
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.cameraview);
+        SurfaceView surfaceView = findViewById(R.id.cameraview);
         mSurfaceHolder = surfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);

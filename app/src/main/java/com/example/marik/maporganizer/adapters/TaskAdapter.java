@@ -15,8 +15,8 @@ import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 
 import com.example.marik.maporganizer.R;
-import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.adapters.viewHolder.TaskHolder;
+import com.example.marik.maporganizer.db.TaskItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.UUID;
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
     public List<TaskItem> mItems = new ArrayList<>();
-    ;
     Context mContext;
     OnItemsListClicked mListClickedListener;
     android.support.v7.view.ActionMode mActionMode;

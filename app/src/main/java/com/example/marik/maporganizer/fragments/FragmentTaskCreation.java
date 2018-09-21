@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
@@ -22,9 +21,6 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -34,7 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +44,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.QuickContactBadge;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -57,21 +51,15 @@ import android.widget.TimePicker;
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
 import com.example.marik.maporganizer.activity.TempMapActivity;
-//import com.example.marik.maporganizer.activity.ar_activities.CameraViewActivity;
 import com.example.marik.maporganizer.activity.ar_activities.CameraViewActivity;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.imagePicker.ImagePicker;
-import com.example.marik.maporganizer.imagePicker.Utility;
 import com.example.marik.maporganizer.imagePicker.WriteBitmapToFileTask;
 import com.example.marik.maporganizer.utils.KeyboardUtil;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
-import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,10 +70,11 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static android.content.Context.ALARM_SERVICE;
-import static com.example.marik.maporganizer.activity.MainActivity.GEOFENCE_NOTIF_CODE;
 import static com.example.marik.maporganizer.activity.TempMapActivity.LATLONG_KEY;
 import static com.example.marik.maporganizer.activity.TempMapActivity.RADIUS_KEY;
 import static com.example.marik.maporganizer.imagePicker.Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
+
+//import com.example.marik.maporganizer.activity.ar_activities.CameraViewActivity;
 
 
 public class FragmentTaskCreation extends BottomSheetDialogFragment implements WriteBitmapToFileTask.OnResultListener {
@@ -171,7 +160,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     ArrayAdapter<String> mSpinnerAdapter;
     private int mFlag;
     Animation zoomAnimation;
-//    OnTaskFragmentInteraction mListener;
 
     private boolean isNewCreated = true;
     private AlarmManager alarmManager;
@@ -185,7 +173,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     public final static String ITEM_ADDRESS = "com.example.marik.maporganizer.NOTIFYING_TASK_ADDRESS";
     public final static String ADDRESS = "address";
     public final static String TAG_DIRECTION = "send latlng to map for roure";
-//    public final static String ADDRESS ="address";
 
     public void setmOndirectionListener(OnDirectionListener mOndirectionListener) {
         this.mOndirectionListener = mOndirectionListener;
@@ -245,16 +232,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-//        StrictMode.setVmPolicy(builder.build());
 
         Bundle args = getArguments();
         if (args != null) {
             if (args.containsKey(ARG_TASK_ITEM)) {
                 mTaskItem = args.getParcelable(ARG_TASK_ITEM);
-//                if (mTaskItem != null && mTaskItem.getDate() != null) {
-//                    mSelectedDate.setTime(mTaskItem.getDate());
-//                }
                 isNewCreated = false;
             } else {
                 isNewCreated = true;
@@ -348,10 +330,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         }
     }
 
-//    public void onPickImage(View view) {
-//        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getContext());
-//        startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
-//    }
 
     private void init(final View root) {
 
@@ -388,20 +366,6 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
                 intent.putExtra(ARG_LAT, mTaskItem.getLatitude());
                 intent.putExtra(ARG_LNG, mTaskItem.getLongitude());
                 startActivity(intent);
-//                //   LatLng latLng = new LatLng(mTaskItem.getLatitude(), mTaskItem.getLongitude());
-//                MapsFragment mapsFragment =MapsFragment.newInstance();
-////                assert getFragmentManager() != null;
-//                Bundle args = new Bundle();
-//                args.putString(TAG_DIRECTION, DIR_ARGS);
-//                args.putDouble(ARG_LAT, mTaskItem.getLatitude());
-//                Log.v("directionic uxarkac", mTaskItem.getLatitude() + ", " + mTaskItem.getLongitude());
-//                args.putDouble(ARG_LNG, mTaskItem.getLongitude());
-//                mapsFragment.setArguments(args);
-//                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//                fragmentTransaction.replace(R.id.fragment_container, mapsFragment);
-//                fragmentTransaction.commit();
-//                mapsFragment.showDirection(latLng);
-//                setFragment(mapsFragment);
                 dismiss();
             }
         });
@@ -717,14 +681,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
-
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        //   Utility.checkPermissions(getContext());
         checkPermissions(getContext());
     }
 
@@ -737,9 +698,7 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
 
     private boolean isEmptyTask() {
-        if ((mTitle.getText().toString().isEmpty()) && (mDescription.getText().toString().isEmpty()))
-            return true;
-        else return false;
+        return (mTitle.getText().toString().isEmpty()) && (mDescription.getText().toString().isEmpty());
     }
 
     public void checkPermissions(Context context) {
@@ -753,14 +712,12 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
         } else {
             ActivityCompat.requestPermissions((Activity) context, permissions, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
         }
-
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         KeyboardUtil.hideKeyboard(getActivity());
-
     }
 
     public void writeBitmapToFile(Bitmap bitmap, String path, WriteBitmapToFileTask.OnResultListener onResultListener) {
@@ -804,18 +761,11 @@ public class FragmentTaskCreation extends BottomSheetDialogFragment implements W
 
             StringBuilder result = new StringBuilder();
             try {
-                // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-
-                //}
                 List<Address> addresses = mGeocoder.getFromLocation(latitude, longitude, 1);
                 if (addresses.size() > 0) {
                     Address address = addresses.get(0);
 
                     result.append(address.getAddressLine(0));
-//                    result.append(address.getLocality());
-                    //  result.append(address.getAdminArea());
-
-
                 }
             } catch (IOException e) {
                 Log.e("tag", e.getMessage());

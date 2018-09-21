@@ -5,9 +5,6 @@ package com.example.marik.maporganizer.db;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-import android.location.Address;
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -27,9 +24,6 @@ public class TaskItem implements Parcelable, ClusterItem {
     @NonNull
     @ColumnInfo(name = "_id")
     public UUID mId;
-//
-    //    @ColumnInfo(name = "location")
-//    private Location mLocation;
 
     @ColumnInfo(name = "latitude")
     private double mLatitude;

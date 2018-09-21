@@ -1,16 +1,5 @@
 package com.example.marik.maporganizer.fragments;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.data.DataBufferUtils;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.model.LatLngBounds;
-
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -25,8 +14,17 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferUtils;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.AutocompletePredictionBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 
@@ -53,7 +51,6 @@ public class PlaceAutocompleteAdapter
 
 
     // Returns the number of results received in the last autocomplete query.
-
     @Override
     public int getCount() {
         return mResultList.size();
@@ -61,7 +58,6 @@ public class PlaceAutocompleteAdapter
 
 
     // Returns an item from the last autocomplete query.
-
     @Override
     public AutocompletePrediction getItem(int position) {
         return mResultList.get(position);
@@ -73,12 +69,10 @@ public class PlaceAutocompleteAdapter
         View row = super.getView(position, convertView, parent);
 
         // Sets the primary and secondary text for a row.
-
-
         AutocompletePrediction item = getItem(position);
 
-        TextView textView1 = (TextView) row.findViewById(android.R.id.text1);
-        TextView textView2 = (TextView) row.findViewById(android.R.id.text2);
+        TextView textView1 = row.findViewById(android.R.id.text1);
+        TextView textView2 = row.findViewById(android.R.id.text2);
         assert item != null;
         textView1.setText(item.getPrimaryText(STYLE_BOLD));
         textView2.setText(item.getSecondaryText(STYLE_BOLD));
@@ -88,7 +82,6 @@ public class PlaceAutocompleteAdapter
 
 
     // Returns the filter for the current set of autocomplete results.
-
     @NonNull
     @Override
     public Filter getFilter() {
@@ -176,6 +169,4 @@ public class PlaceAutocompleteAdapter
         Log.e(TAG, "Google API client is not connected ");
         return null;
     }
-
-
 }

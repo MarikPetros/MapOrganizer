@@ -6,17 +6,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
-import com.example.marik.maporganizer.db.TaskDataBase;
-import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.db.TaskRepository;
-import com.example.marik.maporganizer.fragments.FragmentTaskCreation;
 
 import java.util.Objects;
 

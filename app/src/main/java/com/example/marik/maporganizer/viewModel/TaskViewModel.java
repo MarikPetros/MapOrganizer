@@ -5,9 +5,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.location.Address;
-import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.example.marik.maporganizer.db.TaskItem;

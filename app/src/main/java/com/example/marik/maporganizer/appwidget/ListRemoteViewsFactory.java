@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private final Context mContext;
-    private List<TaskItem> mTaskWidgetItems; // Widgeti item piti lini
+    private List<TaskItem> mTaskWidgetItems;
     private final int mAppWidgetId;
     private TaskDataBase taskRoomDB;
 
@@ -44,12 +44,6 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // locking up the widget.
         mTaskWidgetItems.clear();
         mTaskWidgetItems.addAll(taskRoomDB.mDao().getAllTaskItems());
-        /*TaskItem task = new TaskItem();
-        TaskItem task2 = new TaskItem();
-        task.setChoosedAddress("M.Avetisyan 53,Hrazdan");
-        task2.setChoosedAddress("Noyemberyan 30,Hrazdan");
-        mTaskWidgetItems.add(task);
-        mTaskWidgetItems.add(task2);*/
     }
 
     @Override
@@ -99,7 +93,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public boolean hasStableIds() {
-        return true;  /// indz tvum a karanq false dnenq
+        return true;
     }
 }
 

@@ -3,7 +3,6 @@ package com.example.marik.maporganizer.models;
 
 //holding all the parameters for place objects
 //so we won't loose the info when we call release()
-//ToDo changes later
 
 import android.net.Uri;
 

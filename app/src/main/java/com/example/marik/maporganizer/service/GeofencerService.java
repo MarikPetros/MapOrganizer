@@ -6,10 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Address;
 import android.location.Location;
 import android.os.Build;
-import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.activity.MainActivity;
-import com.example.marik.maporganizer.db.Converters;
 import com.example.marik.maporganizer.db.TaskRepository;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -106,16 +103,12 @@ public class GeofencerService extends IntentService {
     private String getGeofenceTransitionDetails(GeofencerService geofencerService, int geofenceTransition, List<Geofence> triggeringGeofences) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        //For test
-        //      String notifText = "datark a";
-
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             stringBuilder.append(getString(R.string.alert_text));
             List<String> tags = new ArrayList<>();
             List<String> addresses = new ArrayList<>();
             //           int i=0;
             for (Geofence g : triggeringGeofences) {
-                //           notifText = g.getRequestId(); /// This is for test
                 notificationTag = g.getRequestId();
                 String itemAddress = null;
                 try {
@@ -139,7 +132,6 @@ public class GeofencerService extends IntentService {
 
             //complete geofenceTransitionDetails text
             stringBuilder.append(addresses.get(0));
-//            stringBuilder.append(notifText);
         }
         return stringBuilder.toString();
     }
@@ -154,7 +146,7 @@ public class GeofencerService extends IntentService {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        // Greate wearableExtender
+        // Create wearableExtender
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setDismissalId(dismissalId);
 

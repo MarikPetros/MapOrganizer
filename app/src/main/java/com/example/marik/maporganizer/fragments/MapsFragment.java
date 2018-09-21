@@ -96,9 +96,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     private final static int PERMISSION_CODE = 26;
     private static final float DEFAULT_ZOOM = 15f;
-    private final static String GEOFENCING_LOCATIONS = "Geofence triggering locations";
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -169), new LatLng(44, 137));
-    private static final String LAT_LNG_FROM_NOTIFICATIONS = "latlng from notifications ";
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -115,14 +113,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private TaskViewModel mViewModel;
     List<TaskItem> mTasksList = new ArrayList<>();
     ArrayList<LatLng> mMarkerPoints;
- //   LatLng latLngFromNotification;
+
     double mLatitude = 0;
     double mLongitude = 0;
 
     double dirLat;
     double dirLng;
 
-    private boolean notificationFlag;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -166,7 +163,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of((Objects.requireNonNull(getActivity()))).get(TaskViewModel.class);
-     //   mViewModel.getItems();
+        mViewModel.getItems();
 
     }
 
@@ -266,8 +263,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         onMapClick();
         initSearch();
         loadTaskItems();
-
     }
+
 
     @Override
     public void onResume() {
@@ -302,6 +299,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         }
     }
 
+
     private void onMapClick() {
         LocationManager locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(LOCATION_SERVICE);
 
@@ -323,48 +321,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
             Location location = locationManager.getLastKnownLocation(provider);
 
-           // Location location = getCurrentLocation();
             if (location != null) {
                 onLocationChanged(location);
             }
-
         } else
             Log.v("permisssion chka", mCurrentLocation + "");
 
 
-       /* mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-            @Override
-            public void onMapClick(LatLng latLng) {
-
-                if (mMarkerPoints.size() > 1) {
-                    mMarkerPoints.clear();
-                    mMap.clear();
-
-                    LatLng startPoint = new LatLng(mLatitude, mLongitude);
-                    drawMarker(startPoint);
-                }
-
-                drawMarker(latLng);
-
-
-                if (mMarkerPoints.size() == 2) {
-                    LatLng origin = mMarkerPoints.get(0);
-                    LatLng dest = mMarkerPoints.get(1);
-
-                    // Getting URL to the Google Directions API
-                    String url = getUrl(origin, dest);
-                    FetchUrl FetchUrl = new FetchUrl();
-
-                    // Start downloading json data from Google Directions API
-                    FetchUrl.execute(url);
-
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
-                }
-
-            }
-        });*/
 
 
         mMap.setOnMapLongClickListener(this);
@@ -380,9 +343,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
         if (mMarkerPoints.size() == 1) {
             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.kid_icon));
-//        } else if (mMarkerPoints.size() == 2) {
-//            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//        }
 
             mMap.addMarker(options);
         }
@@ -400,11 +360,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 Log.v("directionic ekac latlng", dirLat + ", " + dirLng);
                 mMarkerPoints.add(new LatLng(dirLat, dirLng));
                 drawRout(new LatLng(dirLat,dirLng));
-
-
-            }};
-
-
+            }}
     }
 
     @Override
@@ -415,9 +371,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         //show it
         bottomSheetDialogFragment.show(getChildFragmentManager(), bottomSheetDialogFragment.getTag());
     }
-
-
-    //-----------------------------------------------------------
 
 
     LocationCallback mLocationCallback = new LocationCallback() {
@@ -438,8 +391,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                             .title("Current Position")
                             .icon(BitmapDescriptorFactory
                                     .fromResource(R.drawable.marker3));
-
-                    // mCurrentLocationMarker = mMap.addMarker(markerOptions);
 
                     //move map camera
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
@@ -540,9 +491,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 }
 
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -706,7 +654,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     //-----------------------Marker clustering-------------
-    //
+
     private void setUpClusterer(List<TaskItem> items) {
         mClusterManager = new ClusterManager<>(Objects.requireNonNull(getContext()), mMap);
         for (TaskItem taskItem : items) {
@@ -778,7 +726,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
-           // drawMarker(point);
         }
     }
 

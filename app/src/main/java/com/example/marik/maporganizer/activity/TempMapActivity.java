@@ -4,36 +4,33 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-
-import com.example.marik.maporganizer.R;
-
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageView;;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
 import com.example.marik.maporganizer.fragments.PlaceAutocompleteAdapter;
 import com.example.marik.maporganizer.models.PlaceInfo;
-import com.example.marik.maporganizer.viewModel.TaskViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -140,13 +137,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         intent.putExtra(RADIUS_KEY, radius).putExtra(LATLONG_KEY, new double[] {latitude,longitude});
 
-        /*saveSettingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        });*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
@@ -248,7 +238,7 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
                 System.out.println("ad==" + address);
                 System.out.println("result---" + result.toString());
 
-                //    mAutoCompleteTextView.setText(result.toString()); //  AutoCompleteTextView for setting  string address
+                mAutoCompleteTextView.setText(result.toString()); //  AutoCompleteTextView for setting  string address
             }
         } catch (IOException e) {
             Log.e("tag", e.getMessage());
@@ -324,7 +314,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
         if (list.size() > 0) {
             Address address = list.get(0);
 
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
             latitude = address.getLatitude();
             longitude = address.getLongitude();
             LatLng choosedLocation = new LatLng(latitude, longitude);
@@ -399,8 +388,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
             latitude = Objects.requireNonNull(place.getViewport()).getCenter().latitude;
             longitude = place.getViewport().getCenter().longitude;
 
-            /*moveCamera(new LatLng(Objects.requireNonNull(place.getViewport()).getCenter().latitude,
-                    place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace.getName());*/
 
             LatLng choosedLocation = new LatLng(latitude, longitude);
             moveCamera(choosedLocation, DEFAULT_ZOOM, mPlace.getName());
@@ -430,7 +417,6 @@ public class TempMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onBackPressed() {
         setResult(RESULT_OK, intent);
-       // finish();
         super.onBackPressed();
     }
 }

@@ -2,10 +2,7 @@ package com.example.marik.maporganizer.db;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
-import android.widget.Toast;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -46,15 +43,6 @@ public class TaskRepository {
     }
 
     public TaskItem getItemByLocation(double latitude, double longitude) {
-        /*TaskItem taskItem = null;
-        try {
-            taskItem = (new GetByLocationAsyncTask(mDao).execute(latitude, longitude)).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return taskItem;*/
         new GetByLocationAsyncTask(mDao).execute(latitude, longitude);
         return mItem;
     }

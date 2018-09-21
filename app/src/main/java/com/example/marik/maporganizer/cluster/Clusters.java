@@ -1,11 +1,6 @@
 package com.example.marik.maporganizer.cluster;
 
-import com.example.marik.maporganizer.R;
-import com.google.android.gms.common.images.internal.ImageUtils;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterItem;
 
 

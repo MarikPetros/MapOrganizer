@@ -1,8 +1,11 @@
 package com.example.marik.maporganizer.activity.ar_activities;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -11,18 +14,17 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-/**
- * Created by krzysztofjackowski on 24/09/15.
- */
 public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
     private OnLocationChangedListener onLocationChangedListener;
+    private Context context;
 
-    public MyCurrentLocation(OnLocationChangedListener onLocationChangedListener) {
+    public MyCurrentLocation(OnLocationChangedListener onLocationChangedListener, Context context) {
         this.onLocationChangedListener = onLocationChangedListener;
+        this.context = context;
     }
 
     protected synchronized void buildGoogleApiClient(Context context) {
@@ -48,11 +50,14 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
     @Override
     public void onConnected(Bundle bundle) {
         //checkPermission();
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            onLocationChangedListener.onLocationChanged(mLastLocation);
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED ) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                onLocationChangedListener.onLocationChanged(mLastLocation);
+            }
         }
     }
 
@@ -60,16 +65,6 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
     public void onConnectionSuspended(int i) {
 
     }
-//    public void checkPermission(){
-//        if (ContextCompat.checkSelfPermission((Activity)CameraViewActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                ){//Can add more as per requirement
-//
-//            ActivityCompat.requestPermissions(()MyCurrentLocation.this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    123);
-//        }
-//    }
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e("MyApp", "Location services connection failed with code " + connectionResult.getErrorCode());
@@ -77,10 +72,14 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            onLocationChangedListener.onLocationChanged(mLastLocation);
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED ) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                onLocationChangedListener.onLocationChanged(mLastLocation);
+            }
         }
     }
+
 }

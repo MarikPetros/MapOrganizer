@@ -1,7 +1,6 @@
 package com.example.marik.maporganizer.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -10,13 +9,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
@@ -39,16 +35,11 @@ import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.service.GeofencerService;
 import com.example.marik.maporganizer.utils.GeofenceMaker;
 import com.example.marik.maporganizer.viewModel.TaskViewModel;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.ar.core.ArCoreApk;
-
-//import com.google.ar.core.ArCoreApk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +50,8 @@ import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.ARG_LNG;
 import static com.example.marik.maporganizer.fragments.FragmentTaskCreation.TIME_NOTIFIER;
 import static com.example.marik.maporganizer.service.GeofencerService.TRIGGERING_LOCATIONS;
+
+//import com.google.ar.core.ArCoreApk;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView mBottomNavigationView;
     private TaskViewModel model;
     private ImageView mArButton;
-    public FusedLocationProviderClient mFusedLocationClient;
-    public Location mCurrentLocation;
     double dirLat;
     double dirLng;
 
@@ -93,12 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
         init();
-        //  checkLocationPermission();
     }
 
 
     public void init() {
-//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mBottomNavigationView = findViewById(R.id.nav_view_bar);
         mArButton = findViewById(R.id.augmented_reality);
@@ -145,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             mArButton.setVisibility(View.VISIBLE);
             mArButton.setEnabled(true);
             // indicator on the button.
-        } else { // Unsupported or unknown.
+        } else {
             mArButton.setVisibility(View.INVISIBLE);
             mArButton.setEnabled(false);
         }
@@ -327,18 +316,4 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
-
-    //-------------------------------------------------------------------
-
-    private void doFragmentTransaction(Fragment fragment, boolean addToBackStack) {
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        if (addToBackStack) {
-            fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
-        }
-
-        fragmentTransaction.commit();
-    }
 }

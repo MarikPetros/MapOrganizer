@@ -9,9 +9,7 @@ import android.widget.TextView;
 
 import com.example.marik.maporganizer.R;
 import com.example.marik.maporganizer.db.TaskItem;
-import com.example.marik.maporganizer.fragments.MapsFragment;
 import com.example.marik.maporganizer.utils.DateUtil;
-import com.google.android.gms.maps.model.LatLng;
 
 
 public class TaskHolder extends RecyclerView.ViewHolder {

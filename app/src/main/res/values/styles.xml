@@ -8,14 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay">apptheme</style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="AppTheme"/>               <!--ThemeOverlay.AppCompat.Light"-->
 
     <style name="AppTheme.WhiteTextAppearance">
         <item name="android:textColor">#fff</item>
@@ -29,6 +26,5 @@
     <style name="Theme.AppCompat">Theme.AppCompat</style>
 
     <style name="Theme">Theme</style>
-
 
 </resources>

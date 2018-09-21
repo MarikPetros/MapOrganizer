@@ -5,10 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-/**
- * Created by krzysztofjackowski on 24/09/15.
- */
 public class MyCurrentAzimuth implements SensorEventListener {
 
     private SensorManager sensorManager;
@@ -24,7 +20,7 @@ public class MyCurrentAzimuth implements SensorEventListener {
     }
 
     public void start(){
-        sensorManager = (SensorManager) mContext.getSystemService(mContext.SENSOR_SERVICE);
+        sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_UI);

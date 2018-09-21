@@ -1,10 +1,7 @@
 package com.example.marik.maporganizer.db;
 
 import android.arch.persistence.room.TypeConverter;
-import android.location.Address;
 import android.location.Location;
-
-import com.google.android.gms.location.places.AddPlaceRequest;
 
 import java.util.Date;
 import java.util.Locale;

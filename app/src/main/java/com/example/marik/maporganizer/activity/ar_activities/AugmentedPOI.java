@@ -1,7 +1,4 @@
 package com.example.marik.maporganizer.activity.ar_activities;
-/**
- * Created by krzysztofjackowski on 24/09/15.
- */
 public class AugmentedPOI {
 //	private int mId;
 //	private String mName;
@@ -17,18 +14,6 @@ public class AugmentedPOI {
         this.mLongitude = newLongitude;
 	}
 	
-//	public int getPoiId() {
-//		return mId;
-//	}
-//	public void setPoiId(int poiId) {
-//		this.mId = poiId;
-//	}
-//	public String getPoiName() {
-//		return mName;
-//	}
-//	public void setPoiName(String poiName) {
-//		this.mName = poiName;
-//	}
 	public String getPoiDescription() {
 		return mDescription;
 	}
