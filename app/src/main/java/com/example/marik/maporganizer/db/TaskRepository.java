@@ -16,8 +16,6 @@ public class TaskRepository {
 
     private TaskRepository(Application application) {
         TaskDataBase db = TaskDataBase.getDataBase(application);
-        /*TaskDataBase db = Room.databaseBuilder(application.getBaseContext(),
-                TaskDataBase.class, "task_db").build();*/
         mDao = db.mDao();
         mItemList = mDao.getAll();
     }
