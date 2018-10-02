@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -22,12 +23,12 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
     private OnLocationChangedListener onLocationChangedListener;
     private Context context;
 
-    public MyCurrentLocation(OnLocationChangedListener onLocationChangedListener, Context context) {
+    MyCurrentLocation(OnLocationChangedListener onLocationChangedListener, Context context) {
         this.onLocationChangedListener = onLocationChangedListener;
         this.context = context;
     }
 
-    protected synchronized void buildGoogleApiClient(Context context) {
+    synchronized void buildGoogleApiClient(Context context) {
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -37,16 +38,18 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
     }
 
     public void start(){
         mGoogleApiClient.connect();
     }
 
-    public void stop(){
+    void stop(){
         mGoogleApiClient.disconnect();
     }
+
+
     @Override
     public void onConnected(Bundle bundle) {
         //checkPermission();
@@ -66,7 +69,7 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
 
     }
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e("MyApp", "Location services connection failed with code " + connectionResult.getErrorCode());
     }
 
