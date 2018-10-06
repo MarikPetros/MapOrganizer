@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             for (Location location : locations) {
                 Log.e("triggering_location","triggered from " +location.getLatitude() + " " + location.getLongitude());
                 TaskItem item = model.getItemByLocation(location.getLatitude(), location.getLongitude());
-                Log.e("triggering_location","triggered from " +item.getLatitude() + " " + item.getLongitude());
 
                 BottomSheetDialogFragment bottomSheetDialogFragment = TaskFragment.newInstance(item, 2);
                 //show it
